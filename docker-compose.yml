@@ -9,6 +9,7 @@ services:
     networks:
       - test
     volumes:
+      - ./bin:/app/bin
       - ./app:/app/app
       - ./db:/app/db
       - ./config:/app/config

@@ -26,3 +26,10 @@ console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify
 
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
+//import "../javascript/application"
+
+
+import BlacklightRangeLimit from 'blacklight-range-limit';
+//Blacklight.onLoad(() => {});
+BlacklightRangeLimit.init({ onLoadHandler: Blacklight.onLoad });
+console.log("here???")

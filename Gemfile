@@ -27,7 +27,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 
 # Javascript bundler 
-gem 'vite_rails'
+gem 'vite_rails', '~> 3.0'
 
 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
 gem "cssbundling-rails"

@@ -2,12 +2,20 @@
   "name": "crkn_canadiana_blacklight",
   "packageManager": "yarn@4.2.2",
   "devDependencies": {
-    "vite-plugin-full-reload": "^1.2.0",
-    "vite-plugin-stimulus-hmr": "^3.0.0",
-    "vue": "^3.5.13"
+    "@vitejs/plugin-vue": "^4.5.0",
+    "vite": "^6.1.0",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "rollup": "^4.34.6",
+    "vite-plugin-ruby": "^5.1.1"
   },
   "scripts": {
-    "dev": "vite --mode development",
-    "build": "vite --mode production"
+    "dev": "cross-env DEBUG=vite-plugin-ruby:* vite --open",
+    "build": "cross-env DEBUG=vite-plugin-ruby:* vite build --mode production --emptyOutDir",
+    "preview": "cross-env RAILS_ENV=production DEBUG=vite-plugin-ruby:* vite preview --open"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "blacklight-range-limit": "^9.0.0",
+    "chart.js": "4.2.0"
   }
 }

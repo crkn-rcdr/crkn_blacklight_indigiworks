@@ -24,3 +24,7 @@ rails generate --asset-delivery-mode=importmap-rails blacklight_range_limit:inst
 rake solr:marc:index MARC_FILE=test.mrc
 
 * ...
+
+    "dev": "vite",
+    "build": "vite build", 
+    "preview": "vite preview" 

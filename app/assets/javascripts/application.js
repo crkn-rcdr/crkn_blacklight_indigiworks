@@ -5,3 +5,4 @@
 //= require popper
 //= require bootstrap
 //= require blacklight/blacklight
+console.log("here?")
