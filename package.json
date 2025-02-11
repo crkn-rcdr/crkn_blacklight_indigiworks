@@ -1,0 +1,13 @@
+{
+  "name": "crkn_canadiana_blacklight",
+  "packageManager": "yarn@4.2.2",
+  "devDependencies": {
+    "vite-plugin-full-reload": "^1.2.0",
+    "vite-plugin-stimulus-hmr": "^3.0.0",
+    "vue": "^3.5.13"
+  },
+  "scripts": {
+    "dev": "vite --mode development",
+    "build": "vite --mode production"
+  }
+}
