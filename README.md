@@ -34,3 +34,4 @@ RAILS_ENV=production rails vite:build
 
 https://workshop.projectblacklight.org/
 https://github.com/projectblacklight/blacklight/wiki
+https://github.com/projectblacklight/blacklight/wiki/Configuring-and-Customizing-Blacklight#custom-view-helpers
