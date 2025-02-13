@@ -140,7 +140,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'collection_tsim_str', label: 'Material', sort: 'count', limit: 8, suggest: true # Need to figure out why old values aren't clearing
     config.add_facet_field 'subject_ssim_str', label: 'Subject', sort: 'count', limit: 8, suggest: true
     config.add_facet_field 'author_ssm_str', label: 'Creator', sort: 'count', limit: 8, suggest: true
-    config.add_facet_field 'doc_source_tsim_str', label: 'Source', sort: 'count', limit: 8, suggest: true
+    # TODO: Depositor
     config.add_facet_field 'is_issue', label: 'Is an Individual Issue'
 
     #config.add_facet_field 'format', label: 'Format'
@@ -179,7 +179,7 @@ class CatalogController < ApplicationController
     config.add_index_field 'collection_tsim', label: 'Collection'
     config.add_index_field 'subject_ssim', label: 'Subject'
     config.add_index_field 'author_ssm_str', label: 'Creator'
-    config.add_index_field 'doc_source_tsim', label: 'Source'
+    config.add_index_field 'doc_source_tsim', label: 'Originating Institution'
     config.add_index_field 'pub_date_si', label: 'Date'
     config.add_index_field 'id', label: 'Item Code'
 
@@ -206,7 +206,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'subject_ssim', label: 'Subject'
     config.add_show_field 'author_ssm_str', label: 'Creator'
     config.add_show_field 'published_ssm', label: 'Published Statement'
-    config.add_show_field 'doc_source_tsim', label: 'Document Source'
+    config.add_show_field 'doc_source_tsim', label: 'Originating Institution'
     config.add_show_field 'original_version_note_tsim', label: 'Original Version Note'
     config.add_show_field 'notes_tsim', label: 'Notes'
     config.add_show_field 'access_note_tsim', label: 'Access Note'
