@@ -100,6 +100,8 @@ class CatalogController < ApplicationController
     # config.show.document_component = MyApp::DocumentComponent
     # config.show.sidebar_component = MyApp::SidebarComponent
     # config.show.embed_component = MyApp::EmbedComponent
+    config.index.title_component = IndexTitleComponent
+    config.index.document_component = IndexDocumentComponent
 
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
@@ -176,12 +178,13 @@ class CatalogController < ApplicationController
     #config.add_index_field 'published_vern_ssim', label: 'Published'
     config.add_index_field 'title_ssm', label: 'Title'
     config.add_index_field 'format', label: 'Format'
-    config.add_index_field 'collection_tsim', label: 'Collection'
-    config.add_index_field 'subject_ssim', label: 'Subject'
-    config.add_index_field 'author_ssm_str', label: 'Creator'
-    config.add_index_field 'doc_source_tsim', label: 'Originating Institution'
-    config.add_index_field 'pub_date_si', label: 'Date'
-    config.add_index_field 'id', label: 'Item Code'
+    config.add_index_field 'pub_date_si', label: 'Date', link_to_facet: true
+    config.add_index_field 'language_ssim_str', label: 'Language', link_to_facet: true
+    config.add_index_field 'collection_tsim', label: 'Material', link_to_facet: true
+    config.add_index_field 'subject_ssim', label: 'Subject', link_to_facet: true
+    config.add_index_field 'author_ssm_str', label: 'Creator', link_to_facet: true
+    #config.add_index_field 'doc_source_tsim', label: 'Originating Institution', link_to_facet: true
+    #config.add_index_field 'id', label: 'Item Code'
 
     # solr fields to be displayed in the show (single result) view
     #   The ordering of the field names is the order of the display
@@ -202,17 +205,17 @@ class CatalogController < ApplicationController
     config.add_show_field 'title_ssm', label: 'Title'
     config.add_show_field 'subtitle_tsim', label: 'Subtitle'
     config.add_show_field 'title_addl_tsim', label: 'Other Titles'
-    config.add_show_field 'collection_tsim', label: 'Collection'
-    config.add_show_field 'subject_ssim', label: 'Subject'
-    config.add_show_field 'author_ssm_str', label: 'Creator'
+    config.add_show_field 'pub_date_si', label: 'Date', link_to_facet: true
+    config.add_show_field 'language_ssim', label: 'Language', link_to_facet: true
+    config.add_show_field 'collection_tsim', label: 'Material', link_to_facet: true
+    config.add_show_field 'subject_ssim', label: 'Subject', link_to_facet: true
+    config.add_show_field 'author_ssm_str', label: 'Creator', link_to_facet: true
     config.add_show_field 'published_ssm', label: 'Published Statement'
-    config.add_show_field 'doc_source_tsim', label: 'Originating Institution'
+    #config.add_show_field 'doc_source_tsim', label: 'Originating Institution'
     config.add_show_field 'original_version_note_tsim', label: 'Original Version Note'
     config.add_show_field 'notes_tsim', label: 'Notes'
     config.add_show_field 'access_note_tsim', label: 'Access Note'
     config.add_show_field 'rights_stat_tsim', label: 'Rights Statement'
-    config.add_show_field 'language_ssim', label: 'Language'
-    config.add_show_field 'pub_date_si', label: 'Date'
     config.add_show_field 'permalink_fulltext_ssm', label: 'Permalink'
     config.add_show_field 'is_serial', label: 'Is a Serial Publication'
     config.add_show_field 'is_issue', label: 'Is an Issue of a Serial Publication'
