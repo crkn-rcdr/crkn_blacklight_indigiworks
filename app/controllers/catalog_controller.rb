@@ -179,10 +179,10 @@ class CatalogController < ApplicationController
     config.add_index_field 'title_ssm', label: 'Title'
     config.add_index_field 'format', label: 'Format'
     config.add_index_field 'pub_date_si', label: 'Date', link_to_facet: true
-    config.add_index_field 'language_ssim_str', label: 'Language', link_to_facet: true
+    config.add_index_field 'language_ssim', label: 'Language', link_to_facet: true
     config.add_index_field 'collection_tsim', label: 'Material', link_to_facet: true
     config.add_index_field 'subject_ssim', label: 'Subject', link_to_facet: true
-    config.add_index_field 'author_ssm_str', label: 'Creator', link_to_facet: true
+    config.add_index_field 'author_ssm', label: 'Creator', link_to_facet: true
     #config.add_index_field 'doc_source_tsim', label: 'Originating Institution', link_to_facet: true
     #config.add_index_field 'id', label: 'Item Code'
 
