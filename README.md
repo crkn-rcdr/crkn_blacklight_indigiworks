@@ -20,18 +20,16 @@ Things you may want to cover:
 * Services (job queues, cache servers, search engines, etc.)
 
 * Deployment instructions
-rails generate --asset-delivery-mode=importmap-rails blacklight_range_limit:install 
-rake solr:marc:index MARC_FILE=test.mrc
-RAILS_ENV=production rails vite:build
-* ...
-
-    "dev": "vite",
-    "build": "vite build", 
-    "preview": "vite preview" 
-
+`docker compose up --build --force-recreate`
+`rails generate --asset-delivery-mode=importmap-rails blacklight_range_limit:install`
+`rake solr:marc:index MARC_FILE=1.mrc && rake solr:marc:index MARC_FILE=2.mrc && rake solr:marc:index MARC_FILE=3.mrc && rake solr:marc:index MARC_FILE=4.mrc && rake solr:marc:index MARC_FILE=5.mrc && rake solr:marc:index MARC_FILE=6.mrc && rake solr:marc:index MARC_FILE=7.mrc && rake solr:marc:index MARC_FILE=8.mrc && rake solr:marc:index MARC_FILE=9.mrc && rake solr:marc:index MARC_FILE=10.mrc && rake solr:marc:index MARC_FILE=11.mrc && rake solr:marc:index MARC_FILE=12.mrc && rake solr:marc:index MARC_FILE=13.mrc`
+`RAILS_ENV=production rails vite:build`
 
 # Docs
-
 https://workshop.projectblacklight.org/
+
 https://github.com/projectblacklight/blacklight/wiki
-https://github.com/projectblacklight/blacklight/wiki/Configuring-and-Customizing-Blacklight#custom-view-helpers
+
+https://github.com/projectblacklight/blacklight/wiki/
+
+Configuring-and-Customizing-Blacklight#custom-view-helpers

@@ -14,13 +14,13 @@ COPY Gemfile .
 
 RUN bundle install
 
-RUN rails generate blacklight:install --marc --skip-solr --bootstrap-version=5
+#RUN rails generate blacklight:install --marc --skip-solr --bootstrap-version=5
 
 COPY . .
 
 RUN yarn install
 
-RUN bundle binstub vite_ruby
+#RUN bundle binstub vite_ruby
 RUN RAILS_ENV=production rails vite:build
 
 EXPOSE 3000

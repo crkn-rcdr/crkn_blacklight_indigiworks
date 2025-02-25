@@ -148,7 +148,7 @@
     </analyzer>
     <analyzer type="query">
       <tokenizer name="standard"/>
-      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
+      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
       <filter name="lowercase"/>
       <filter name="englishPossessive"/>
@@ -160,7 +160,7 @@
     <analyzer type="index">
       <tokenizer name="whitespace"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
-      <filter generateWordParts="1" catenateAll="0" name="wordDelimiterGraph" splitOnCaseChange="1" catenateNumbers="1" catenateWords="1" generateNumberParts="1"/>
+      <filter catenateAll="0" name="wordDelimiterGraph" splitOnCaseChange="1" catenateNumbers="1" catenateWords="1" generateNumberParts="1" generateWordParts="1"/>
       <filter name="lowercase"/>
       <filter protected="protwords.txt" name="keywordMarker"/>
       <filter name="porterStem"/>
@@ -168,9 +168,9 @@
     </analyzer>
     <analyzer type="query">
       <tokenizer name="whitespace"/>
-      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
+      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
-      <filter generateWordParts="1" catenateAll="0" name="wordDelimiterGraph" splitOnCaseChange="1" catenateNumbers="0" catenateWords="0" generateNumberParts="1"/>
+      <filter catenateAll="0" name="wordDelimiterGraph" splitOnCaseChange="1" catenateNumbers="0" catenateWords="0" generateNumberParts="1" generateWordParts="1"/>
       <filter name="lowercase"/>
       <filter protected="protwords.txt" name="keywordMarker"/>
       <filter name="porterStem"/>
@@ -179,7 +179,7 @@
   <fieldType name="text_en_splitting_tight" class="solr.TextField" autoGeneratePhraseQueries="true" positionIncrementGap="100">
     <analyzer type="index">
       <tokenizer name="whitespace"/>
-      <filter synonyms="synonyms.txt" name="synonymGraph" expand="false" ignoreCase="true"/>
+      <filter name="synonymGraph" expand="false" ignoreCase="true" synonyms="synonyms.txt"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
       <filter generateNumberParts="0" catenateAll="0" generateWordParts="0" catenateNumbers="1" catenateWords="1" name="wordDelimiterGraph"/>
       <filter name="lowercase"/>
@@ -190,7 +190,7 @@
     </analyzer>
     <analyzer type="query">
       <tokenizer name="whitespace"/>
-      <filter synonyms="synonyms.txt" name="synonymGraph" expand="false" ignoreCase="true"/>
+      <filter name="synonymGraph" expand="false" ignoreCase="true" synonyms="synonyms.txt"/>
       <filter name="stop" ignoreCase="true" words="lang/stopwords_en.txt"/>
       <filter generateNumberParts="0" catenateAll="0" generateWordParts="0" catenateNumbers="1" catenateWords="1" name="wordDelimiterGraph"/>
       <filter name="lowercase"/>
@@ -269,7 +269,7 @@
     <analyzer type="query">
       <tokenizer name="standard"/>
       <filter name="stop" ignoreCase="true" words="stopwords.txt"/>
-      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
+      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
       <filter name="lowercase"/>
     </analyzer>
   </fieldType>
@@ -282,7 +282,7 @@
     <analyzer type="query">
       <tokenizer name="standard"/>
       <filter name="stop" ignoreCase="true" words="stopwords.txt"/>
-      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
+      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
       <filter name="lowercase"/>
     </analyzer>
   </fieldType>
@@ -295,7 +295,7 @@
     </analyzer>
     <analyzer type="query">
       <tokenizer name="standard"/>
-      <filter synonyms="synonyms.txt" name="synonymGraph" expand="true" ignoreCase="true"/>
+      <filter name="synonymGraph" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
       <filter name="stop" ignoreCase="true" words="stopwords.txt"/>
       <filter name="lowercase"/>
     </analyzer>
@@ -474,6 +474,7 @@
   <field name="pub_date_si" type="plongs"/>
   <field name="pub_date_ssim" type="plongs"/>
   <field name="published_ssm" type="text_general"/>
+  <field name="serial_key" type="text_general"/>
   <field name="serial_title" type="text_general"/>
   <field name="subject_addl_tsim" type="text_general"/>
   <field name="subject_era_ssim" type="text_general"/>
@@ -592,4 +593,5 @@
   <copyField source="subject_era_ssim" dest="subject_era_ssim_str" maxChars="256"/>
   <copyField source="title_added_entry_tsim" dest="title_added_entry_tsim_str" maxChars="256"/>
   <copyField source="original_version_note_tsim" dest="original_version_note_tsim_str" maxChars="256"/>
+  <copyField source="serial_key" dest="serial_key_str" maxChars="256"/>
 </schema>
