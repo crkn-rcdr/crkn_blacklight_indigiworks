@@ -44,7 +44,7 @@ class CatalogController < ApplicationController
     #  qt: "/query",
     #  q: "*:*"
     #}
-
+    
     # solr path which will be added to solr base url before the other solr params.
     #config.solr_path = 'select'
     #config.document_solr_path = 'get'
@@ -138,13 +138,16 @@ class CatalogController < ApplicationController
     }
     #config.add_facet_field 'pub_date_ssim', label: 'Publication Year', single: true
     # Suggest is the search box for the facet pop-ups
-    config.add_facet_field 'language_ssim_str', label: 'Language', sort: 'index', limit: 8, suggest: true
-    config.add_facet_field 'collection_tsim_str', label: 'Material', sort: 'count', limit: 8, suggest: true # Need to figure out why old values aren't clearing
-    config.add_facet_field 'subject_ssim_str', label: 'Subject', sort: 'count', limit: 8, suggest: true
-    config.add_facet_field 'author_ssm_str', label: 'Creator', sort: 'count', limit: 8, suggest: true
-    # TODO: Depositor
-    config.add_facet_field 'is_issue', label: 'Is an Individual Issue'
+    config.add_facet_field 'language_ssim_str', label: 'Language', sort: 'index', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'collection_tsim_str', label: 'Material', sort: 'count', limit: 8, suggest: true, index_range: true # Need to figure out why old values aren't clearing
+    config.add_facet_field 'subject_ssim_str', label: 'Subject', sort: 'count', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'author_ssm_str', label: 'Creator', sort: 'count', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'format_str', label: 'Format', sort: 'count', limit: 8, suggest: true, index_range: true
 
+    # TODO: Depositor
+    config.add_facet_field 'is_issue_str', label: 'Is an Issue', sort: 'count', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'is_serial_str', label: 'Is a Series', sort: 'count', limit: 8, suggest: true, index_range: true
+    
     #config.add_facet_field 'format', label: 'Format'
     #config.add_facet_field 'subject_ssim', label: 'Topic', limit: 20, index_range: 'A'..'Z'
     #config.add_facet_field 'language_ssim', label: 'Language', limit: true
