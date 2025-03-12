@@ -9,7 +9,6 @@
 .navbar-logo {
     background: transparent url(/assets/canadiana-tag-color.svg) no-repeat top left;
 }
-
 .btn-primary {
     --bs-btn-bg: var(--theme-primary);
     --bs-btn-border-color: var(--theme-primary);
@@ -20,10 +19,13 @@
     --bs-btn-disabled-bg: var(--theme-primary);
     --bs-btn-disabled-border-color: var(--theme-primary);
 }
-
 .sidenav {
     --bl-facet-active-bg: var(--theme-primary); 
     --bl-facet-active-item-color: var(--theme-primary); 
     //--bl-facet-remove-color: var(--bs-secondary-color);
     //--bl-facets-smallish-border: var(--bs-border-width) solid var(--bs-border-color);
+}
+.pagination {
+    --bs-pagination-active-bg: var(--theme-primary);
+    --bs-pagination-active-border-color: var(--theme-primary);
 }
