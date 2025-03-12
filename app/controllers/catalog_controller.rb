@@ -100,8 +100,8 @@ class CatalogController < ApplicationController
     # config.show.document_component = MyApp::DocumentComponent
     # config.show.sidebar_component = MyApp::SidebarComponent
     # config.show.embed_component = MyApp::EmbedComponent
-    config.index.title_component = IndexTitleComponent
-    config.index.document_component = IndexDocumentComponent
+    #config.index.title_component = IndexTitleComponent 
+    #config.index.document_component = IndexDocumentComponent
 
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
@@ -171,6 +171,19 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
+
+    #   Creator
+    #   Title
+    #   Published
+    #   Identifier
+    #   Subject
+    #   Document source
+    #   Notes
+    #   Collection
+    #   Language
+    #   Depositor
+    #   URL
+
     #config.add_index_field 'title_tsim', label: 'Title'
     #config.add_index_field 'title_vern_ssim', label: 'Title'
     #config.add_index_field 'author_tsim', label: 'Author'
@@ -181,7 +194,7 @@ class CatalogController < ApplicationController
     #config.add_index_field 'published_vern_ssim', label: 'Published'
     config.add_index_field 'title_ssm', label: 'Title'
     config.add_index_field 'format', label: 'Format'
-    config.add_index_field 'pub_date_si', label: 'Date', link_to_facet: true
+    config.add_index_field 'pub_date_si', label: 'Date'
     config.add_index_field 'language_ssim', label: 'Language', link_to_facet: true
     config.add_index_field 'collection_tsim', label: 'Material', link_to_facet: true
     config.add_index_field 'subject_ssim', label: 'Subject', link_to_facet: true
@@ -208,7 +221,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'title_ssm', label: 'Title'
     config.add_show_field 'subtitle_tsim', label: 'Subtitle'
     config.add_show_field 'title_addl_tsim', label: 'Other Titles'
-    config.add_show_field 'pub_date_si', label: 'Date', link_to_facet: true
+    config.add_show_field 'pub_date_si', label: 'Date'
     config.add_show_field 'language_ssim', label: 'Language', link_to_facet: true
     config.add_show_field 'collection_tsim', label: 'Material', link_to_facet: true
     config.add_show_field 'subject_ssim', label: 'Subject', link_to_facet: true
