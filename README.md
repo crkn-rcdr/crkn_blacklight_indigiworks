@@ -40,17 +40,29 @@ Docker, Docker-compose
         "role": ["admin", "public"]  
       },
       {
-        "name": "security-edit",
+        "name": "all",
         "role": "admin"  
       },
       {
-        "name": "update",  
-        "role": "admin"  
+        "name": "update", 
+        "role": "admin" 
+      },
+      {
+        "name": "create", 
+        "role": "admin"
+      },
+      {
+        "name": "delete", 
+        "role": "admin"
+      },
+      {
+        "name": "security-edit", 
+        "role": "admin"
       }
     ],
     "user-role": {
-      "admin": "admin",  // Map admin user
-      "public": "public"  // Map public user
+      "admin": "admin",  
+      "public": "public" 
     }
   }
 }
