@@ -44,7 +44,9 @@ class CatalogController < ApplicationController
     #  qt: "/query",
     #  q: "*:*"
     #}
-    
+    #config.default_solr_params = {
+    #  defType: 'edismax' 
+    #}
     # solr path which will be added to solr base url before the other solr params.
     config.solr_path = 'select'
     #config.document_solr_path = 'get'
@@ -266,24 +268,31 @@ class CatalogController < ApplicationController
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields.
 
-    config.add_search_field('title_ssm') do |field|
+    config.add_search_field('title_tsim') do |field|
       # solr_parameters hash are sent to Solr as ordinary url query params.
       field.solr_parameters = {
-        df: 'title_ssm'
+        qf: 'title_tsim',
+        pf: 'title_tsim'
       }
-      field.label = "Title"
+      field.label = 'Title'
     end
 
     config.add_search_field('author_tsim') do |field|
       field.solr_parameters = {
-        df: 'author_tsim'
+        qf: 'author_tsim',
+        pf: 'author_tsim'
       }
       field.label = 'Creator'
     end
 
+    # Specifying a :qt only to show it's possible, and so our internal automated
+    # tests can test it. In this case it's the same as
+    # config[:default_solr_parameters][:qt], so isn't actually neccesary.
     config.add_search_field('subject_tsim') do |field|
+      field.qt = 'search'
       field.solr_parameters = {
-        df: 'subject_tsim'
+        qf: 'subject_tsim',
+        pf: 'subject_tsim'
       }
       field.label = 'Subject'
     end
