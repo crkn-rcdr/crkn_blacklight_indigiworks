@@ -66,4 +66,9 @@ sudo vi security.json
   }
 }
 
+$ sudo rm solrconfig.xml
+$ sudo vi solrconfig.xml
+$ sudo rm managed-schema.xml
+$ sudo vi managed-schema.xml
+
 sudo /opt/bitnami/ctlscript.sh restart solr

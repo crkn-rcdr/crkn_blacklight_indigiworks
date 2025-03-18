@@ -32,7 +32,10 @@
 /public/assets
 
 # Ignore master key for decrypting credentials and more.
-/config/master.key
-/data
-/config/blacklight.yml
+/data/data/blacklight_marc/data
+/data/data/blacklight_marc/core.properties
+/data/logs
+/data/log4j2.xml
 *.mrc
+config/blacklight.yml
+config/master.key

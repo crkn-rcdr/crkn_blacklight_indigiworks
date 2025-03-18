@@ -46,7 +46,7 @@ class CatalogController < ApplicationController
     #}
     
     # solr path which will be added to solr base url before the other solr params.
-    #config.solr_path = 'select'
+    config.solr_path = 'select'
     #config.document_solr_path = 'get'
     #config.json_solr_path = 'advanced'
     # solr path which will be added to solr base url before the other solr params.
@@ -266,33 +266,26 @@ class CatalogController < ApplicationController
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields.
 
-    config.add_search_field('title') do |field|
+    config.add_search_field('title_ssm') do |field|
       # solr_parameters hash are sent to Solr as ordinary url query params.
       field.solr_parameters = {
-        'spellcheck.dictionary': 'title',
-        qf: '${title_qf}',
-        pf: '${title_pf}'
+        df: 'title_ssm'
       }
+      field.label = "Title"
     end
 
-    config.add_search_field('author') do |field|
+    config.add_search_field('author_tsim') do |field|
       field.solr_parameters = {
-        'spellcheck.dictionary': 'author',
-        qf: '${author_qf}',
-        pf: '${author_pf}'
+        df: 'author_tsim'
       }
+      field.label = 'Creator'
     end
 
-    # Specifying a :qt only to show it's possible, and so our internal automated
-    # tests can test it. In this case it's the same as
-    # config[:default_solr_parameters][:qt], so isn't actually neccesary.
-    config.add_search_field('subject') do |field|
-      field.qt = 'search'
+    config.add_search_field('subject_tsim') do |field|
       field.solr_parameters = {
-        'spellcheck.dictionary': 'subject',
-        qf: '${subject_qf}',
-        pf: '${subject_pf}'
+        df: 'subject_tsim'
       }
+      field.label = 'Subject'
     end
 
     # "sort results by" select (pulldown)
