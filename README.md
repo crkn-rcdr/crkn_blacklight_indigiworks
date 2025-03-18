@@ -37,11 +37,15 @@ Docker, Docker-compose
     "permissions": [
       {
         "name": "read",
-        "role": ["admin", "public"]  // Grant read access to both admin and public roles
+        "role": ["admin", "public"]  
       },
       {
         "name": "security-edit",
-        "role": "admin"  // Only admin can edit security settings
+        "role": "admin"  
+      },
+      {
+        "name": "update",  
+        "role": "admin"  
       }
     ],
     "user-role": {
