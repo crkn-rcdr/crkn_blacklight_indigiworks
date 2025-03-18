@@ -1,4 +1,4 @@
-README
+# README
 A docker compose demo that will allow you to spin up a test instance of blacklight v8.8 (marc) in a flash.
 
 # Ruby version
