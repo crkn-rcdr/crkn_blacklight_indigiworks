@@ -36,6 +36,5 @@
 /data/data/blacklight_marc/core.properties
 /data/logs
 /data/log4j2.xml
-*.mrc
 config/blacklight.yml
 config/master.key
