@@ -33,36 +33,24 @@ Docker, Docker-compose
 ```
 {
   "authorization": {
-    "class": "solr.RuleBasedAuthorizationPlugin",
-    "permissions": [
+    "class":"solr.RuleBasedAuthorizationPlugin",
+    "permissions":[
       {
-        "name": "read",
-        "role": ["admin", "public"]  
+        "name":"read",
+        "role":[
+          "admin",
+          "public"
+        ],
       },
       {
-        "name": "all",
-        "role": "admin"  
-      },
-      {
-        "name": "update", 
-        "role": "admin" 
-      },
-      {
-        "name": "create", 
-        "role": "admin"
-      },
-      {
-        "name": "delete", 
-        "role": "admin"
-      },
-      {
-        "name": "security-edit", 
-        "role": "admin"
+        "name":"all",
+        "role":"admin",
       }
     ],
-    "user-role": {
-      "admin": "admin",  
-      "public": "public" 
+    "user-role":{
+      "admin":"admin",
+      "public":"public",
+      "manager":"admin"
     }
   }
 }
