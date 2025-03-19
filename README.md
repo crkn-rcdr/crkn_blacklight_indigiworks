@@ -59,27 +59,37 @@ Docker, Docker-compose
 
 # Developing Locally
 Ensure docker and docker compose are installed. Then, enter the directory in your terminal, and run:
+
 `docker compose up --build --force-recreate`
 
 # Deployment Instructions
+Run the following to push the image to docker hub:
+
 `docker tag crkn_canadiana_blacklight-web brilap/crkn`
 
 `docker push brilap/crkn `
 
-Restart the web app on [Azure](https://portal.azure.com/#@crkn.ca/resource/subscriptions/1bf1b056-be1d-4b1c-991f-2f154caf3061/resourceGroups/CRKN-demo-test/providers/Microsoft.Web/sites/canadiana-beta/appServices) to pull the new docker image.
+Then restart the web app on [Azure](https://portal.azure.com/#@crkn.ca/resource/subscriptions/1bf1b056-be1d-4b1c-991f-2f154caf3061/resourceGroups/CRKN-demo-test/providers/Microsoft.Web/sites/canadiana-beta/appServices) to pull the new docker image.
 
 # Docs
 See Blacklight Wiki and Tutorials:
 - https://github.com/projectblacklight/blacklight/wiki/
 - https://workshop.projectblacklight.org/
 
+To index a marc record from the terminal, you can enter the container on Docker Desktop (or through the docker exec command in your terminal) and run: 
+
 `rake solr:marc:index MARC_FILE=marc-file-name-here.mrc`
+
+A quick command to clear the solr index is:
+
+`curl -X POST -H 'Content-Type: application/json' 'http://username:password@host/solr/blacklight_marc/update?commit=true' -d '{ "delete": {"query":"*:*"} }'`
+
+I ran these commands and saved the app directory as a mapped volume, so you shouldn't have to:
 
 `rails generate --asset-delivery-mode=importmap-rails blacklight_range_limit:install`
 
 `RAILS_ENV=production rails vite:build`
 
-`curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/blacklight_marc/update?commit=true' -d '{ "delete": {"query":"*:*"} }'`
 
 
 
