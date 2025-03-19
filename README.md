@@ -57,15 +57,16 @@ Docker, Docker-compose
 
 `sudo /opt/bitnami/ctlscript.sh restart solr`
 
-# Developing locally
+# Developing Locally
+Ensure docker and docker compose are installed. Then, enter the directory in your terminal, and run:
 `docker compose up --build --force-recreate`
 
-# Deployment instructions
+# Deployment Instructions
 `docker tag crkn_canadiana_blacklight-web brilap/crkn`
 
 `docker push brilap/crkn `
 
-Restart the web app on azure
+Restart the web app on [Azure](https://portal.azure.com/#@crkn.ca/resource/subscriptions/1bf1b056-be1d-4b1c-991f-2f154caf3061/resourceGroups/CRKN-demo-test/providers/Microsoft.Web/sites/canadiana-beta/appServices) to pull the new docker image.
 
 # Docs
 See Blacklight Wiki and Tutorials:
