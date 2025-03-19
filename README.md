@@ -11,7 +11,6 @@ Docker, Docker-compose
 (job queues, cache servers, search engines, etc.)
   
 # Configuration
-`docker compose up --build --force-recreate`
 
 `sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc/conf`
 
@@ -58,9 +57,10 @@ Docker, Docker-compose
 
 `sudo /opt/bitnami/ctlscript.sh restart solr`
 
-# Deployment instructions
+# Developing locally
 `docker compose up --build --force-recreate`
 
+# Deployment instructions
 `docker tag crkn_canadiana_blacklight-web brilap/crkn`
 
 `docker push brilap/crkn `
