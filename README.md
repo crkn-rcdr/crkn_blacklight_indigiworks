@@ -8,7 +8,7 @@ A docker compose demo that will allow you to spin up a test instance of blacklig
 Docker, Docker-compose
 
 # Services 
-Blacklight and Blacklight Marc depend on an apache solr Search Engine. For more information, see their docs.
+Blacklight and Blacklight Marc depend on an apache solr Search Engine. For more information, see their [docs](https://github.com/crkn-rcdr/crkn_base_blacklight/blob/master/README.md#docs).
   
 # Configuration
 
