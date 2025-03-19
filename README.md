@@ -8,25 +8,47 @@ A docker compose demo that will allow you to spin up a test instance of blacklig
 Docker, Docker-compose
 
 # Services 
-(job queues, cache servers, search engines, etc.)
+Blacklight and Blacklight Marc depend on an apache solr Search Engine. For more information, see their docs.
   
 # Configuration
 
+This repo is configured to pull and run solr through docker compose, and has the data folder mapped as a volume, which will allow the solr index to be created automatically for you, and will persist the information in the index for development or production needs.
+
+For CRKN in production, we are using a solr instance running independantly from this docker compose. To configure the Solr instance to work with the Blacklight container, I sshed onto the Solr server, and performed the following:
+
+Created the blacklight_marc core config directory:
+
 `sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc/conf`
+
+Copied the default configs to my new core:
 
 `sudo cp -r /opt/bitnami/solr/server/solr/configsets/_default/conf/* /opt/bitnami/solr/server/solr/blacklight_marc/conf/`
 
+Went into the new core's config directory:
+
 `cd /opt/bitnami/solr/server/solr/blacklight_marc/conf/`
+
+Removed the default solr config:
 
 `sudo rm solrconfig.xml`
 
+Pasted the solrconfig from this repo into a new solrconfig file"
+
 `sudo vi solrconfig.xml`
+
+Removed the default solr schema:
 
 `sudo rm managed-schema.xml`
 
+Pasted the solr schema from this repo into a new solr schema file"
+
 `sudo vi managed-schema.xml`
 
+Went to the solr server directory:
+
 `cd /opt/bitnami/solr/server/solr`
+
+Ensured the following users and permissions were configured:
 
 `sudo vi security.json`
 ```
@@ -54,6 +76,8 @@ Docker, Docker-compose
   }
 }
 ```
+
+Restarted solr to apply the changes:
 
 `sudo /opt/bitnami/ctlscript.sh restart solr`
 
