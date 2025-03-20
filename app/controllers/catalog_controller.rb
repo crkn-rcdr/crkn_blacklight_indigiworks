@@ -174,10 +174,10 @@ class CatalogController < ApplicationController
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
     config.add_index_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
-    #   Creator
-    config.add_index_field 'author_ssm', label: 'Creator', link_to_facet: true
     #   Title
     config.add_index_field 'title_ssm', label: 'Title'
+    #   Creator
+    config.add_index_field 'author_ssm', label: 'Creator', link_to_facet: true
     #   Published
     config.add_index_field 'published_ssm', label: 'Published'
     #   Published Date
@@ -220,12 +220,12 @@ class CatalogController < ApplicationController
     #config.add_show_field 'isbn_ssim', label: 'ISBN'
 
     config.add_show_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
-    #   Creator
-    config.add_show_field 'author_ssm', label: 'Creator', link_to_facet: true
-    #Title
+    #   Title
     config.add_show_field 'title_ssm', label: 'Title'
     config.add_show_field 'subtitle_tsim', label: 'Subtitle'
     config.add_show_field 'title_addl_tsim', label: 'Other Titles'
+    #   Creator
+    config.add_show_field 'author_ssm', label: 'Creator', link_to_facet: true
     #   Published
     config.add_show_field 'published_ssm', label: 'Published'
     #   Published Date

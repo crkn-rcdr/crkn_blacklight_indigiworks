@@ -4,3 +4,9 @@
 ul.document-metadata {
     list-style-type: none;
 }
+.document-title-heading {
+    max-width: 755px;
+    text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
