@@ -196,7 +196,7 @@ class CatalogController < ApplicationController
     config.add_index_field 'language_ssim', label: 'Language', link_to_facet: true
     #   Depositor
     #   URL
-    config.add_index_field 'url_fulltext_ssm', label: 'URL'
+    config.add_index_field 'url_fulltext_ssm', label: 'URL', helper_method: :value_link
     #config.add_index_field 'pub_date_si', label: 'Date'
     #config.add_index_field 'collection_tsim', label: 'Material', link_to_facet: true
     #config.add_index_field 'doc_source_tsim', label: 'Originating Institution', link_to_facet: true

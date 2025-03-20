@@ -21,4 +21,8 @@ module ApplicationHelper
       content_tag :li, " #{icon} #{formats} ".html_safe, class: 'blacklight-format', dir: 'ltr'
     end
   end
+  def value_link(args)
+    value_str = args[:document][args[:field]].join(', ').to_s
+    content_tag :a, "#{value_str}".html_safe, href: value_str, dir: 'ltr'
+  end
 end
