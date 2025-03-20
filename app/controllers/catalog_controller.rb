@@ -173,6 +173,7 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
+    config.add_index_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
     #   Creator
     config.add_index_field 'author_ssm', label: 'Creator', link_to_facet: true
     #   Title
@@ -186,7 +187,6 @@ class CatalogController < ApplicationController
     #   Subject
     config.add_index_field 'subject_ssim', label: 'Subject', link_to_facet: true
     #   Document source
-    config.add_index_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
     #   Notes
     config.add_index_field 'notes_tsim', label: 'Notes'
     config.add_index_field 'original_version_note_tsim', label: 'Original Version Note'
@@ -219,6 +219,7 @@ class CatalogController < ApplicationController
     #config.add_show_field 'lc_callnum_ssim', label: 'Call number'
     #config.add_show_field 'isbn_ssim', label: 'ISBN'
 
+    config.add_show_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
     #   Creator
     config.add_show_field 'author_ssm', label: 'Creator', link_to_facet: true
     #Title
@@ -231,7 +232,6 @@ class CatalogController < ApplicationController
     config.add_show_field 'pub_date_si', label: 'Date'
     #   Identifier
     config.add_show_field 'id', label: 'Identifier'
-    config.add_show_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
     config.add_show_field 'subject_ssim', label: 'Subject', link_to_facet: true
     config.add_show_field 'collection_tsim', label: 'Material', link_to_facet: true
     config.add_show_field 'language_ssim', label: 'Language', link_to_facet: true

@@ -1,14 +1,22 @@
 # See: https://github.com/pulibrary/orangelight/blob/main/app/helpers/application_helper.rb
 module ApplicationHelper
   def render_icon(var)
-    "<span class='icon icon-#{var.parameterize}' aria-hidden='true'></span>".html_safe
+    "<span class='icon icon-#{var.parameterize}' aria-hidden='true'></span>"
   end
-  def format_render(args)
-    "<span class='format-text'>#{args[:document][args[:field]].join(', ')}</span>"
+  def format_render(var)
+    "<span class='format-text'>#{var.parameterize}</span>"
   end
   def format_icon(args)
-    icon = render_icon(args[:document][args[:field]][0]).to_s
-    formats = format_render(args)
+    format_str = args[:document][args[:field]].join(', ').to_s
+    if format_str.include?('Serial')
+      if args[:document][:id].include?('N')
+        format_str = 'newspaper-issue'
+      else
+        format_str = 'journal-issue'
+      end
+    end
+    icon = render_icon(format_str)
+    formats = format_render(format_str)
     content_tag :ul do
       content_tag :li, " #{icon} #{formats} ".html_safe, class: 'blacklight-format', dir: 'ltr'
     end
