@@ -1,0 +1,29 @@
+dt.blacklight-format {
+    position: absolute;
+    visibility: hidden;
+}
+dd.blacklight-format {
+    position: absolute;
+}
+.blacklight-format ul {
+    list-style-type: none;
+    padding-left: 0 !important;
+}
+.blacklight-format li .icon {
+    display: inline-block !important;
+    margin-right: 0;
+    width: 64px;
+    height: 64px;
+    background-size: 100%;
+}
+.blacklight-format li .icon-ebook {
+    background-image: url(/assets/icon-ebook.svg);
+}
+.blacklight-format li .format-text {
+    visibility: hidden;
+}
+@media screen and (max-width: 768px) {
+  dt:not(.blacklight-format), dd:not(.blacklight-format) {
+    margin-left: 80px;
+  }
+}
