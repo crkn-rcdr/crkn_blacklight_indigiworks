@@ -1,7 +1,7 @@
 # See: https://github.com/pulibrary/orangelight/blob/main/app/helpers/application_helper.rb
 module ApplicationHelper
   def render_icon(var)
-    "<span class='icon icon-#{var.parameterize}' aria-hidden='true'></span>"
+    "<span title='#{var.parameterize}' class='icon icon-#{var.parameterize}' aria-hidden='true'></span>"
   end
   def format_render(var)
     "<span class='format-text'>#{var.parameterize}</span>"

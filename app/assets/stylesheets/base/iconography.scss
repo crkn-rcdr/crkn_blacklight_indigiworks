@@ -1,64 +1,67 @@
-article.document {
-    padding-left: 100px;
-}
-.document-metadata {
-    margin-top: 5px;
-}
-dt.blacklight-format {
-    position: absolute;
-    visibility: hidden;
-}
-dd.blacklight-format {
-    position: absolute;
-    padding-left: 0;
-    margin-left: -90px;
-    margin-top: -35px;
-    width: 100px;
-}
 .blacklight-format ul {
     list-style-type: none;
     padding-left: 0 !important;
 }
-.blacklight-format li .icon {
-    display: inline-block !important;
-    margin-right: 0;
-    width: 64px;
-    height: 64px;
-    background-size: 100%;
-    opacity: 0.6;
-}
-.blacklight-format li .format-text {
-    visibility: hidden;
-}
-@media screen and (max-width: 768px) {
-  dt:not(.blacklight-format), dd:not(.blacklight-format) {
-    margin-left: 80px;
-  }
-}
-.blacklight-format li .icon-ebook {
-    background-image: url(/assets/icon-book.svg);
-}
-.blacklight-format li .icon-book {
-    background-image: url(/assets/icon-book.svg);
-}
-.blacklight-format li .icon-software {
-    background-image: url(/assets/icon-book.svg);
-}
-.blacklight-format li .icon-newspaper-issue {
-    background-image: url(/assets/icon-serial.svg);
-}
-.blacklight-format li .icon-journal-issue {
-    background-image: url(/assets/icon-serial.svg);
-}
-.blacklight-format li .icon-journal {
-    background-image: url(/assets/icon-journal.svg);
-}
-.blacklight-format li .icon-newspaper {
-    background-image: url(/assets/icon-newspaper.svg);
-}
-.blacklight-format li .icon-musicalscore {
-    background-image: url(/assets/icon-musicalscore.svg);
-}
-.blacklight-format li .icon-electronic {
-    background-image: url(/assets/icon-electronic.svg);
+.documents-list {
+    article.document {
+        padding-left: 100px;
+    }
+    .document-metadata {
+        margin-top: 5px;
+    }
+    dt.blacklight-format {
+        position: absolute;
+        visibility: hidden;
+    }
+    dd.blacklight-format {
+        position: absolute;
+        padding-left: 0;
+        margin-left: -90px;
+        margin-top: -35px;
+        width: 100px;
+    }
+    .blacklight-format li .icon {
+        display: inline-block !important;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        margin-right: 0;
+        width: 80px;
+        height: 80px;
+        opacity: 0.5;
+    }
+    .blacklight-format li .format-text {
+        visibility: hidden;
+    }
+    @media screen and (max-width: 768px) {
+    dt:not(.blacklight-format), dd:not(.blacklight-format) {
+        margin-left: 80px;
+    }
+    }
+    .blacklight-format li .icon-ebook {
+        background-image: url(/assets/icon-book.svg);
+    }
+    .blacklight-format li .icon-book {
+        background-image: url(/assets/icon-book.svg);
+    }
+    .blacklight-format li .icon-software {
+        background-image: url(/assets/icon-book.svg);
+    }
+    .blacklight-format li .icon-newspaper-issue {
+        background-image: url(/assets/icon-newspaper-issue.svg);
+    }
+    .blacklight-format li .icon-journal-issue {
+        background-image: url(/assets/icon-journal-issue.svg);
+    }
+    .blacklight-format li .icon-journal {
+        background-image: url(/assets/icon-journal.png);
+    }
+    .blacklight-format li .icon-newspaper {
+        background-image: url(/assets/icon-newspaper.svg);
+    }
+    .blacklight-format li .icon-musicalscore {
+        background-image: url(/assets/icon-musicalscore.svg);
+    }
+    .blacklight-format li .icon-electronic {
+        background-image: url(/assets/icon-electronic.svg);
+    }
 }

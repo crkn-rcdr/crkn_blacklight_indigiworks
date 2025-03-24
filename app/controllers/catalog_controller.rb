@@ -142,6 +142,7 @@ class CatalogController < ApplicationController
     # Suggest is the search box for the facet pop-ups
     config.add_facet_field 'language_ssim_str', label: 'Language', sort: 'index', limit: 8, suggest: true, index_range: true
     config.add_facet_field 'collection_tsim_str', label: 'Material', sort: 'count', limit: 8, suggest: true, index_range: true # Need to figure out why old values aren't clearing
+    config.add_facet_field 'depositor_tsim_str', label: 'Depositor', sort: 'count', limit: 8, suggest: true, index_range: true
     config.add_facet_field 'subject_ssim_str', label: 'Subject', sort: 'count', limit: 8, suggest: true, index_range: true
     config.add_facet_field 'author_ssm_str', label: 'Creator', sort: 'count', limit: 8, suggest: true, index_range: true
     config.add_facet_field 'format_str', label: 'Format', sort: 'count', limit: 8, suggest: true, index_range: true
@@ -192,6 +193,8 @@ class CatalogController < ApplicationController
     config.add_index_field 'original_version_note_tsim', label: 'Original Version Note'
     #   Collection
     config.add_index_field 'collection_tsim', label: 'Material', link_to_facet: true
+    #   Depositor
+    config.add_index_field 'depositor_tsim', label: 'Depositor', link_to_facet: true
     #   Language
     config.add_index_field 'language_ssim', label: 'Language', link_to_facet: true
     #   Depositor
@@ -219,7 +222,6 @@ class CatalogController < ApplicationController
     #config.add_show_field 'lc_callnum_ssim', label: 'Call number'
     #config.add_show_field 'isbn_ssim', label: 'ISBN'
 
-    config.add_show_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
     #   Title
     config.add_show_field 'title_ssm', label: 'Title'
     config.add_show_field 'subtitle_tsim', label: 'Subtitle'
@@ -234,6 +236,10 @@ class CatalogController < ApplicationController
     config.add_show_field 'id', label: 'Identifier'
     config.add_show_field 'subject_ssim', label: 'Subject', link_to_facet: true
     config.add_show_field 'collection_tsim', label: 'Material', link_to_facet: true
+    config.add_show_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
+    #   Depositor
+    config.add_show_field 'depositor_tsim', label: 'Depositor', link_to_facet: true
+    #   Language
     config.add_show_field 'language_ssim', label: 'Language', link_to_facet: true
     #config.add_show_field 'doc_source_tsim', label: 'Originating Institution'
     config.add_show_field 'notes_tsim', label: 'Notes'
