@@ -49,8 +49,8 @@ if(pageViewer) {
             //view: 'single',
             canvasIndex: canvasIndex,
         }],
-
         view: "catalogueView",
+        selectedTheme: 'light', // light | dark
         window: {
 
             //imageToolsOpen: false,
