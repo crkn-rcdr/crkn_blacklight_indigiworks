@@ -9,7 +9,7 @@ export default defineConfig({
   ],
   build: {
     manifest: true,
-    outDir: 'public/assets',
+    outDir: 'public/assets'
   },
   resolve: {
     alias: {

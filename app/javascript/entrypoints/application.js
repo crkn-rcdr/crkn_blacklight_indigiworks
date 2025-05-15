@@ -28,6 +28,23 @@ console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify
 // import '~/index.css'
 //import "../javascript/application"
 
+console.log("Mirador", Mirador)
+var miradorViewer = Mirador.viewer({
+  "id": "my-mirador",
+  "manifests": {
+    "https://iiif.lib.harvard.edu/manifests/drs:48309543": {
+      "provider": "Harvard University"
+    }
+  },
+  "windows": [
+    {
+      "loadedManifest": "https://iiif.lib.harvard.edu/manifests/drs:48309543",
+      "canvasIndex": 2,
+      "thumbnailNavigationPosition": 'far-bottom'
+    }
+  ]
+});
+console.log("miradorViewer", miradorViewer)
 
 import BlacklightRangeLimit from 'blacklight-range-limit';
 //Blacklight.onLoad(() => {});

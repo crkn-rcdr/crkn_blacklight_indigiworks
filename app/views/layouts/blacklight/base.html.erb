@@ -24,6 +24,8 @@
 
     <%= vite_client_tag %>
     <%= vite_javascript_tag 'application' %>
+
+    <script src="/assets/mirador.min.js"></script>
    
   </head>
   <body class="<%= render_body_class %>">
@@ -39,6 +41,7 @@
       <%= render partial: 'shared/flash_msg', layout: 'shared/flash_messages' %>
 
       <div class="row">
+        <div id="my-mirador"></div>
         <%= content_for?(:content) ? yield(:content) : yield %>
       </div>
     </main>
