@@ -7,4 +7,10 @@
 
 .mirador-window-top-bar {
     min-height: 0 !important;
+    border-top: none !important;
+}
+
+.mosaic-window {
+    border-radius: 7px !important;
+    border: 3px solid #EEE !important;
 }
