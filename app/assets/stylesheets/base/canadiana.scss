@@ -6,6 +6,9 @@
     --bs-link-hover-color: var(--theme-primary); 
     --bs-link-color: var(--theme-primary); 
 }
+.navbar {
+    --bs-navbar-padding-y: 1rem 0.5rem;
+}
 .navbar-logo {
     background: transparent url(/assets/canadiana-tag-color.svg) no-repeat top left;
 }
@@ -28,4 +31,13 @@
 .pagination {
     --bs-pagination-active-bg: var(--theme-primary);
     --bs-pagination-active-border-color: var(--theme-primary);
+}
+.container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+    max-width: 90%;
+}
+@media (min-width: 992px) {
+    .col-lg-3 {
+        flex: 0 0 auto;
+        width: 16%;
+    }
 }
