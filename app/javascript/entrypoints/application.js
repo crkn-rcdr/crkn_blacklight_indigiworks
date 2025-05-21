@@ -30,7 +30,7 @@ console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify
 let pageViewer = document.getElementById("my-mirador")
 if(pageViewer) {
 
-    const documentId = "oocihm.9_07160";//pageViewer.getAttribute("data-docid")
+    const documentId = pageViewer.getAttribute("data-docid")
     let canvasIndex = 0
     const params = new URLSearchParams(window.location.search)
     if(params.has("pageNum")) canvasIndex = parseInt(params.get("pageNum")-1)

@@ -1,3 +1,40 @@
 @import 'bootstrap';
 @import 'blacklight/blacklight';
 @import 'blacklight_marc';
+
+.show-document {
+    width:100%;
+}
+.main-container > .row {
+    flex-direction: column !important;
+}
+.dl-invert dt {
+    text-align: left !important;
+}
+.document-main-section {
+    .doc-record-title {
+        padding: 0.5rem 0;
+    }
+}
+.page-sidebar[aria-label="Tools"] {
+    width: 100%;
+    .card {
+        border: none;
+    }
+    .card .card-header {
+        background-color: white;
+        padding: var(--bs-card-cap-padding-y) 0;
+        border: none !important;
+    }
+    .card .list-group-item {
+        padding: var(--bs-list-group-item-padding-y) 0;
+    }
+    @media (min-width: 1200px) {
+        h2, .h2 {
+            font-size: 2rem !important;
+        }
+    }
+    h2, .h2 {
+        font-size: calc(1.325rem + 0.9vw)  !important;
+    }
+}
