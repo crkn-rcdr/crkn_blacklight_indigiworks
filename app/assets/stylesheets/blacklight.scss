@@ -29,12 +29,12 @@
     .card .list-group-item {
         padding: var(--bs-list-group-item-padding-y) 0;
     }
+    h2, .h2 {
+        font-size: calc(1.325rem + 0.9vw)  !important;
+    }
     @media (min-width: 1200px) {
         h2, .h2 {
             font-size: 2rem !important;
         }
-    }
-    h2, .h2 {
-        font-size: calc(1.325rem + 0.9vw)  !important;
     }
 }
