@@ -1,10 +1,10 @@
 load_defaults: 8.8.2
 development:
   adapter: solr
-  url: "http://solr:8983/solr/blacklight_marc"
+  url: "http://public:hdwi389e8d!ds@4.204.49.142/solr/blacklight_marc"
 test: &test
   adapter: solr
-  url: "http://solr:8983/solr/blacklight_marc"
+  url: "http://public:hdwi389e8d!ds@4.204.49.142/solr/blacklight_marc"
 production:
   adapter: solr
-  url: "http://solr:8983/solr/blacklight_marc"
+  url: "http://public:hdwi389e8d!ds@4.204.49.142/solr/blacklight_marc"
