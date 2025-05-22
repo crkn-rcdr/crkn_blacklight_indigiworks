@@ -11,6 +11,11 @@
 .dl-invert dt {
     text-align: left !important;
 }
+.document-metadata {
+    dt {
+        max-width: 300px;
+    }
+}
 .document-main-section {
     .doc-record-title {
         padding: 0.5rem 0;
