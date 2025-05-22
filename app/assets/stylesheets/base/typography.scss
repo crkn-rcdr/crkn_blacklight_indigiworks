@@ -10,3 +10,8 @@ ul.document-metadata {
     overflow: hidden;
     white-space: nowrap;
 }
+@media (min-width: 1700px) {
+    .document-title-heading {
+        max-width: 1260px;
+    }
+}
