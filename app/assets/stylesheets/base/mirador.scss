@@ -1,21 +1,18 @@
 #my-mirador > .fullscreen > div {
     position: initial !important;
     width: 100% !important;
-    height: 95vh !important;
+    height: 90vh !important;
     min-height: 600px;
     background: white !important;
 }
-
 .mirador-window-top-bar {
     min-height: 0 !important;
     border-top: none !important;
 }
-
 .mosaic-window {
     border-radius: 7px !important;
     border: 3px solid #EEE !important;
 }
-
 @media screen and (max-width: 990px) {
     .mosaic-window-body .mosaic-root div:first-child {
         inset: 0% 0% 0% 0% !important;
