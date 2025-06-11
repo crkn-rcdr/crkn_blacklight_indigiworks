@@ -5,7 +5,7 @@ RUN apt-get update; \
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -; \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y nodejs npm
+RUN apt-get update && apt-get install -y nodejs npm --fix-missing
 RUN npm install -g yarn@2.4.3
 
 WORKDIR /app

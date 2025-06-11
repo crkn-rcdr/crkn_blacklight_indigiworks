@@ -1,3 +1,4 @@
+require 'time'
 $:.unshift './config'
 class MarcIndexer < Blacklight::Marc::Indexer
   # this mixin defines lambda factory method get_format for legacy marc formats
@@ -12,45 +13,38 @@ class MarcIndexer < Blacklight::Marc::Indexer
       # set this to be non-negative if threshold should be enforced
       provide 'solr_writer.max_skipped', -1
     end
-
+    # https://github.com/ruby-marc/ruby-marc
+    # https://github.com/traject/traject/blob/5d720e2ba0a277cf7af455763f520cd6a2d956c7/README.md?plain=1#L279
     to_field "id", extract_marc("001"), trim, first_only
-    to_field "is_issue",  extract_marc('001'), first_only do |rec, acc|
-      acc.replace [acc.join(' ')]
-      if acc[0].count("_") >= 2
-        acc.replace ["Yes"]
+    # TODO: could use the serials 990 instead 
+    to_field "is_issue" do |record, accumulator|
+      if record["901"]&.value&.casecmp("Is issue")
+        accumulator.replace ["Yes"]
       else
-        acc.replace ["No"]
+        accumulator.replace ["No"]
       end
     end
-    to_field "serial_key",  extract_marc('001'), first_only do |rec, acc|
-      if acc[0].count("_") >= 2
-        parts = acc[0].split('_', 3)
-        acc.replace [parts[0..1].join('_')]
+    to_field "is_serial" do |record, accumulator|
+      is_in_serials = record["999"]&.value&.match?(/serials/i)
+      is_issue = record["901"]&.value&.match?(/is issue/i)
+      if is_in_serials && !is_issue
+        accumulator.replace ["Yes"]
       else
-        acc.replace []
+        accumulator.replace ["No"]
       end
     end
-    to_field "serial_title",  extract_marc('245a'), first_only do |rec, acc|
+    to_field "serial_key",  extract_marc('490v'), first_only do |rec, acc|
+      parts = acc[0].split('_')
+      acc.replace [parts[0...-1].join('_')]
+    end
+    to_field "serial_title",  extract_marc('490v'), first_only do |rec, acc|
       if acc[0].count(":") >= 1
         parts = acc[0].split(':', 2)
         acc.replace [parts[0]]
       else
         acc.replace []
       end
-    end
-
-    # https://github.com/ruby-marc/ruby-marc
-    # https://github.com/traject/traject/blob/5d720e2ba0a277cf7af455763f520cd6a2d956c7/README.md?plain=1#L279
-    to_field "is_serial" do |record, accumulator|
-      has_two_or_more_underscores = true
-      leader07 = record.leader.slice(7)
-      has_two_or_more_underscores = record["001"].to_s.count("_") >=2
-      if leader07 == "s" && !has_two_or_more_underscores
-        accumulator.replace ["Yes"]
-      else
-        accumulator.replace ["No"]
-      end
-    end
+    end 
 
     to_field 'marc_ss', get_xml
     to_field "all_text_timv", extract_all_marc_values do |r, acc|
@@ -201,6 +195,16 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field 'permalink_fulltext_ssm', extract_marc("856g")
 
+    
+
+    to_field 'date_added' do |record, accumulator|
+      raw = record['005']&.value
+      if raw
+        # Parse MARC timestamp (e.g., "20240716103000.0005") into ISO8601
+        iso = Time.strptime(raw[0..13], "%Y%m%d%H%M%S").utc.iso8601
+        accumulator << iso
+      end
+    end
     # URL Fields
     notfulltext = /abstract|description|sample text|table of contents|/i
     to_field('url_fulltext_ssm') do |rec, acc|

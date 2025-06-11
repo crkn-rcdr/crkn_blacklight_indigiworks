@@ -145,7 +145,7 @@ class CatalogController < ApplicationController
     config.add_facet_field 'depositor_tsim_str', label: 'Depositor', sort: 'count', limit: 8, suggest: true, index_range: true
     config.add_facet_field 'subject_ssim_str', label: 'Subject', sort: 'count', limit: 8, suggest: true, index_range: true
     config.add_facet_field 'author_ssm_str', label: 'Creator', sort: 'count', limit: 8, suggest: true, index_range: true
-    config.add_facet_field 'format_str', label: 'Format', sort: 'count', limit: 8, suggest: true, index_range: true
+    #config.add_facet_field 'format_str', label: 'Format', sort: 'count', limit: 8, suggest: true, index_range: true
 
     # TODO: Depositor
     config.add_facet_field 'is_issue_str', label: 'Is an Issue', sort: 'count', limit: 8, suggest: true, index_range: true
@@ -199,7 +199,8 @@ class CatalogController < ApplicationController
     config.add_index_field 'language_ssim', label: 'Language', link_to_facet: true
     #   Depositor
     #   URL
-    config.add_index_field 'url_fulltext_ssm', label: 'URL', helper_method: :value_link
+    config.add_index_field 'url_fulltext_ssm', label: 'Persistent URL', helper_method: :value_link
+    config.add_index_field 'date_added', label: 'Date Added'
     #config.add_index_field 'pub_date_si', label: 'Date'
     #config.add_index_field 'collection_tsim', label: 'Material', link_to_facet: true
     #config.add_index_field 'doc_source_tsim', label: 'Originating Institution', link_to_facet: true
@@ -310,8 +311,10 @@ class CatalogController < ApplicationController
     # except in the relevancy case). Add the sort: option to configure a
     # custom Blacklight url parameter value separate from the Solr sort fields.
     config.add_sort_field 'relevance', sort: 'score desc, pub_date_si desc', label: 'relevance'
-    config.add_sort_field 'year-desc', sort: 'pub_date_si desc', label: 'newest to oldest'
-    config.add_sort_field 'year-asc', sort: 'pub_date_si asc', label: 'oldest to newest'
+    config.add_sort_field 'year-desc', sort: 'pub_date_si desc', label: 'published date (newest to oldest)'
+    config.add_sort_field 'year-asc', sort: 'pub_date_si asc', label: 'published date (oldest to newest)'
+    config.add_sort_field 'date-added-desc', sort: 'date_added desc', label: 'date added (newest to oldest)'
+    config.add_sort_field 'date-added-asc', sort: 'date_added  asc', label: 'date added (oldest to newest)'
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.

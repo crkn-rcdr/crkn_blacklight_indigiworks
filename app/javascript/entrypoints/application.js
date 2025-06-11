@@ -27,6 +27,8 @@ console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
 //import "../javascript/application"
+console.log("mirador", Mirador)
+
 let pageViewer = document.getElementById("my-mirador")
 if(pageViewer) {
 
@@ -34,13 +36,12 @@ if(pageViewer) {
     let canvasIndex = 0
     const params = new URLSearchParams(window.location.search)
     if(params.has("pageNum")) canvasIndex = parseInt(params.get("pageNum")-1)
-
     let apiPrefix =  "https://www.canadiana.ca/iiif/"
     let manifest = apiPrefix+documentId+"/manifest"
     const manifestList = {} 
     manifestList[manifest] = { "provider": "Canadian Research Knowledge Network" }
     console.log("Mirador", Mirador)
-    var miradorViewer = Mirador.viewer({
+    let mconfig = {
         id: "my-mirador",
         manifests: manifestList,
         windows: [
@@ -53,7 +54,7 @@ if(pageViewer) {
         selectedTheme: 'light', // light | dark
         window: {
 
-            //imageToolsOpen: false,
+            imageToolsOpen: false,
     
             //global window defaults
     
@@ -65,7 +66,7 @@ if(pageViewer) {
     
             allowTopMenuButton: false, // Configure if window view and thumbnail display menu are visible or not
     
-            allowWindowSideBar: false, // Configure if side bar menu is visible or not
+            allowWindowSideBar: true, // Configure if side bar menu is visible or not
     
             authNewWindowCenter: "parent", // Configure how to center a new window created by the authentication flow. Options: parent, screen
     
@@ -79,7 +80,7 @@ if(pageViewer) {
     
             forceDrawAnnotations: false,
     
-            hideWindowTitle: true, // Configure if the window title is shown in the window title bar or not
+            hideWindowTitle: false, // Configure if the window title is shown in the window title bar or not
     
             highlightAllAnnotations: false, // Configure whether to display annotations on the canvas by default
     
@@ -163,7 +164,8 @@ if(pageViewer) {
             enabled: false // Configure if the control panel should be rendered.  Useful if you want to lock the viewer down to only the configured manifests
     
           },
-    });
+    }
+    let miradorViewer = Mirador.viewer(mconfig);
     console.log("miradorViewer", miradorViewer)
 }
 

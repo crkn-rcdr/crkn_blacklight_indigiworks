@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "vue": "^3.5.13",
-    "blacklight-range-limit": "^9.0.0",
-    "chart.js": "4.2.0"
+    "blacklight-range-limit": "^9.0.0"
   }
 }
