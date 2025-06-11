@@ -104,8 +104,6 @@ To index a marc record from the terminal, you can enter the container on Docker 
 
 `rake solr:marc:index MARC_FILE=marc-file-name-here.mrc`
 
-`rake solr:marc:index MARC_FILE=Issue-Series-ForBrittny.mrc`
-
 A quick command to clear the solr index is:
 
 `curl -X POST -H 'Content-Type: application/json' 'http://username:password@host/solr/blacklight_marc/update?commit=true' -d '{ "delete": {"query":"*:*"} }'`
