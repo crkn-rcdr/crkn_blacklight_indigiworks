@@ -1,3 +1,4 @@
+<br/>
 <h2>All Issues</h2>
 <div class="row align-items-start" id="collection-items-list">
     <% if @collection_items %>
@@ -10,7 +11,7 @@
                             <% if collection_item['pub_date_si'] %>
                                 <p class="card-text"><%= collection_item['pub_date_si'][0] %></p>
                             <% end %>
-                            <a  class="btn btn-primary" href="/catalog/<%= collection_item['id'] %>?pageNum=<%= collection_item['id'] %>" class="pv-go-to-index">View issue</a>
+                            <a  class="btn btn-primary" href="/catalog/<%= collection_item['id'] %>" class="pv-go-to-index">View issue</a>
                         </div>
                     </div>
             <% end %>
