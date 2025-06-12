@@ -451,51 +451,9 @@
   <field name="_root_" type="string" indexed="true" stored="false"/>
   <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
   <field name="_version_" type="plong" indexed="false" stored="false"/>
-  <field name="access_note_tsim" type="text_general"/>
-  <field name="all_text_timv" type="text_general"/>
-  <field name="author_addl_tsim" type="text_general"/>
-  <field name="author_si" type="text_general"/>
-  <field name="author_ssm" type="text_general"/>
-  <field name="author_tsim" type="text_general"/>
-  <field name="collection_tsim" type="text_general"/>
-  <field name="date_added" type="pdates" multiValued="false"/>
-  <field name="date_added_str" type="text_general"/>
-  <field name="depositor_tsim" type="text_general"/>
-  <field name="doc_source_tsim" type="text_general"/>
-  <field name="format" type="text_general"/>
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
-  <field name="is_issue" type="text_general"/>
-  <field name="is_serial" type="text_general"/>
-  <field name="isbn_tsim" type="plongs"/>
-  <field name="language_ssim" type="text_general"/>
-  <field name="lc_1letter_ssim" type="text_general"/>
-  <field name="lc_alpha_ssim" type="text_general"/>
-  <field name="lc_b4cutter_ssim" type="text_general"/>
-  <field name="lc_callnum_ssm" type="text_general"/>
-  <field name="material_type_ssm" type="text_general"/>
-  <field name="notes_tsim" type="text_general"/>
-  <field name="original_version_note_tsim" type="text_general"/>
-  <field name="full_txt" type="text_general" uninvertible="true" indexed="true" stored="false"/>
-  <field name="pub_date_si" type="plongs"/>
-  <field name="pub_date_ssim" type="plongs"/>
-  <field name="published_ssm" type="text_general"/>
-  <field name="rights_stat_tsim" type="text_general"/>
-  <field name="serial_key" type="text_general"/>
-  <field name="serial_title" type="text_general"/>
-  <field name="subject_addl_tsim" type="text_general"/>
-  <field name="subject_era_ssim" type="text_general"/>
-  <field name="subject_geo_ssim" type="text_general"/>
-  <field name="subject_ssim" type="text_general"/>
-  <field name="subject_tsim" type="text_general"/>
-  <field name="subtitle_ssm" type="text_general"/>
-  <field name="subtitle_tsim" type="text_general"/>
-  <field name="title_added_entry_tsim" type="text_general"/>
-  <field name="title_addl_tsim" type="text_general"/>
-  <field name="title_series_tsim" type="text_general"/>
-  <field name="title_si" type="text_general"/>
-  <field name="title_ssm" type="text_general"/>
-  <field name="title_tsim" type="text_general"/>
-  <field name="url_fulltext_ssm" type="text_general"/>
+  <field name="pkey" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="page_txt" type="text_general" uninvertible="true" indexed="true" stored="false"/>
   <dynamicField name="*_txt_en_split_tight" type="text_en_splitting_tight" indexed="true" stored="true"/>
   <dynamicField name="*_descendent_path" type="descendent_path" indexed="true" stored="true"/>
   <dynamicField name="*_ancestor_path" type="ancestor_path" indexed="true" stored="true"/>
@@ -565,42 +523,4 @@
   <dynamicField name="*_d" type="pdouble" indexed="true" stored="true"/>
   <dynamicField name="*_t" type="text_general" multiValued="false" indexed="true" stored="true"/>
   <dynamicField name="*_p" type="location" indexed="true" stored="true"/>
-  <copyField source="is_serial" dest="is_serial_str" maxChars="256"/>
-  <copyField source="is_issue" dest="is_issue_str" maxChars="256"/>
-  <copyField source="title_tsim" dest="title_tsim_str" maxChars="256"/>
-  <copyField source="language_ssim" dest="language_ssim_str" maxChars="256"/>
-  <copyField source="notes_tsim" dest="notes_tsim_str" maxChars="256"/>
-  <copyField source="format" dest="format_str" maxChars="256"/>
-  <copyField source="all_text_timv" dest="all_text_timv_str" maxChars="256"/>
-  <copyField source="doc_source_tsim" dest="doc_source_tsim_str" maxChars="256"/>
-  <copyField source="title_addl_tsim" dest="title_addl_tsim_str" maxChars="256"/>
-  <copyField source="published_ssm" dest="published_ssm_str" maxChars="256"/>
-  <copyField source="collection_tsim" dest="collection_tsim_str" maxChars="256"/>
-  <copyField source="url_fulltext_ssm" dest="url_fulltext_ssm_str" maxChars="256"/>
-  <copyField source="title_series_tsim" dest="title_series_tsim_str" maxChars="256"/>
-  <copyField source="title_si" dest="title_si_str" maxChars="256"/>
-  <copyField source="author_si" dest="author_si_str" maxChars="256"/>
-  <copyField source="title_ssm" dest="title_ssm_str" maxChars="256"/>
-  <copyField source="author_ssm" dest="author_ssm_str" maxChars="256"/>
-  <copyField source="author_tsim" dest="author_tsim_str" maxChars="256"/>
-  <copyField source="material_type_ssm" dest="material_type_ssm_str" maxChars="256"/>
-  <copyField source="serial_title" dest="serial_title_str" maxChars="256"/>
-  <copyField source="subtitle_ssm" dest="subtitle_ssm_str" maxChars="256"/>
-  <copyField source="subtitle_tsim" dest="subtitle_tsim_str" maxChars="256"/>
-  <copyField source="subject_tsim" dest="subject_tsim_str" maxChars="256"/>
-  <copyField source="subject_ssim" dest="subject_ssim_str" maxChars="256"/>
-  <copyField source="lc_1letter_ssim" dest="lc_1letter_ssim_str" maxChars="256"/>
-  <copyField source="lc_alpha_ssim" dest="lc_alpha_ssim_str" maxChars="256"/>
-  <copyField source="lc_b4cutter_ssim" dest="lc_b4cutter_ssim_str" maxChars="256"/>
-  <copyField source="lc_callnum_ssm" dest="lc_callnum_ssm_str" maxChars="256"/>
-  <copyField source="subject_addl_tsim" dest="subject_addl_tsim_str" maxChars="256"/>
-  <copyField source="subject_geo_ssim" dest="subject_geo_ssim_str" maxChars="256"/>
-  <copyField source="author_addl_tsim" dest="author_addl_tsim_str" maxChars="256"/>
-  <copyField source="subject_era_ssim" dest="subject_era_ssim_str" maxChars="256"/>
-  <copyField source="title_added_entry_tsim" dest="title_added_entry_tsim_str" maxChars="256"/>
-  <copyField source="original_version_note_tsim" dest="original_version_note_tsim_str" maxChars="256"/>
-  <copyField source="serial_key" dest="serial_key_str" maxChars="256"/>
-  <copyField source="depositor_tsim" dest="depositor_tsim_str" maxChars="256"/>
-  <copyField source="access_note_tsim" dest="access_note_tsim_str" maxChars="256"/>
-  <copyField source="rights_stat_tsim" dest="rights_stat_tsim_str" maxChars="256"/>
 </schema>

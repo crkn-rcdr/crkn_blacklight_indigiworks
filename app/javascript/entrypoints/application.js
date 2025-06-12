@@ -60,11 +60,11 @@ if(pageViewer) {
     
             allowClose: false, // Configure if windows can be closed or not
     
-            allowFullscreen: false, // Configure to show a "fullscreen" button in the WindowTopBar
+            allowFullscreen: true, // Configure to show a "fullscreen" button in the WindowTopBar
     
             allowMaximize: false, // Configure if windows can be maximized or not
     
-            allowTopMenuButton: false, // Configure if window view and thumbnail display menu are visible or not
+            allowTopMenuButton: true, // Configure if window view and thumbnail display menu are visible or not
     
             allowWindowSideBar: true, // Configure if side bar menu is visible or not
     
@@ -94,11 +94,11 @@ if(pageViewer) {
     
               // Configure which panels are visible in WindowSideBarButtons
     
-              info: false,
+              info: true,
     
               attribution: false,
     
-              canvas: false,
+              canvas: true, // table of contents
     
               annotations: false,
     

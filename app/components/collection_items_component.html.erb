@@ -1,0 +1,31 @@
+<h2>All Issues</h2>
+<div class="row align-items-start" id="collection-items-list">
+    <% if @collection_items %>
+        <% if @collection_items.length > 0 %>
+            <% @collection_items.each do |collection_item| %>
+                <% if collection_item['is_issue'] && collection_item['is_issue'][0] == "Yes" %>
+                    <div class="card" style="width: 20rem; margin: 0 0.5rem 0.5rem 0.5rem;">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= collection_item['title_tsim'][0] %></h5>
+                            <% if collection_item['pub_date_si'] %>
+                                <p class="card-text"><%= collection_item['pub_date_si'][0] %></p>
+                            <% end %>
+                            <a  class="btn btn-primary" href="/catalog/<%= collection_item['id'] %>?pageNum=<%= collection_item['id'] %>" class="pv-go-to-index">View issue</a>
+                        </div>
+                    </div>
+            <% end %>
+            <% end %>
+        <% else %>
+            <p>
+                No items in this serial
+            </p>
+        <% end %>
+    <% end %>
+</div>
+
+<div class="row align-items-start" >
+    <nav aria-label="Page navigation example">
+        <ul class="pagination" id="collection-items-paginator">
+        </ul>
+    </nav>
+</div>

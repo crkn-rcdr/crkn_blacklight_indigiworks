@@ -1,0 +1,19 @@
+<% if  @term.length != 0 && @term != "*:*" %>
+    <% if @legacy_ocr_search_results %>
+        <div class="page-search-res-wrap">
+            <% if @legacy_ocr_search_results.length > 0 %>
+                <span class="matching-image-label" term="<%= @term %>">
+                    <%= I18n.t('L_MATCHING_PAGES_PRE')%> <!--'<%= @term %>' <%= I18n.t('L_MATCHING_PAGES_SUF')%>:-->
+                </span>
+                <%= content %>
+                <% @legacy_ocr_search_results.each do |legacy_ocr_search_result| %>
+                    <a href="/catalog/<%= @documentId %>?pageNum=<%= legacy_ocr_search_result %>" class="pv-go-to-index"><%= legacy_ocr_search_result %></a>
+                <% end %>
+            <% else %>
+                <span term="<%= @term %>">
+                    No results for '<%= @term %>' in this item
+                </span>
+            <% end %>
+        </div>
+    <% end %>
+<% end %>

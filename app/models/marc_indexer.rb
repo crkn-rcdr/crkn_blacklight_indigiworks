@@ -37,7 +37,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
       parts = acc[0].split('_')
       acc.replace [parts[0...-1].join('_')]
     end
-    to_field "serial_title",  extract_marc('490v'), first_only do |rec, acc|
+    to_field "serial_title",  extract_marc('245a'), first_only do |rec, acc|
       if acc[0].count(":") >= 1
         parts = acc[0].split(':', 2)
         acc.replace [parts[0]]

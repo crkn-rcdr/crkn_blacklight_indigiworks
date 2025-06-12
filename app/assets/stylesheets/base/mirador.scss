@@ -5,6 +5,9 @@
     min-height: 600px;
     background: white !important;
 }
+#my-mirador > .fullscreen-enabled > div {
+    height: 100vh !important;
+}
 .mirador-window-top-bar {
     min-height: 3.5rem !important;
     border-top: none !important;
@@ -21,3 +24,6 @@
         display: none !important;
     }
 }
+/*.mirador-window-top-bar .MuiTypography-h2 {
+    display: none;
+}*/
