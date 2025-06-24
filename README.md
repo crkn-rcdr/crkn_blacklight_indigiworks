@@ -16,6 +16,10 @@ This repo is configured to pull and run solr through docker compose, and has the
 
 For CRKN in production, we are using a solr instance running independantly from this docker compose. To configure the Solr instance to work with the Blacklight container, I sshed onto the Solr server, and performed the following:
 
+Connect to the solr vm:
+
+`ssh -i ~/.ssh/<id file>.pem <user>@4.204.49.142`
+
 Created the blacklight_marc core config directory:
 
 `sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc/conf`
@@ -32,7 +36,7 @@ Removed the default solr config:
 
 `sudo rm solrconfig.xml`
 
-Pasted the solrconfig from this repo into a new solrconfig file"
+Pasted the solrconfig from this repo into a new solrconfig file:
 
 `sudo vi solrconfig.xml`
 
@@ -40,7 +44,7 @@ Removed the default solr schema:
 
 `sudo rm managed-schema.xml`
 
-Pasted the solr schema from this repo into a new solr schema file"
+Pasted the solr schema from this repo into a new solr schema file:
 
 `sudo vi managed-schema.xml`
 

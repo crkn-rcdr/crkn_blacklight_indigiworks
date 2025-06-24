@@ -247,7 +247,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'original_version_note_tsim', label: 'Original Version Note'
     config.add_show_field 'access_note_tsim', label: 'Access Note'
     config.add_show_field 'rights_stat_tsim', label: 'Rights Statement'
-    config.add_show_field 'url_fulltext_ssm', label: 'URL'
+    config.add_show_field 'url_fulltext_ssm', label: 'Persistent URL', helper_method: :value_link
     config.add_show_field 'is_serial', label: 'Is a Serial Publication'
     config.add_show_field 'is_issue', label: 'Is an Issue of a Serial Publication'
 

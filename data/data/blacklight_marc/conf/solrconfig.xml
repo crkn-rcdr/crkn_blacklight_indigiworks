@@ -608,9 +608,6 @@
 
        Not all Request Handlers are defined in the solrconfig.xml, many are implicit.
     -->
-
-  <!-- Primary search handler, expected by most clients, examples and UI frameworks -->
-
   <!-- Primary search handler, expected by most clients, examples and UI frameworks -->
  <requestHandler name="search" class="solr.SearchHandler" default="true">
     <!-- default values for query parameters can be specified, these
