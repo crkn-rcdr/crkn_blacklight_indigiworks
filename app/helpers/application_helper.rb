@@ -1,4 +1,6 @@
 # See: https://github.com/pulibrary/orangelight/blob/main/app/helpers/application_helper.rb
+require 'cgi'  # For URL escaping
+
 module ApplicationHelper
   def render_icon(var)
     "<span title='#{var.parameterize}' class='icon icon-#{var.parameterize}' aria-hidden='true'></span>"
@@ -22,7 +24,27 @@ module ApplicationHelper
     end
   end
   def value_link(args)
-    value_str = args[:document][args[:field]].join(', ').to_s
+    value_str = Array(args[:document][args[:field]]).join(', ')
     content_tag :a, "#{value_str}".html_safe, href: value_str, dir: 'ltr'
+  end
+  def format_text(args)
+    args[:document][args[:field]].map! do |item|
+      item.gsub(/https?:\/\/\S+/) do |url|
+        "<a href=\"#{url}\" target=\"_blank\">#{url}</a>"
+      end
+    end
+    value_str = Array(args[:document][args[:field]]).join('<br/>')
+    value_str.sub!(/<br\/>$/, '')
+    content_tag :p, "#{value_str}".html_safe, dir: 'ltr'
+  end
+  def format_facet(args)
+    field = args[:field].to_s
+    args[:document][args[:field]].map! do |value|
+      escaped_value = CGI.escape(value.to_s)
+      "<a href=\"/?f%5B#{field}_str%5D%5B%5D=#{escaped_value}&q=&search_field=all_fields\">#{value}</a>"
+    end
+    value_str = Array(args[:document][args[:field]]).join('<br/>')
+    value_str.sub!(/<br\/>$/, '')
+    content_tag :p, "#{value_str}".html_safe, dir: 'ltr'
   end
 end

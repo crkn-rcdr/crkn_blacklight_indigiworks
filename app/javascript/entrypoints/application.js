@@ -31,13 +31,11 @@ console.log("mirador", Mirador)
 
 let pageViewer = document.getElementById("my-mirador")
 if(pageViewer) {
-
     const documentId = pageViewer.getAttribute("data-docid")
     let canvasIndex = 0
     const params = new URLSearchParams(window.location.search)
     if(params.has("pageNum")) canvasIndex = parseInt(params.get("pageNum")-1)
-    let apiPrefix =  "https://www.canadiana.ca/iiif/"
-    let manifest = apiPrefix+documentId+"/manifest"
+    let manifest = documentId.replace("https://n2t.net/ark:/", "https://crkn-iiif-api.azurewebsites.net/manifest/")
     const manifestList = {} 
     manifestList[manifest] = { "provider": "Canadian Research Knowledge Network" }
     console.log("Mirador", Mirador)
@@ -167,6 +165,15 @@ if(pageViewer) {
     }
     let miradorViewer = Mirador.viewer(mconfig);
     console.log("miradorViewer", miradorViewer)
+
+    /*miradorViewer.store.subscribe(() => {
+      const titleElement = document.querySelector('dd.blacklight-title_ssm p')
+      const titleText = titleElement?.textContent?.trim()
+      const h2Element = document.querySelector('h2.MuiTypography-h2')
+      if (titleText && h2Element) {
+        h2Element.textContent = h2Element.textContent.replace(titleText, '').replace(/\s+:\s+/, '').trim()
+      }
+    })*/
 }
 
 import BlacklightRangeLimit from 'blacklight-range-limit';

@@ -69,6 +69,11 @@ class MarcIndexer < Blacklight::Marc::Indexer
     # get rid of / in title
     # 245 So, just keeping the $a and $b could work.
 
+    # full title
+    to_field 'full_title_tsim', extract_marc('245ab')
+    to_field 'full_title_ssm', extract_marc('245ab', alternate_script: false), trim_punctuation
+    to_field 'full_title_vern_ssm', extract_marc('245ab', alternate_script: :only), trim_punctuation
+
     # primary title 
     to_field 'title_tsim', extract_marc('245a')
     to_field 'title_ssm', extract_marc('245a', alternate_script: false), trim_punctuation
@@ -185,8 +190,12 @@ class MarcIndexer < Blacklight::Marc::Indexer
       500#{ATOZ}
       515#{ATOZ}
       546#{ATOZ}
-      588#{ATOZ}
     ).join(':'))
+
+    # Source of Description
+    to_field 'source_of_description_tsim', extract_marc(%W(
+      588#{ATOZ}
+    ))
 
     # Series
     # CIHM don't need?? Need to ask Jason

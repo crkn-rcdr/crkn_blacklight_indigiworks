@@ -30,7 +30,7 @@
       <%= content %>
       <% if @component == :div %>
       <% if @document._source["is_serial"] && @document._source['is_serial'][0] == "No" %>
-        <div id="my-mirador" data-docid="<%= @document.id %>"></div>        
+        <div id="my-mirador" data-docid="<%= @document.ark %>"></div>        
         <br/>
       <% else %>
         <%= render(CollectionItemsComponent.new(documentId: @document.id)) do %><% end %>

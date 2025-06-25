@@ -62,7 +62,7 @@ class CatalogController < ApplicationController
     #config.per_page = [10,20,50,100]
 
     # solr field configuration for search results/index views
-    config.index.title_field = 'title_tsim'
+    config.index.title_field = 'full_title_tsim'
     # config.index.display_type_field = 'format'
     # config.index.thumbnail_field = 'thumbnail_path_ss'
 
@@ -174,11 +174,11 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
-    config.add_index_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
+    config.add_index_field 'format', label: 'Format', helper_method: :format_icon
     #   Title
-    config.add_index_field 'title_ssm', label: 'Title'
+    config.add_index_field 'title_ssm', label: 'Title', helper_method: :format_text
     #   Creator
-    config.add_index_field 'author_ssm', label: 'Creator', link_to_facet: true
+    config.add_index_field 'author_ssm', label: 'Creator', helper_method: :format_facet
     #   Published
     config.add_index_field 'published_ssm', label: 'Published'
     #   Published Date
@@ -186,24 +186,24 @@ class CatalogController < ApplicationController
     #   Identifier
     config.add_index_field 'id', label: 'Identifier'
     #   Subject
-    config.add_index_field 'subject_ssim', label: 'Subject', link_to_facet: true
+    config.add_index_field 'subject_ssim', label: 'Subject', helper_method: :format_facet
     #   Document source
     #   Notes
-    config.add_index_field 'notes_tsim', label: 'Notes'
-    config.add_index_field 'original_version_note_tsim', label: 'Original Version Note'
+    config.add_index_field 'notes_tsim', label: 'Notes', helper_method: :format_text
+    config.add_index_field 'original_version_note_tsim', label: 'Original Version Note', helper_method: :format_text
     #   Collection
-    config.add_index_field 'collection_tsim', label: 'Material', link_to_facet: true
+    config.add_index_field 'collection_tsim', label: 'Material', helper_method: :format_facet
     #   Depositor
-    config.add_index_field 'depositor_tsim', label: 'Depositor', link_to_facet: true
+    config.add_index_field 'depositor_tsim', label: 'Depositor', helper_method: :format_facet
     #   Language
-    config.add_index_field 'language_ssim', label: 'Language', link_to_facet: true
+    config.add_index_field 'language_ssim', label: 'Language', helper_method: :format_facet
     #   Depositor
     #   URL
-    config.add_index_field 'url_fulltext_ssm', label: 'Persistent URL', helper_method: :value_link
+    config.add_index_field 'ark', label: 'Persistent URL', helper_method: :value_link
     config.add_index_field 'date_added', label: 'Date Added'
     #config.add_index_field 'pub_date_si', label: 'Date'
-    #config.add_index_field 'collection_tsim', label: 'Material', link_to_facet: true
-    #config.add_index_field 'doc_source_tsim', label: 'Originating Institution', link_to_facet: true
+    #config.add_index_field 'collection_tsim', label: 'Material', helper_method: :value_link
+    #config.add_index_field 'doc_source_tsim', label: 'Originating Institution', helper_method: :value_link
     #config.add_index_field 'id', label: 'Item Code'
 
     # solr fields to be displayed in the show (single result) view
@@ -224,32 +224,32 @@ class CatalogController < ApplicationController
     #config.add_show_field 'isbn_ssim', label: 'ISBN'
 
     #   Title
-    config.add_show_field 'title_ssm', label: 'Title'
-    config.add_show_field 'subtitle_tsim', label: 'Subtitle'
-    config.add_show_field 'title_addl_tsim', label: 'Other Titles'
+    config.add_show_field 'title_ssm', label: 'Title', helper_method: :format_text
+    config.add_show_field 'subtitle_tsim', label: 'Subtitle', helper_method: :format_text
+    config.add_show_field 'title_addl_tsim', label: 'Other Titles', helper_method: :format_text
     #   Creator
-    config.add_show_field 'author_ssm', label: 'Creator', link_to_facet: true
+    config.add_show_field 'author_ssm', label: 'Creator', helper_method: :format_facet
     #   Published
     config.add_show_field 'published_ssm', label: 'Published'
     #   Published Date
     config.add_show_field 'pub_date_si', label: 'Date'
     #   Identifier
     config.add_show_field 'id', label: 'Identifier'
-    config.add_show_field 'subject_ssim', label: 'Subject', link_to_facet: true
-    config.add_show_field 'collection_tsim', label: 'Material', link_to_facet: true
-    config.add_show_field 'format', label: 'Format', link_to_facet: true, helper_method: :format_icon
+    config.add_show_field 'subject_ssim', label: 'Subject', helper_method: :format_facet
+    config.add_show_field 'collection_tsim', label: 'Material', helper_method: :format_facet
     #   Depositor
-    config.add_show_field 'depositor_tsim', label: 'Depositor', link_to_facet: true
+    config.add_show_field 'depositor_tsim', label: 'Depositor', helper_method: :format_facet
     #   Language
-    config.add_show_field 'language_ssim', label: 'Language', link_to_facet: true
+    config.add_show_field 'language_ssim', label: 'Language', helper_method: :format_facet
     #config.add_show_field 'doc_source_tsim', label: 'Originating Institution'
-    config.add_show_field 'notes_tsim', label: 'Notes'
-    config.add_show_field 'original_version_note_tsim', label: 'Original Version Note'
-    config.add_show_field 'access_note_tsim', label: 'Access Note'
-    config.add_show_field 'rights_stat_tsim', label: 'Rights Statement'
-    config.add_show_field 'url_fulltext_ssm', label: 'Persistent URL', helper_method: :value_link
+    config.add_show_field 'notes_tsim', label: 'Notes', helper_method: :format_text
+    config.add_show_field 'original_version_note_tsim', label: 'Original Version Note', helper_method: :format_text
+    config.add_show_field 'access_note_tsim', label: 'Access Note', helper_method: :format_text
+    config.add_show_field 'rights_stat_tsim', label: 'Rights Statement', helper_method: :format_text
+    config.add_show_field 'ark', label: 'Persistent URL', helper_method: :value_link
     config.add_show_field 'is_serial', label: 'Is a Serial Publication'
     config.add_show_field 'is_issue', label: 'Is an Issue of a Serial Publication'
+    config.add_show_field 'date_added', label: 'Date Added'
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
@@ -276,11 +276,11 @@ class CatalogController < ApplicationController
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields.
 
-    config.add_search_field('title_tsim') do |field|
+    config.add_search_field('full_title_tsim') do |field|
       # solr_parameters hash are sent to Solr as ordinary url query params.
       field.solr_parameters = {
-        qf: 'title_tsim',
-        pf: 'title_tsim'
+        qf: 'full_title_tsim',
+        pf: 'full_title_tsim'
       }
       field.label = 'Title'
     end
