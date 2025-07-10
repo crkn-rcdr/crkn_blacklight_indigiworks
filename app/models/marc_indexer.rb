@@ -204,9 +204,15 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field 'permalink_fulltext_ssm', extract_marc("856g")
 
-    
-
-    to_field 'date_added' do |record, accumulator|
+    to_field 'date_added' do |record, accumulator| 
+      raw = record['998']&.value
+      if raw
+        # Parse MARC timestamp (e.g., "20240716103000.0005") and format only the date
+        date = Time.strptime(raw[0..7], "%Y%m%d").utc.strftime("%Y-%m-%d")
+        accumulator << date
+      end
+    end
+    to_field 'date_edited' do |record, accumulator|
       raw = record['005']&.value
       if raw
         # Parse MARC timestamp (e.g., "20240716103000.0005") into ISO8601

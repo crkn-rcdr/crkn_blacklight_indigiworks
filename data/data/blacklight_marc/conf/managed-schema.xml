@@ -461,6 +461,7 @@
   <field name="collection_tsim" type="text_general"/>
   <field name="date_added" type="pdates" multiValued="false"/>
   <field name="date_added_str" type="text_general"/>
+  <field name="date_edited" type="pdates"/>
   <field name="depositor_tsim" type="text_general"/>
   <field name="doc_source_tsim" type="text_general"/>
   <field name="format" type="text_general"/>

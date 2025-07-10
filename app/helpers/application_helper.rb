@@ -47,4 +47,9 @@ module ApplicationHelper
     value_str.sub!(/<br\/>$/, '')
     content_tag :p, "#{value_str}".html_safe, dir: 'ltr'
   end
+  def format_date(args)
+    Time.parse(args[:document][args[:field]].to_s).strftime("%Y-%m-%d")
+  rescue
+    args[:document][args[:field]].to_s # Fallback to original if parsing fails
+  end
 end

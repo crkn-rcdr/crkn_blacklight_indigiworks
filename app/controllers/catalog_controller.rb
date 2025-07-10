@@ -191,6 +191,7 @@ class CatalogController < ApplicationController
     #   Notes
     config.add_index_field 'notes_tsim', label: 'Notes', helper_method: :format_text
     config.add_index_field 'original_version_note_tsim', label: 'Original Version Note', helper_method: :format_text
+    config.add_index_field 'source_of_description_tsim', label: 'Source of Description', helper_method: :format_text
     #   Collection
     config.add_index_field 'collection_tsim', label: 'Material', helper_method: :format_facet
     #   Depositor
@@ -200,7 +201,7 @@ class CatalogController < ApplicationController
     #   Depositor
     #   URL
     config.add_index_field 'ark', label: 'Persistent URL', helper_method: :value_link
-    config.add_index_field 'date_added', label: 'Date Added'
+    config.add_index_field 'date_added', label: 'Date Added', helper_method: :format_date
     #config.add_index_field 'pub_date_si', label: 'Date'
     #config.add_index_field 'collection_tsim', label: 'Material', helper_method: :value_link
     #config.add_index_field 'doc_source_tsim', label: 'Originating Institution', helper_method: :value_link
@@ -245,11 +246,12 @@ class CatalogController < ApplicationController
     config.add_show_field 'notes_tsim', label: 'Notes', helper_method: :format_text
     config.add_show_field 'original_version_note_tsim', label: 'Original Version Note', helper_method: :format_text
     config.add_show_field 'access_note_tsim', label: 'Access Note', helper_method: :format_text
+    config.add_show_field 'source_of_description_tsim', label: 'Source of Description', helper_method: :format_text
     config.add_show_field 'rights_stat_tsim', label: 'Rights Statement', helper_method: :format_text
     config.add_show_field 'ark', label: 'Persistent URL', helper_method: :value_link
     config.add_show_field 'is_serial', label: 'Is a Serial Publication'
     config.add_show_field 'is_issue', label: 'Is an Issue of a Serial Publication'
-    config.add_show_field 'date_added', label: 'Date Added'
+    config.add_show_field 'date_added', label: 'Date Added', helper_method: :format_date
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
