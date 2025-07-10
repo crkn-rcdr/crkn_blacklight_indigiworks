@@ -30,7 +30,12 @@
       <%= content %>
       <% if @component == :div %>
       <% if @document._source["is_serial"] && @document._source['is_serial'][0] == "No" %>
-        <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>        
+        <% if @document._source["ark"] %>
+          <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>        
+        <% else %>
+          <p>Sorry, there was a problem loading the images for this item. Please wait a while, and try again, or <a href="https://www.crkn-rcdr.ca/en/contact-us" target="_blank">reach out to us for assistance.</a></p>
+          <img src="/assets/404.webp" class="not-found-icon"/>
+        <% end %>
         <br/>
       <% else %>
         <%= render(CollectionItemsComponent.new(documentId: @document.id)) do %><% end %>
