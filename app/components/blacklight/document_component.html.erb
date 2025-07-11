@@ -33,8 +33,9 @@
         <% if @document._source["ark"] %>
           <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>        
         <% else %>
-          <p>Sorry, there was a problem loading the images for this item. Please wait a while, and try again, or <a href="https://www.crkn-rcdr.ca/en/contact-us" target="_blank">reach out to us for assistance.</a></p>
+          <br/>
           <img src="/assets/404.webp" class="not-found-icon"/>
+          <p>Sorry, there was a problem loading the images for this item. Please wait a while, and try again, or <a href="https://www.crkn-rcdr.ca/en/contact-us" target="_blank">reach out to us for assistance.</a></p>
         <% end %>
         <br/>
       <% else %>
