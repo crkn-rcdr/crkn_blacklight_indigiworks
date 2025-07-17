@@ -1,0 +1,42 @@
+<ul class="navbar-nav">
+  <%= render_nav_actions do |config, action|%>
+    <li class="nav-item"><%= action %></li>
+  <% end %>
+
+  <% if has_user_authentication_provider? %>
+    <% if current_user %>
+    <li class="nav-item">
+      <%= link_to t('blacklight.header_links.logout'), destroy_user_session_path, class: 'nav-link' %>
+    </li>
+    <% unless current_user.to_s.blank? -%>
+    <li class="nav-item">
+      <%= link_to current_user, edit_user_registration_path, class: 'nav-link' %>
+    </li>
+    <% end %>
+    <% else %>
+    <li class="nav-item">
+      <%= link_to t('blacklight.header_links.login'), new_user_session_path, class: 'nav-link' %>
+    </li>
+    <% end %>
+  <% end %>
+
+  <li class="nav-item">
+    <a href="https://www.crkn-rcdr.ca/en/heritage-content" class="nav-link">About</a>
+  </li>
+  <li class="nav-item">
+    <a href="//heritage.canadiana.ca/" class="nav-link">Héritage</a>
+  </li>
+  <li class="nav-item">
+    <a href="https://www.crkn-rcdr.ca/en" class="nav-link">CRKN</a>
+  </li>
+  <li class="nav-item">
+    <a href="https://www.crkn-rcdr.ca/en/whats-new-canadiana-collections" class="nav-link">What's New</a>
+  </li>
+  <li class="nav-item">
+    <a target="_blank" href="https://www.crkn-rcdr.ca/en/canadiana-citation-guide" class="nav-link">Citation Guide</a>
+  </li>
+  <li class="nav-item">
+    <a href="https://www.crkn-rcdr.ca/en/contact-us" class="nav-link">Contact Us</a>
+  </li>
+
+</ul>

@@ -7,12 +7,16 @@
     --bs-link-color: var(--theme-primary); 
 }
 .navbar {
-    --bs-navbar-padding-y: 2rem 0;
+    --bs-navbar-padding-y: 1rem 0;
+    padding-bottom: 1rem;
 }
 .navbar-logo {
     background: transparent url(/assets/canadiana-tag-color.svg) no-repeat top left;
     height: 80px !important;
     width: 245px !important;
+}
+.nav-item {
+    margin-left: 1rem;
 }
 .btn-primary {
     --bs-btn-bg: var(--theme-primary);
@@ -45,4 +49,101 @@
 }
 .search-query-form {
     width: 100% !important;
+}
+.home-search-wrap {
+    position: absolute;
+    top: 44vh;
+    width:99vw;
+}
+.home-search {
+    background-color: rgba(34, 34, 34, .65) !important;
+    width: fit-content !important;
+    padding: 1.5rem;
+    margin: auto;
+}
+.home-search {
+    color: white !important;
+}
+.home-search form {
+    margin-bottom: 0 !important;
+}
+.home-search input {
+    min-width: 28rem !important;
+}
+.home-search svg {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+}
+/*.carousel.home-main-images {
+    width: 85vw;
+    height: 45vh;
+    margin: auto;
+}*/
+.carousel-caption {
+    padding: .5rem !important;
+    margin-left: 1rem !important;
+    background-color: rgba(34, 34, 34, .65) !important;
+    width: fit-content !important;
+    left: 58% !important;
+    min-width: 410px;
+}
+.carousel-caption h5 {
+    margin-bottom: 0 !important;
+}
+.banner-img {
+    width: 99vw;
+    height: 87vh;
+}
+.home-cards {
+    width: 70rem;
+    position: relative;
+    margin: auto !important;
+}
+.home-cards .card {
+    width: 33rem !important;
+    margin-bottom: 1rem;
+    min-height:585px;
+}
+.home-cards .card-img, .home-cards .card-img-top {
+    height: 350px;
+}
+.home-cards .card-body p {
+    height: 80px;
+}
+footer {
+    grid-area: footer;
+}
+footer a {
+    color: white !important;
+}
+.blacklight-pages-home #main-container {
+    max-width: 100vw !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+.blacklight-pages-home .navbar-search {
+    display: none;
+}
+.blacklight-pages-home .navbar {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    background: #00000063 !important;
+    color: white;
+}
+.navbar a {
+    color: var(--theme-primary) !important;
+}
+.blacklight-pages-home .navbar a {
+    color: white !important;
+}
+.blacklight-pages-home .navbar-logo {
+    background: transparent url(/assets/canadiana-tag-white.svg) no-repeat top left;
+}
+footer.bg-dark {
+    background-color: black !important;
+}
+#main-container {
+    min-height: 74vh;
 }
