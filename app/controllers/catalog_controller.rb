@@ -130,8 +130,8 @@ class CatalogController < ApplicationController
     # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
 
     
-    config.add_facet_field 'pub_date_si', label: 'Date Range',
-      range: {
+    config.add_facet_field 'pub_date_si', label: ->(_config) { I18n.t('blacklight.metadata.date_range.label') }, 
+    range: {
         num_segments: 10,
         segments: true,
         maxlength: 4,
@@ -140,16 +140,13 @@ class CatalogController < ApplicationController
     }
     #config.add_facet_field 'pub_date_ssim', label: 'Publication Year', single: true
     # Suggest is the search box for the facet pop-ups
-    config.add_facet_field 'language_ssim_str', label: 'Language', sort: 'index', limit: 8, suggest: true, index_range: true
-    config.add_facet_field 'collection_tsim_str', label: 'Material', sort: 'count', limit: 8, suggest: true, index_range: true # Need to figure out why old values aren't clearing
-    config.add_facet_field 'depositor_tsim_str', label: 'Depositor', sort: 'count', limit: 8, suggest: true, index_range: true
-    config.add_facet_field 'subject_ssim_str', label: 'Subject', sort: 'count', limit: 8, suggest: true, index_range: true
-    config.add_facet_field 'author_ssm_str', label: 'Creator', sort: 'count', limit: 8, suggest: true, index_range: true
-    #config.add_facet_field 'format_str', label: 'Format', sort: 'count', limit: 8, suggest: true, index_range: true
-
-    # TODO: Depositor
-    config.add_facet_field 'is_issue_str', label: 'Is an Issue', sort: 'count', limit: 8, suggest: true, index_range: true
-    config.add_facet_field 'is_serial_str', label: 'Is a Series', sort: 'count', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'language_ssim_str', label: ->(_config) { I18n.t('blacklight.metadata.language.label') }, sort: 'index', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'collection_tsim_str', label: ->(_config) { I18n.t('blacklight.metadata.material.label') }, sort: 'count', limit: 8, suggest: true, index_range: true # Need to figure out why old values aren't clearing
+    config.add_facet_field 'depositor_tsim_str', label:->(_config) { I18n.t('blacklight.metadata.depositor.label') }, sort: 'count', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'subject_ssim_str', label: ->(_config) { I18n.t('blacklight.metadata.subject.label') }, sort: 'count', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'author_ssm_str', label:  ->(_config) { I18n.t('blacklight.metadata.creator.label') }, sort: 'count', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'is_issue_str', label: ->(_config) { I18n.t('blacklight.metadata.issue_msg.label') }, sort: 'count', limit: 8, suggest: true, index_range: true
+    config.add_facet_field 'is_serial_str', label: ->( _config) { I18n.t('blacklight.metadata.serial_msg.label') }, sort: 'count', limit: 8, suggest: true, index_range: true
     
     #config.add_facet_field 'format', label: 'Format'
     #config.add_facet_field 'subject_ssim', label: 'Topic', limit: 20, index_range: 'A'..'Z'
@@ -176,32 +173,30 @@ class CatalogController < ApplicationController
     #   The ordering of the field names is the order of the display
     config.add_index_field 'format', label: 'Format', helper_method: :format_icon
     #   Title
-    config.add_index_field 'title_ssm', label: 'Title', helper_method: :format_text
+    config.add_index_field 'title_ssm',  label: ->(_field, _config) { I18n.t('blacklight.metadata.title.label') }, helper_method: :format_text
     #   Creator
-    config.add_index_field 'author_ssm', label: 'Creator', helper_method: :format_facet
+    config.add_index_field 'author_ssm', label: ->(_field, _config) { I18n.t('blacklight.metadata.creator.label') }, helper_method: :format_facet
     #   Published
-    config.add_index_field 'published_ssm', label: 'Published'
+    config.add_index_field 'published_ssm', label: ->(_field, _config) { I18n.t('blacklight.metadata.published.label') }
     #   Published Date
-    config.add_index_field 'pub_date_si', label: 'Date'
+    config.add_index_field 'pub_date_si', label: ->(_field, _config) { I18n.t('blacklight.metadata.date.label') }
     #   Identifier
-    config.add_index_field 'id', label: 'Identifier'
+    config.add_index_field 'id', label: ->(_field, _config) { I18n.t('blacklight.metadata.id.label') }
     #   Subject
-    config.add_index_field 'subject_ssim', label: 'Subject', helper_method: :format_facet
-    #   Document source
-    #   Notes
-    config.add_index_field 'notes_tsim', label: 'Notes', helper_method: :format_text
-    config.add_index_field 'original_version_note_tsim', label: 'Original Version Note', helper_method: :format_text
-    config.add_index_field 'source_of_description_tsim', label: 'Source of Description', helper_method: :format_text
+    config.add_index_field 'subject_ssim', label: ->(_field, _config) { I18n.t('blacklight.metadata.subject.label') }, helper_method: :format_facet
     #   Collection
-    config.add_index_field 'collection_tsim', label: 'Material', helper_method: :format_facet
+    config.add_index_field 'collection_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.material.label') }, helper_method: :format_facet
     #   Depositor
-    config.add_index_field 'depositor_tsim', label: 'Depositor', helper_method: :format_facet
+    config.add_index_field 'depositor_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.depositor.label') }, helper_method: :format_facet
     #   Language
-    config.add_index_field 'language_ssim', label: 'Language', helper_method: :format_facet
-    #   Depositor
+    config.add_index_field 'language_ssim', label: ->(_field, _config) { I18n.t('blacklight.metadata.language.label') }, helper_method: :format_facet
+    #   Notes
+    config.add_index_field 'notes_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.notes.label') }, helper_method: :format_text
+    config.add_index_field 'original_version_note_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.original_version_note.label') }, helper_method: :format_text
+    config.add_index_field 'access_note_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.access_note.label') }, helper_method: :format_text
     #   URL
-    config.add_index_field 'ark', label: 'Persistent URL', helper_method: :value_link
-    config.add_index_field 'date_added', label: 'Date Added', helper_method: :format_date
+    config.add_index_field 'ark', label: ->(_field, _config) { I18n.t('blacklight.metadata.persistent_url.label') }, helper_method: :value_link
+    config.add_index_field 'date_added', label: ->(_field, _config) { I18n.t('blacklight.metadata.date_added.label') }, helper_method: :format_date
     #config.add_index_field 'pub_date_si', label: 'Date'
     #config.add_index_field 'collection_tsim', label: 'Material', helper_method: :value_link
     #config.add_index_field 'doc_source_tsim', label: 'Originating Institution', helper_method: :value_link
@@ -225,33 +220,31 @@ class CatalogController < ApplicationController
     #config.add_show_field 'isbn_ssim', label: 'ISBN'
 
     #   Title
-    config.add_show_field 'title_ssm', label: 'Title', helper_method: :format_text
-    config.add_show_field 'subtitle_tsim', label: 'Subtitle', helper_method: :format_text
-    config.add_show_field 'title_addl_tsim', label: 'Other Titles', helper_method: :format_text
+    config.add_show_field 'title_ssm',  label: ->(_field, _config) { I18n.t('blacklight.metadata.title.label') }, helper_method: :format_text
+    config.add_show_field 'subtitle_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.subtitle.label') }, helper_method: :format_text
+    config.add_show_field 'title_addl_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.other_titles.label') }, helper_method: :format_text
     #   Creator
-    config.add_show_field 'author_ssm', label: 'Creator', helper_method: :format_facet
+    config.add_show_field 'author_ssm', label: ->(_field, _config) { I18n.t('blacklight.metadata.creator.label') }, helper_method: :format_facet
     #   Published
-    config.add_show_field 'published_ssm', label: 'Published'
+    config.add_show_field 'published_ssm', label: ->(_field, _config) { I18n.t('blacklight.metadata.published.label') }
     #   Published Date
-    config.add_show_field 'pub_date_si', label: 'Date'
+    config.add_show_field 'pub_date_si', label: ->(_field, _config) { I18n.t('blacklight.metadata.date.label') }
     #   Identifier
-    config.add_show_field 'id', label: 'Identifier'
-    config.add_show_field 'subject_ssim', label: 'Subject', helper_method: :format_facet
-    config.add_show_field 'collection_tsim', label: 'Material', helper_method: :format_facet
+    config.add_show_field 'id', label: ->(_field, _config) { I18n.t('blacklight.metadata.id.label') }
+    config.add_show_field 'subject_ssim', label: ->(_field, _config) { I18n.t('blacklight.metadata.subject.label') }, helper_method: :format_facet
+    config.add_show_field 'collection_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.material.label') }, helper_method: :format_facet
     #   Depositor
-    config.add_show_field 'depositor_tsim', label: 'Depositor', helper_method: :format_facet
+    config.add_show_field 'depositor_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.depositor.label') }, helper_method: :format_facet
     #   Language
-    config.add_show_field 'language_ssim', label: 'Language', helper_method: :format_facet
+    config.add_show_field 'language_ssim', label: ->(_field, _config) { I18n.t('blacklight.metadata.language.label') }, helper_method: :format_facet
     #config.add_show_field 'doc_source_tsim', label: 'Originating Institution'
-    config.add_show_field 'notes_tsim', label: 'Notes', helper_method: :format_text
-    config.add_show_field 'original_version_note_tsim', label: 'Original Version Note', helper_method: :format_text
-    config.add_show_field 'access_note_tsim', label: 'Access Note', helper_method: :format_text
-    config.add_show_field 'source_of_description_tsim', label: 'Source of Description', helper_method: :format_text
-    config.add_show_field 'rights_stat_tsim', label: 'Rights Statement', helper_method: :format_text
-    config.add_show_field 'ark', label: 'Persistent URL', helper_method: :value_link
-    config.add_show_field 'is_serial', label: 'Is a Serial Publication'
-    config.add_show_field 'is_issue', label: 'Is an Issue of a Serial Publication'
-    config.add_show_field 'date_added', label: 'Date Added', helper_method: :format_date
+    config.add_show_field 'notes_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.notes.label') }, helper_method: :format_text
+    config.add_show_field 'original_version_note_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.original_version_note.label') }, helper_method: :format_text
+    config.add_show_field 'access_note_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.access_note.label') }, helper_method: :format_text
+    config.add_show_field 'source_of_description_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.source_of_description.label') }, helper_method: :format_text
+    config.add_show_field 'rights_stat_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.right_statements.label') }, helper_method: :format_text
+    config.add_show_field 'ark', label: ->(_field, _config) { I18n.t('blacklight.metadata.persistent_url.label') }, helper_method: :value_link
+    config.add_show_field 'date_added', label: ->(_field, _config) { I18n.t('blacklight.metadata.date_added.label') }, helper_method: :format_date
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
@@ -271,8 +264,7 @@ class CatalogController < ApplicationController
     # solr request handler? The one set in config[:default_solr_parameters][:qt],
     # since we aren't specifying it otherwise.
 
-    config.add_search_field 'all_fields', label: 'All Fields'
-
+    config.add_search_field 'all_fields', label: ->(_config) { I18n.t('blacklight.metadata.all_fields.label') }
 
     # Now we see how to over-ride Solr request handler defaults, in this
     # case for a BL "search field", which is really a dismax aggregate
@@ -284,7 +276,7 @@ class CatalogController < ApplicationController
         qf: 'full_title_tsim',
         pf: 'full_title_tsim'
       }
-      field.label = 'Title'
+      field.label = ->(_config) { I18n.t('blacklight.metadata.title.label') }
     end
 
     config.add_search_field('author_tsim') do |field|
@@ -292,7 +284,7 @@ class CatalogController < ApplicationController
         qf: 'author_tsim',
         pf: 'author_tsim'
       }
-      field.label = 'Creator'
+      field.label = ->(_config) { I18n.t('blacklight.metadata.creator.label') }
     end
 
     # Specifying a :qt only to show it's possible, and so our internal automated
@@ -304,7 +296,7 @@ class CatalogController < ApplicationController
         qf: 'subject_tsim',
         pf: 'subject_tsim'
       }
-      field.label = 'Subject'
+      field.label = ->(_config) { I18n.t('blacklight.metadata.subject.label') }
     end
 
     # "sort results by" select (pulldown)
@@ -312,11 +304,11 @@ class CatalogController < ApplicationController
     # whether the sort is ascending or descending (it must be asc or desc
     # except in the relevancy case). Add the sort: option to configure a
     # custom Blacklight url parameter value separate from the Solr sort fields.
-    config.add_sort_field 'relevance', sort: 'score desc, pub_date_si desc', label: 'relevance'
-    config.add_sort_field 'year-desc', sort: 'pub_date_si desc', label: 'published date (newest to oldest)'
-    config.add_sort_field 'year-asc', sort: 'pub_date_si asc', label: 'published date (oldest to newest)'
-    config.add_sort_field 'date-added-desc', sort: 'date_added desc', label: 'date added (newest to oldest)'
-    config.add_sort_field 'date-added-asc', sort: 'date_added  asc', label: 'date added (oldest to newest)'
+    config.add_sort_field 'relevance', sort: 'score desc, pub_date_si desc', label: ->(_config) { I18n.t('blacklight.sort.relevance.label') }
+    config.add_sort_field 'year-desc', sort: 'pub_date_si desc', label: ->(_config) { I18n.t('blacklight.sort.year_desc.label') }
+    config.add_sort_field 'year-asc', sort: 'pub_date_si asc', label: ->(_config) { I18n.t('blacklight.sort.year_asc.label') }
+    config.add_sort_field 'date-added-desc', sort: 'date_added desc', label: ->(_config) { I18n.t('blacklight.sort.date_added_desc.label') }
+    config.add_sort_field 'date-added-asc', sort: 'date_added  asc', label: ->(_config) { I18n.t('blacklight.sort.date_added_asc.label') }
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.

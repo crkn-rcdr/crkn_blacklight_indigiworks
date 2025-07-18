@@ -228,6 +228,66 @@ en:
       aria:
         container_label: Main navigation
     welcome: Welcome!
+    metadata:
+      title:
+        label: Title
+      subtitle:
+        label: Subtitle
+      other_titles:
+        label: Other Titles
+      creator:
+        label: Creator
+      published:
+        label: Published
+      date:
+        label: Date
+      id:
+        label: Identifier
+      subject:
+        label: Subject
+      material:
+        label: Material
+      depositor:
+        label: Depositor
+      notes:
+        label: Notes
+      original_version_note:
+        label: Original Version Note
+      access_note:
+        label: Access Note
+      source_of_description:
+        label: Source of Description
+      right_statements:
+        label: Rights Statement
+      persistent_url:
+        label: Persistent URL
+      serial_msg:
+        label: Is a Serial Publication
+      issue_msg:
+        label: Is an Issue of a Serial Publication
+      date_added:
+        label: Date Added
+      language:
+        label: Language
+      collection:
+        label: Collection
+      description:
+        label: Description
+      date_range:
+        label: Date Range
+      all_fields:
+        label: All Fields
+    sort:
+      relevance:
+        label: Relevance
+      year_desc:
+        label: Published Date (newest to oldest)
+      year_asc:
+        label: Published Date (oldest to newest)
+      date_added_desc:
+        label: Date Added (newest to oldest)
+      date_added_asc:
+        label: Date Added (oldest to newest)
   views:
     pagination:
       aria:

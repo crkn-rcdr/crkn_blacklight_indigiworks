@@ -209,6 +209,66 @@ fr:
       aria:
         container_label: Navigation principale
     welcome: Welcome!
+    metadata:
+      title:
+        label: Titre
+      subtitle:
+        label: todo
+      other_titles:
+        label: todo
+      creator:
+        label: Créateur
+      published:
+        label: Adresse bibliographique
+      date:
+        label: todo
+      id:
+        label: Identificateur
+      subject:
+        label: Sujet
+      material:
+        label: todo
+      depositor:
+        label: Fournisseur
+      notes:
+        label: Notes
+      original_version_note:
+        label: todo
+      access_note:
+        label: todo
+      source_of_description:
+        label: Document original
+      right_statements:
+        label: Droits
+      persistent_url:
+        label: URL pérenne
+      serial_msg:
+        label: todo
+      issue_msg:
+        label: todo
+      date_added:
+        label: todo
+      language:
+        label: Langue
+      collection:
+        label: Collection
+      description:
+        label: Description
+      date_range:
+        label: todo
+      all_fields:
+        label: All Fields
+    sort:
+      relevance:
+        label: todo
+      year_desc:
+        label: todo
+      year_asc:
+        label: todo
+      date_added_desc:
+        label: todo
+      date_added_asc:
+        label: todo
   layouts:
     catalog_result:
       aria:
