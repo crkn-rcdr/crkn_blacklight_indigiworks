@@ -310,3 +310,51 @@ en:
     catalog_result:
       aria:
         sidebar: Tools
+  labels:
+    L_ABOUT: About
+    L_BROWSE: Browse
+    L_BROWSE_COLLECTION: Browse this collection
+    L_BROWSE_MAPS_PROVINCES : Browse by Province/Territory
+    L_CANADIANA: Canadiana
+    L_CARL_HOME: CARL Homepage
+    L_CNDHI: "CNDHI: Canadian National Digital Heritage Index"
+    L_CONTACT: Contact Us
+    L_CITE : Citation Guide
+    L_CRKN: Canadian Research Knowledge Network
+    L_CRKN_PRODUCED: Produced by CRKN
+    L_CRKN_SHORT: CRKN
+    L_HERITAGE: Héritage 
+    L_HERITAGE_PARTNERSHIP: En partenariat avec
+    L_LAC: Libraries and Archives Canada
+    L_NEW : "What's New"
+    L_READ_MORE: Read more
+    L_RECORD": Document Record
+  links:
+    URL_ABOUT: "https://www.crkn-rcdr.ca/en/canadiana"
+    URL_CANADA: "https://www.canada.ca/en.html"
+    URL_CANADIANA: "http://www.canadiana.ca/?usrlang=en"
+    URL_CARL: "http://www.carl-abrc.ca/"
+    URL_CNDHI: "https://www.cndhi-ipnpc.ca/en"
+    URL_CONTACT: "https://www.crkn-rcdr.ca/en/contact-us"
+    URL_NEW: "https://www.crkn-rcdr.ca/en/whats-new-canadiana-collections"
+    URL_CRKN: "https://www.crkn-rcdr.ca/en"
+    URL_GAC: "https://www.international.gc.ca/global-affairs-affaires-mondiales/home-accueil.aspx?lang=eng"
+    URL_GAC_LIBRARY: "https://www.international.gc.ca/gac-amc/programs-programmes/jll-bjl/index.aspx?lang=eng"
+    URL_HELP: "/search-tips"
+    URL_HERITAGE: "https://heritage.canadiana.ca/?usrlang=en"
+    URL_LAC": "http://www.bac-lac.gc.ca/eng/Pages/home.aspx"
+    URL_NUMERIS: "http://en.numeris.ca"
+    URL_PARL": "https://lop.parl.ca/sites/PublicWebsite/default/en_CA/"
+    URL_PARL_ABOUT: "https://lop.parl.ca/sites/PublicWebsite/default/en_CA/About"
+    URL_PARL_CONTACT: "https://lop.parl.ca/sites/PublicWebsite/default/en_CA/ContactUs"
+    URL_PARL_HOC: "http://www.ourcommons.ca/en"
+    URL_PARL_LEARN: "https://learn.parl.ca/"
+    URL_PARL_NOTICES: "/important-notices"
+    URL_PARL_PARL: "https://www.parl.ca/"
+    URL_PARL_SENATE: "https://www.sencanada.ca/en"
+    URL_PARL_VISIT: "https://visit.parl.ca/"
+    URL_PARL_HELP: "/search-tips"
+    URL_TERMS: "http://www.canadiana.ca/terms"
+    URL_CITATION_GUIDE: "https://www.crkn-rcdr.ca/en/canadiana-citation-guide"
+    URL_CITATION_GUIDE_HERITAGE: "https://library-archives.canada.ca/eng/services/public/using-lac-material/crediting-citing-material/Pages/credit-citing-material.aspx"
+    URL_DOWNLOAD_DOCS: "https://www.crkn-rcdr.ca/en/navigating-collections"

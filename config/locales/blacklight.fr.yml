@@ -257,7 +257,7 @@ fr:
       date_range:
         label: todo
       all_fields:
-        label: All Fields
+        label: todo
     sort:
       relevance:
         label: todo
@@ -291,3 +291,51 @@ fr:
     pagination_compact:
       next: Suivante &raquo;
       previous: "&laquo; Précédente"
+  labels:
+    L_ABOUT: À propos
+    L_BROWSE: Parcourir
+    L_BROWSE_COLLECTION: Parcourir cette collection
+    L_BROWSE_MAPS_PROVINCES : Naviguer par province/territoire
+    L_CANADIANA: Canadiana
+    L_CARL_HOME: Page d'accueil de l'ABRC
+    L_CNDHI: "IPNPC : L'Index des projets de numérisation du patrimoine canadien"
+    L_CONTACT: Nous joindre
+    L_CITE : Guide de citation
+    L_CRKN: Réseau canadien de documentation pour la recherche
+    L_CRKN_PRODUCED: Réalisé par RCDR
+    L_CRKN_SHORT: RCDR
+    L_HERITAGE: Héritage 
+    L_HERITAGE_PARTNERSHIP: In partnership with
+    L_LAC: Bibliothèque et Archives Canada
+    L_NEW : Quoi de neuf
+    L_READ_MORE: Lire la suite
+    L_RECORD: Lire la suite
+  links:
+    URL_ABOUT: "https://www.crkn-rcdr.ca/fr/canadiana"
+    URL_CANADA: "https://www.canada.ca/fr.html"
+    URL_CANADIANA: "http://www.canadiana.ca/?usrlang=fr"
+    URL_CARL: "http://www.carl-abrc.ca/fr/"
+    URL_CNDHI: "https://www.cndhi-ipnpc.ca/fr"
+    URL_CONTACT: "https://www.crkn-rcdr.ca/fr/nous-joindre"
+    URL_NEW: "https://www.crkn-rcdr.ca/fr/quoi-de-neuf-dans-les-collections-de-canadiana"
+    URL_CRKN: "https://www.crkn-rcdr.ca/fr"
+    URL_GAC: "https://www.international.gc.ca/global-affairs-affaires-mondiales/home-accueil.aspx?lang=fra"
+    URL_GAC_LIBRARY: "https://www.international.gc.ca/gac-amc/programs-programmes/jll-bjl/index.aspx?lang=fra"
+    URL_HELP: "/conseils-recherche"
+    URL_HERITAGE: "https://heritage.canadiana.ca/?usrlang=fr"
+    URL_LAC: "http://www.bac-lac.gc.ca/fra/Pages/accueil.aspx"
+    URL_NUMERIS: "http://fr.numeris.ca"
+    URL_PARL: "https://lop.parl.ca/sites/PublicWebsite/default/fr_CA/"
+    URL_PARL_ABOUT: "https://lop.parl.ca/sites/PublicWebsite/default/fr_CA/About"
+    URL_PARL_CONTACT: "https://lop.parl.ca/sites/PublicWebsite/default/fr_CA/ContactUs"
+    URL_PARL_HOC: "http://www.ourcommons.ca/fr"
+    URL_PARL_LEARN: "https://decouvrez.parl.ca/"
+    URL_PARL_NOTICES: "/avis-importants"
+    URL_PARL_PARL: "https://www.parl.ca/"
+    URL_PARL_SENATE: "https://www.sencanada.ca/fr"
+    URL_PARL_VISIT: "https://visitez.parl.ca/"
+    URL_PARL_HELP: "/conseils-recherche"
+    URL_TERMS: "http://www.canadiana.ca/conditions"
+    URL_CITATION_GUIDE: "https://www.crkn-rcdr.ca/fr/guide-de-citation-canadiana"
+    URL_CITATION_GUIDE_HERITAGE: "https://bibliotheque-archives.canada.ca/fra/services/public/utiliser-documents-bac/crediting-citing-material/Pages/citation-documents.aspx"
+    URL_DOWNLOAD_DOCS: "https://www.crkn-rcdr.ca/fr/parcourir-les-collections"
