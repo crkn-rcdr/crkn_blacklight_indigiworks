@@ -8,6 +8,8 @@ services:
       - "3000:3000"
     networks:
       - test
+    environment:
+      - RAILS_ENV=development
     volumes:
       - ./bin:/app/bin
       - ./app:/app/app
