@@ -3,24 +3,33 @@ class ApplicationController < ActionController::Base
   include Blacklight::Controller
   layout :determine_layout if respond_to? :layout
 
-  around_action :switch_locale
+  before_action :set_locale
+  after_action :set_content_language
 
   private
 
-  def switch_locale(&action)
-    locale = extract_locale_from_tld || I18n.default_locale
-    I18n.with_locale(locale, &action)
+  def set_locale
+    I18n.locale = params[:lang] ||
+                  session[:locale] ||
+                  extract_locale_from_header ||
+                  I18n.default_locale
+
+    session[:locale] = I18n.locale
   end
 
-  def extract_locale_from_tld
-    tld = request.host.split('.').last
-    case tld
-    when 'fr'
-      'fr'
-    when 'ca'
-      'en'
-    else
-      nil
-    end
+  def extract_locale_from_header
+    return if request.env['HTTP_ACCEPT_LANGUAGE'].blank?
+
+    # Get the first language from the header, like 'fr', 'en', etc.
+    lang = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first
+    lang if I18n.available_locales.map(&:to_s).include?(lang)
+  end
+
+  def set_content_language
+    response.set_header('Content-Language', I18n.locale.to_s)
+  end
+
+  def default_url_options
+    { lang: I18n.locale }
   end
 end
