@@ -333,6 +333,7 @@ en:
     L_ALL_ISSUES: List of Issues
     L_VIEW_ISSUE: View Issue
     L_NO_ISSUES_MSG: No issues in this serial
+    L_TERMS: Terms of Service
   links:
     URL_ABOUT: "https://www.crkn-rcdr.ca/en/canadiana"
     URL_CANADA: "https://www.canada.ca/en.html"

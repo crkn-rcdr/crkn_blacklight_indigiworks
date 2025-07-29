@@ -147,3 +147,54 @@ footer.bg-dark {
 #main-container {
     min-height: 74vh;
 }
+.sm-icon {
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+  margin: 0 4px;
+}
+.facebook {
+  background-image: url("/assets/facebook-color.svg");
+}
+
+.blacklight-pages-home .facebook {
+  background-image: url("/assets/facebook-white.svg");
+}
+
+.bluesky {
+  background-image: url("/assets/bluesky-color.svg");
+}
+
+.blacklight-pages-home .bluesky {
+  background-image: url("/assets/bluesky-white.svg");
+}
+
+.linkedin {
+  background-image: url("/assets/linkedin-color.svg");
+}
+
+.blacklight-pages-home .linkedin {
+  background-image: url("/assets/linkedin-white.svg");
+}
+
+.nav-list {
+    list-style: none; 
+    padding: 0; 
+    margin: 0;
+}
+.nav-list li {
+    display: inline !important; 
+    margin-right: 10px !important;
+}
+.nav-link {
+    display: inline !important; 
+    margin-right: 0 !important;
+}
+.nav-list a {
+    text-decoration: none !important;
+}
+.nav-list-upper {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 80%;
+}

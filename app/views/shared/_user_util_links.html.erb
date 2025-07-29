@@ -1,54 +1,80 @@
-<ul class="navbar-nav">
-  <%= render_nav_actions do |config, action|%>
-    <li class="nav-item"><%= action %></li>
-  <% end %>
-
-  <% if has_user_authentication_provider? %>
-    <% if current_user %>
-    <li class="nav-item">
-      <%= link_to t('blacklight.header_links.logout'), destroy_user_session_path, class: 'nav-link' %>
+<div>
+  <ul class="nav-list nav-list-upper">
+    <li>
+      <a href="<%= t('links.URL_TERMS') %>"><%= t('labels.L_TERMS') %></a>
     </li>
-    <% unless current_user.to_s.blank? -%>
-    <li class="nav-item">
-      <%= link_to current_user, edit_user_registration_path, class: 'nav-link' %>
+    <% content_lang = request.get_header('HTTP_CONTENT_LANGUAGE') || I18n.locale.to_s %>
+    <li>
+      <% if content_lang == 'fr' %>
+        <%= link_to "English", url_for(params.permit!.to_h.merge(lang: 'en')) %> | <b>Français</b>
+      <% else %>
+        <b>English</b> | <%= link_to "Français", url_for(params.permit!.to_h.merge(lang: 'fr')) %>
+      <% end %>
     </li>
+    <li>
+      <a class="sm-icon facebook" href="https://www.facebook.com/CRKNRCDR/">
+        <span class="visually-hidden">Facebook</span>
+      </a>
+      <a class="sm-icon bluesky" href="">
+        <span class="visually-hidden">Bluesky</span>
+      </a>
+      <a class="sm-icon linkedin" href="https://www.linkedin.com/mwlite/company/canadian-research-knowledge-network">
+        <span class="visually-hidden">LinkedIn</span>
+      </a>
+    </li>
+  </ul>
+  <ul class="nav-list">
+    <%= render_nav_actions do |config, action|%>
+      <li><%= action %></li>
     <% end %>
-    <% else %>
-    <li class="nav-item">
-      <%= link_to t('blacklight.header_links.login'), new_user_session_path, class: 'nav-link' %>
-    </li>
+
+    <% if has_user_authentication_provider? %>
+      <% if current_user %>
+      <li>
+        <%= link_to t('blacklight.header_links.logout'), destroy_user_session_path%>
+      </li>
+      <% unless current_user.to_s.blank? -%>
+      <li>
+        <%= link_to current_user, edit_user_registration_path%>
+      </li>
+      <% end %>
+      <% else %>
+      <li>
+        <%= link_to t('blacklight.header_links.login'), new_user_session_path%>
+      </li>
+      <% end %>
     <% end %>
-  <% end %>
 
-  <li class="nav-item">
-    <a href="<%= I18n.t('links.URL_ABOUT') %>" class="nav-link">
-      <%= I18n.t('labels.L_ABOUT') %>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="<%= I18n.t('links.URL_HERITAGE') %>" class="nav-link">
-      <%= I18n.t('labels.L_HERITAGE') %>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="<%= I18n.t('links.URL_CRKN') %>" class="nav-link">
-      <%= I18n.t('labels.L_CRKN_SHORT') %>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="<%= I18n.t('links.URL_NEW') %>" class="nav-link">
-      <%= I18n.t('labels.L_NEW') %>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a target="_blank" href="<%= I18n.t('links.URL_CITATION_GUIDE') %>" class="nav-link">
-      <%= I18n.t('labels.L_CITE') %>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="<%= I18n.t('links.URL_CONTACT') %>" class="nav-link">
-      <%= I18n.t('labels.L_CONTACT') %>
-    </a>
-  </li>
+    <li>
+      <a href="<%= I18n.t('links.URL_ABOUT') %>">
+        <%= I18n.t('labels.L_ABOUT') %>
+      </a>
+    </li>
+    <li>
+      <a href="<%= I18n.t('links.URL_HERITAGE') %>">
+        <%= I18n.t('labels.L_HERITAGE') %>
+      </a>
+    </li>
+    <li>
+      <a href="<%= I18n.t('links.URL_CRKN') %>">
+        <%= I18n.t('labels.L_CRKN_SHORT') %>
+      </a>
+    </li>
+    <li>
+      <a href="<%= I18n.t('links.URL_NEW') %>">
+        <%= I18n.t('labels.L_NEW') %>
+      </a>
+    </li>
+    <li>
+      <a target="_blank" href="<%= I18n.t('links.URL_CITATION_GUIDE') %>">
+        <%= I18n.t('labels.L_CITE') %>
+      </a>
+    </li>
+    <li>
+      <a href="<%= I18n.t('links.URL_CONTACT') %>">
+        <%= I18n.t('labels.L_CONTACT') %>
+      </a>
+    </li>
 
-</ul>
+  </ul>
+</div>
