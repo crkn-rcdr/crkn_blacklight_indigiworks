@@ -15,7 +15,7 @@
       <br/>
       <% if @component.to_s == 'div' %>
         <div class="crumbs">
-          <a href="/catalog">Collection search</a> <span>/</span> 
+          <a href="/catalog"><%= t('labels.L_SEARCH_BREADCRUMB') %></a> <span>/</span> 
           <% @document._source["collection_tsim"].each do |val| %>
             <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=<%= val %>"><%= val %></a>  / 
           <% end %>
@@ -41,7 +41,7 @@
       <% else %>
         <%= render(CollectionItemsComponent.new(documentId: @document.id)) do %><% end %>
       <% end %>
-      <h2 class="doc-record-title">Document Record</h2>
+      <h2 class="doc-record-title"><%= t('labels.L_RECORD') %></h2>
       <% end %>
       <%= metadata %>
       <% metadata_sections.each do |section| %>

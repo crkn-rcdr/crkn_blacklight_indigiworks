@@ -31,6 +31,10 @@ console.log("mirador", Mirador)
 
 let pageViewer = document.getElementById("my-mirador")
 if(pageViewer) {
+    let language = "en"
+    if (window.location.host.includes('canadiana-beta.fr')) {
+      language = "fr"
+    }
     const documentId = pageViewer.getAttribute("data-docid")
     let canvasIndex = 0
     const params = new URLSearchParams(window.location.search)
@@ -50,6 +54,7 @@ if(pageViewer) {
         }],
         view: "catalogueView",
         selectedTheme: 'light', // light | dark
+        language,
         window: {
 
             imageToolsOpen: false,

@@ -310,6 +310,10 @@ fr:
     L_NEW : Quoi de neuf
     L_READ_MORE: Lire la suite
     L_RECORD: Lire la suite
+    L_SEARCH_BREADCRUMB: Recherche dans la collection
+    L_ALL_ISSUES: Liste des numéros
+    L_VIEW_ISSUE: Voir le numéro
+    L_NO_ISSUES_MSG: Aucun problème dans cette série
   links:
     URL_ABOUT: "https://www.crkn-rcdr.ca/fr/canadiana"
     URL_CANADA: "https://www.canada.ca/fr.html"

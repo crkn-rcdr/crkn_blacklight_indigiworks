@@ -1,5 +1,5 @@
 <br/>
-<h2>All Issues</h2>
+<h2><%= t('labels.L_ALL_ISSUES') %></h2>
 <div class="row align-items-start" id="collection-items-list">
     <% if @collection_items %>
         <% if @collection_items.length > 0 %>
@@ -7,18 +7,20 @@
                 <% if collection_item['is_issue'] && collection_item['is_issue'][0] == "Yes" %>
                     <div class="card" style="width: 20rem; margin: 0 0.5rem 0.5rem 0.5rem;">
                         <div class="card-body">
-                            <h5 class="card-title"><%= collection_item['subtitle_tsim'][0] %></h5>
+                            <% if collection_item['subtitle_tsim'] %>
+                                <h5 class="card-title"><%= collection_item['subtitle_tsim'][0] %></h5>
+                            <% end %>
                             <% if collection_item['pub_date_si'] %>
                                 <p class="card-text"><%= collection_item['pub_date_si'][0] %></p>
                             <% end %>
-                            <a  class="btn btn-primary" href="/catalog/<%= collection_item['id'] %>" class="pv-go-to-index">View issue</a>
+                            <a  class="btn btn-primary" href="/catalog/<%= collection_item['id'] %>" class="pv-go-to-index"><%= t('labels.L_VIEW_ISSUE') %></a>
                         </div>
                     </div>
             <% end %>
             <% end %>
         <% else %>
             <p>
-                No items in this serial
+                <%= t('labels.L_NO_ISSUES_MSG') %>
             </p>
         <% end %>
     <% end %>
