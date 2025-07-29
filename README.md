@@ -88,7 +88,7 @@ Restarted solr to apply the changes:
 # Developing Locally
 Ensure docker and docker compose are installed. Then, enter the directory in your terminal, and run:
 
-`docker compose up --build --force-recreate`
+`docker compose up --build --force-recreate -d`
 
 # Deployment Instructions
 Run the following to push the image to docker hub:
