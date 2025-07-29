@@ -1,0 +1,118 @@
+
+<div class="carousel slide home-main-images ">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="/assets/oocihm.8_06251_308@20.jpg" alt="..." class="banner-img">
+            <div class="carousel-caption d-none d-md-block">
+                <span>Le magazine canadien : Vol. 51, n° 6 (octobre 1918)</span>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+
+<div class="home-search-wrap">
+    <div class="home-search">
+        <!--h2>Search the Canadiana Collection</h2-->
+        <%= render(Blacklight::SearchBarComponent.new(
+            url: '/catalog',
+            params: search_state.params_for_search.except(:qt))) %>
+    </div>
+</div>
+
+<br/>
+<div class="row justify-content-start home-cards">
+    <h2>Explorez les collections Canadiana</h2>
+</div>
+<div class="row justify-content-start home-cards">
+    <div class="col">
+        <div class="card">
+        <h5 class="card-header">Monographies</h5>
+            <img src="assets/monog.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <!--h5 class="card-title">Card title</h5-->
+                <p class="card-text">
+                    La collection des monographies, qui couvre trois siècles et demi d’histoire canadienne, s’avère une riche source de documentation primaire pour l’exploration d’un large éventail de sujets et de disciplines.
+                </p>
+            </div>
+            <!--ul class="list-group list-group-flush">
+            <li class="list-group-item">An item</li>
+            <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li>
+            </ul-->
+            <div class="card-body">
+                <!--a href="/#" class="card-link">Lire la suite</a-->
+                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Monographs+%7C+Monographies&q=&search_field=all_fields" class="card-link">Parcourir cette collection</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <h5 class="card-header">Publications en série : périodiques, publications annuelles et journaux</h5>
+            <img src="assets/serials.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text">
+                    La collection des publications en série englobe un large éventail de quotidiens, d’hebdomadaires, de revues spécialisées et de magazines grand public, ainsi que des annuaires de villes et des rapports annuels d’églises, d’écoles et de sociétés. 
+                </p>
+            </div>
+            <div class="card-body">
+                <!--a href="#" class="card-link">Lire la suite</a-->
+                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Serials+%7C+Publications+en+se%CC%81rie&q=&search_field=all_fields" class="card-link">Parcourir cette collection</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <h5 class="card-header">Publications gouvernementales</h5>
+            <img src="assets/govpubs.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text">
+                    La collection des publications gouvernementales d’avant 1920 contient plus de 1,7 million de pages de documents officiels et historiques de l’époque coloniale, ainsi que des gouvernements provinciaux et fédéral.
+                </p>
+            </div>
+            <div class="card-body">
+                <!--a href="#" class="card-link">Lire la suite</a-->
+                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Government Publications+%7C+Publications gouvernementales&q=&search_field=all_fields" class="card-link">Parcourir cette collection</a>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <h5 class="card-header">Cartes</h5>
+            <img src="assets/maps.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text">
+                    La collection de cartes contient actuellement près de 24 000 cartes canadiennes numérisées à partir de la Série nationale de référence cartographique à l’échelle 1:50 000. Les cartes datent de 1905 à 2012 et couvrent l’ensemble des provinces et territoires canadiens.
+                </p>
+            </div>
+            <div class="card-body">
+                <!--a href="#" class="card-link">Lire la suite</a
+                Naviguer par province/territoire  ou-->
+                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Maps+%7C+Cartes&q=&search_field=all_fields" class="card-link">Parcourir cette collection</a>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+
+<div class="container-fluid home-cards">
+    <h2>Déclaration sur les contenus et les descriptions problématiques dans Canadiana</h2>
+    <p>
+        Les collections de Canadiana renferment des documents créés sur cinq siècles, qui racontent une histoire du Canada incomplète, souvent déformée et parfois préjudiciable. Les contenus, les métadonnées et les descriptions des ressources faisant partie des collections de Canadiana contiennent un langage qui reflète les préjugés, les normes et les perspectives de l’époque à laquelle ils ont été créés. Il peut notamment s’agir de formulations blessantes et offensantes, de références culturelles et de stéréotypes. Afin de refléter fidèlement les attitudes et les points de vue de l’époque à laquelle ces archives historiques ont été créées, les objets des collections Canadiana demeurent inchangés. Reconnaissant l’impact blessant ou douloureux que ce langage et ces images peuvent avoir, le personnel du RCDR s’engage activement à :
+    </p>
+    <ul>
+        <li>soutenir et participer activement aux efforts visant à mettre à jour et à modifier les normes internationales en matière de descriptions, afin de garantir que celles-ci soient inclusives et respectueuses, et qu’elles ne causent pas de préjudice;</li>
+        <li>remplacer le langage inapproprié contenu dans les métadonnées et les descriptions de ressources introduites alors que les pratiques de catalogage traditionnelles étaient en vigueur.</li>
+    </ul>
+    <p>
+        Il s’agit d’un processus continu. Si vous voyez des documents dont le langage ou le contenu est inapproprié et que vous pensez que le RCDR devrait les examiner, veuillez remplir notre <a href="https://www.crkn-rcdr.ca/sites/crkn/files/2021-09/Final%20-%20Review%20Request%20Process%20for%20the%20Canadiana%20Collection%20-%20FR.pdf" target="_blank">Formulaire de demande de révision.</a>
+    </p>
+</div>
+
+
+
+
+
+
+
+
