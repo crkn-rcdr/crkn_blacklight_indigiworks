@@ -15,3 +15,12 @@ ul.document-metadata {
         max-width: 1260px;
     }
 }
+
+@media only screen and (max-width: 1024px) {
+    .document-title-heading {
+        max-width: 100%;
+        text-overflow: unset;
+        overflow: show;
+        white-space: wrap;
+    }
+}

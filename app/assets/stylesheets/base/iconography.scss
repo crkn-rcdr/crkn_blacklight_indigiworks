@@ -32,11 +32,6 @@
     .blacklight-format li .format-text {
         visibility: hidden;
     }
-    @media screen and (max-width: 768px) {
-    dt:not(.blacklight-format), dd:not(.blacklight-format) {
-        margin-left: 80px;
-    }
-    }
     .blacklight-format li .icon-ebook {
         background-image: url(/assets/icon-book.svg);
     }

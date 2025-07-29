@@ -31,10 +31,7 @@ console.log("mirador", Mirador)
 
 let pageViewer = document.getElementById("my-mirador")
 if(pageViewer) {
-    let language = "en"
-    if (window.location.host.includes('canadiana-beta.fr')) {
-      language = "fr"
-    }
+    let language = document.documentElement.lang || "en";
     const documentId = pageViewer.getAttribute("data-docid")
     let canvasIndex = 0
     const params = new URLSearchParams(window.location.search)

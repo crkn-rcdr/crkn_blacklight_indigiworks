@@ -27,6 +27,8 @@ class ApplicationController < ActionController::Base
 
   def set_content_language
     response.set_header('Content-Language', I18n.locale.to_s)
+    response.set_header('Access-Control-Expose-Headers', 'Content-Language')
+
   end
 
   def default_url_options

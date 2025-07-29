@@ -24,6 +24,7 @@
         padding: 0.5rem 0;
     }
 }
+
 .page-sidebar[aria-label="Tools"] {
     width: 100%;
     .card {
@@ -44,5 +45,10 @@
         h2, .h2 {
             font-size: 2rem !important;
         }
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .document-main-section {
+        max-width: 66vw !important;
     }
 }
