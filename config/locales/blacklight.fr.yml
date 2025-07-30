@@ -309,7 +309,8 @@ fr:
     L_LAC: Bibliothèque et Archives Canada
     L_NEW : Quoi de neuf
     L_READ_MORE: Lire la suite
-    L_RECORD: Lire la suite
+    L_RECORD: Métadonnées du document
+    L_SERIAL_RECORD: Métadonnées de publication en série
     L_SEARCH_BREADCRUMB: Recherche dans la collection
     L_ALL_ISSUES: Liste des numéros
     L_VIEW_ISSUE: Voir le numéro
