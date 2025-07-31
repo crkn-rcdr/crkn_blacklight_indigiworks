@@ -1,17 +1,21 @@
-require 'view_component/version'
-
 class CollectionItemsComponent < ViewComponent::Base
+  def initialize(documentId:, page: 1, per_page: 20)
+    @documentId = documentId
+    @page = page.to_i
+    @per_page = per_page.to_i
 
-    def initialize(documentId:)
-        @documentId = documentId
-        
-        rsolr = RSolr.connect :url => 'http://public:hdwi389e8d!ds@4.204.49.142/solr/blacklight_marc'
+    rsolr = RSolr.connect url: 'http://public:hdwi389e8d!ds@4.204.49.142/solr/blacklight_marc'
 
-        @response_data = rsolr.get 'select', :params => {
-            :rows => 500,
-            :q => 'serial_key:' + @documentId
-        } 
-        @collection_items = @response_data['response']['docs']
+    start = (@page - 1) * @per_page
 
-    end
+    @response_data = rsolr.get 'select', params: {
+      q: "serial_key:#{@documentId}",
+      start: start,
+      rows: @per_page
+    }
+
+    @collection_items = @response_data['response']['docs']
+    @total_items = @response_data['response']['numFound']
+    @total_pages = (@total_items.to_f / @per_page).ceil
+  end
 end

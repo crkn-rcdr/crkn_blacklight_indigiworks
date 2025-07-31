@@ -40,7 +40,11 @@
           <br/>
           <h2 class="doc-record-title"><%= t('labels.L_RECORD') %></h2>
         <% else %>
-          <%= render(CollectionItemsComponent.new(documentId: @document.id)) do %><% end %>
+          <%= render CollectionItemsComponent.new(
+            documentId: params[:id],
+            page: params[:page] || 1,
+            per_page: 20
+          ) do %><% end %>
           <h2 class="doc-record-title"><%= t('labels.L_SERIAL_RECORD') %></h2>
         <% end %>
       <% end %>
