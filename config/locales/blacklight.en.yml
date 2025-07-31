@@ -332,7 +332,7 @@ en:
     L_SERIAL_RECORD: Serial Publication Metadata
     L_SEARCH_BREADCRUMB: Collection search
     L_ALL_ISSUES: List of Issues
-    L_VIEW_ISSUE: View Issue
+    L_VIEW_ISSUE: View Details
     L_NO_ISSUES_MSG: No issues in this serial
     L_TERMS: Terms of Service
   links:

@@ -5,15 +5,17 @@
     <% @collection_items.each do |collection_item| %>
       <% if collection_item['is_issue']&.first == "Yes" %>
         <div class="card" style="width: 20rem; margin: 0 0.5rem 0.5rem 0.5rem;">
+        <div class="card-img-top" id="osd-<%= collection_item['id'] %>" style="height: 250px; border: 1px solid #ccc; margin-bottom: 1rem;"></div>
           <div class="card-body">
-            <div id="osd-<%= collection_item['id'] %>" style="height: 250px; border: 1px solid #ccc; margin-bottom: 1rem;"></div>
-
             <% if collection_item['subtitle_tsim'] %>
               <h5 class="card-title"><%= collection_item['subtitle_tsim'][0] %></h5>
             <% end %>
 
             <% if collection_item['pub_date_si'] %>
               <p class="card-text"><%= collection_item['pub_date_si'][0] %></p>
+            <% end %>
+            <% if collection_item['collection_tsim'] %>
+                <p class="card-text"><%= collection_item['collection_tsim'].last %></p>
             <% end %>
 
             <a class="btn btn-primary" href="/catalog/<%= collection_item['id'] %>">
