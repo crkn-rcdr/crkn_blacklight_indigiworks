@@ -57,3 +57,15 @@
 #collection-items-list .card {
     padding: 0;
 }
+
+.page-sidebar {
+    .endnote, .refworks {
+        display: none; /* TODO: find how to disable in src code */
+    }
+}
+
+
+footer {
+    margin-top: 3rem !important;
+    grid-area: footer;
+}

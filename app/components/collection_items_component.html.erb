@@ -4,8 +4,8 @@
   <% if @collection_items.present? %>
     <% @collection_items.each do |collection_item| %>
       <% if collection_item['is_issue']&.first == "Yes" %>
-        <div class="card" style="width: 20rem; margin: 0 0.5rem 0.5rem 0.5rem;">
-        <div class="card-img-top" id="osd-<%= collection_item['id'] %>" style="height: 250px; border: 1px solid #ccc; margin-bottom: 1rem;"></div>
+        <div class="card" style="width: 20rem; margin: 0 0.7rem 1rem 0.7rem;">
+        <div class="card-img-top" id="osd-<%= collection_item['id'] %>" style="height: 250px; border-bottom: 1px solid #ccc; margin-bottom: 1rem;"></div>
           <div class="card-body">
             <% if collection_item['subtitle_tsim'] %>
               <h5 class="card-title"><%= collection_item['subtitle_tsim'][0] %></h5>

@@ -111,9 +111,6 @@
 .home-cards .card-body p {
     height: 80px;
 }
-footer {
-    grid-area: footer;
-}
 footer a {
     color: white !important;
 }
@@ -144,6 +141,8 @@ footer a {
 }
 footer.bg-dark {
     background-color: black !important;
+    margin-top: 3rem !important;
+    grid-area: footer;
 }
 #main-container {
     min-height: 74vh;
