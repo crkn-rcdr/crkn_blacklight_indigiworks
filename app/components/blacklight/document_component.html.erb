@@ -31,7 +31,9 @@
       <% if @component == :div %>
         <% if @document._source["is_serial"] && @document._source['is_serial'][0] == "No" %>
           <% if @document._source["ark"] %>
-            <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>        
+            <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>      
+            <%= render(::IiifComponent.new(document: @document, term: params[:q] )) do %><% end %>  
+            <br/>
           <% else %>
             <br/>
             <img src="/assets/404.webp" class="not-found-icon"/>

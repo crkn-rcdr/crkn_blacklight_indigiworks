@@ -231,3 +231,16 @@ footer.bg-dark {
         min-height: 585px;
     }
 }
+
+.iiif-tools-list {
+    list-style-type:none;
+    padding-left: 0;
+    margin-bottom: 0;
+    > li:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+
+    > li:first-child {
+        margin-top: 0.5rem;
+    }
+}
