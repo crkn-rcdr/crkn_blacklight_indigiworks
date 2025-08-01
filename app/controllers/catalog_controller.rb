@@ -136,7 +136,7 @@ class CatalogController < ApplicationController
         segments: true,
         maxlength: 4,
         assumed_boundaries: [1300, Time.now.year + 2],
-        chart_js: true,
+        chart_js: false,
     }
     #config.add_facet_field 'pub_date_ssim', label: 'Publication Year', single: true
     # Suggest is the search box for the facet pop-ups
