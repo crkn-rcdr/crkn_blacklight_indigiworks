@@ -323,7 +323,7 @@ fr:
     URL_CARL: "http://www.carl-abrc.ca/fr/"
     URL_CNDHI: "https://www.cndhi-ipnpc.ca/fr"
     URL_CONTACT: "https://www.crkn-rcdr.ca/fr/nous-joindre"
-    URL_NEW: "https://www.crkn-rcdr.ca/fr/quoi-de-neuf-dans-les-collections-de-canadiana"
+    URL_NEW: "/catalog?lang=en&q=&search_field=all_fields&sort=date-added-desc"
     URL_CRKN: "https://www.crkn-rcdr.ca/fr"
     URL_GAC: "https://www.international.gc.ca/global-affairs-affaires-mondiales/home-accueil.aspx?lang=fra"
     URL_GAC_LIBRARY: "https://www.international.gc.ca/gac-amc/programs-programmes/jll-bjl/index.aspx?lang=fra"
