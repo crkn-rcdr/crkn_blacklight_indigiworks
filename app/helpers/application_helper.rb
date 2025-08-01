@@ -41,7 +41,7 @@ module ApplicationHelper
     field = args[:field].to_s
     args[:document][args[:field]].map! do |value|
       escaped_value = CGI.escape(value.to_s)
-      "<a href=\"/?f%5B#{field}_str%5D%5B%5D=#{escaped_value}&q=&search_field=all_fields\">#{value}</a>"
+      "<a href=\"/catalog?f%5B#{field}_str%5D%5B%5D=#{escaped_value}&q=&search_field=all_fields\">#{value}</a>"
     end
     value_str = Array(args[:document][args[:field]]).join('<br/>')
     value_str.sub!(/<br\/>$/, '')
