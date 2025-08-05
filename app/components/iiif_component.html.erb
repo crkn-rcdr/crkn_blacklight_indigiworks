@@ -6,53 +6,68 @@
       <img src="/assets/iiif_logo.png" height="48" style="margin-right:0.5rem;" />
       <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-          Open IIIF Manifest in...
+          Manifest Tools
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <li><a class="dropdown-item" href="https://mcgrawcenter.github.io/croppingtool/?manifest=<%= manifest_url %>" target="_blank">Image Cropper</a></li>
-          <li><a class="dropdown-item" href="https://pdiiif.jbaiter.de/?manifest=<%= manifest_url %>" target="_blank">Advanced PDF Generator</a></li>
-          <li><a class="dropdown-item" href="https://manifest-editor.digirati.services/share?iiif-content=<%= manifest_url %>" target="_blank">IIIF Manifest Editor</a></li>
+          <li><a class="dropdown-item" href="https://mcgrawcenter.github.io/croppingtool/?manifest=<%= manifest_url %>" target="_blank">Crop Image</a></li>
+          <li><a class="dropdown-item" href="https://pdiiif.jbaiter.de/?manifest=<%= manifest_url %>" target="_blank">Generate PDF</a></li>
+          <li><a class="dropdown-item" href="https://manifest-editor.digirati.services/share?iiif-content=<%= manifest_url %>" target="_blank">Edit Copy of Manifest</a></li>
         </ul>
       </div>
     </div>
   </li>
-  <li>
-    <div class="d-flex align-items-center gap-2">
-      <div>
-        <span style="margin-right:0.5rem">IIIF Manifest URL:</span>
-        <a id="iiif-manifest-url" href="<%= manifest_url %>"><%= manifest_url %></a>
-      </div>
-      <button class="btn btn-sm btn-outline-secondary" onclick="copyManifestUrl(this)">Copy</button>
-    </div>
-  </li>
+<li>
+  <button class="copy-link-btn" onclick="copyManifestUrl(this)">
+    <img src="/assets/link_icon.svg" class="icon" width="16" height="16"/>
+    <span>Copy Manifest Link</span>
+  </button>
+  <a id="iiif-manifest-url" href="<%= manifest_url %>" class="visually-hidden">
+    <%= manifest_url %>
+  </a>
+
+</li>
+
+
   <li><a href="">What is IIIF?</a></li>
 </ul>
-
-
 
 <script>
   function copyManifestUrl(button) {
     const text = document.getElementById("iiif-manifest-url").textContent.trim();
+    const label = button.querySelector("span");
 
-    // Use navigator.clipboard if available
+    if (!label) return;
+
+    const originalText = label.textContent;
+
+    function setCopiedFeedback() {
+      label.textContent = "Copied!";
+      setTimeout(() => {
+        label.textContent = originalText;
+      }, 2000);
+    }
+
     if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(() => {
-        button.textContent = "Copied!";
-        setTimeout(() => button.textContent = "Copy", 2000);
-      }).catch(err => {
-        console.error("Copy failed", err);
-        alert("Failed to copy to clipboard");
-      });
+      navigator.clipboard.writeText(text)
+        .then(setCopiedFeedback)
+        .catch(err => {
+          console.error("Copy failed", err);
+          alert("Failed to copy to clipboard.");
+        });
     } else {
-      // Fallback for insecure contexts (e.g. localhost without HTTPS)
       const tempInput = document.createElement("textarea");
       tempInput.value = text;
+      tempInput.style.position = "absolute";
+      tempInput.style.left = "-9999px";
       document.body.appendChild(tempInput);
       tempInput.select();
       try {
-        document.execCommand("copy");
-        button.textContent = "Copied!";
-        setTimeout(() => button.textContent = "Copy", 2000);
+        const success = document.execCommand("copy");
+        if (success) {
+          setCopiedFeedback();
+        } else {
+          alert("Copy not supported in this browser.");
+        }
       } catch (err) {
         console.error("Fallback copy failed", err);
         alert("Copy not supported in this browser.");
