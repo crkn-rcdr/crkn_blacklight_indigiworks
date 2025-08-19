@@ -37,10 +37,10 @@
         <div id="document-togglable-content" class="container-fluid">
           <div class="row flex-nowrap">
             <!-- Sidebar -->
-            <div id="sidebar" class="col collapse collapse-horizontal show">
+            <div id="toggle-menu" class="col collapse collapse-horizontal show">
               <div class="document-sidebar-header">
                 <h3><%= t('labels.L_SERIAL_RECORD') %></h3>
-                <button id="toggle-doc-metadata1" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="true" aria-controls="sidebar">
+                <button id="toggle-doc-metadata1" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
                     <img src="/assets/arrow-left.svg" width="32"/>
                 </button>
               </div>
@@ -53,7 +53,7 @@
             </div>
             <!-- Main Content -->
             <div id="doc-main" class="col">
-              <button id="toggle-doc-metadata2" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="true" aria-controls="sidebar">
+              <button id="toggle-doc-metadata2" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
                     <img src="/assets/file-ruled.svg" width="32"/>
               </button>
               <% if @document._source["is_serial"]&.first == "No" %>
@@ -64,13 +64,11 @@
                   <p>Sorry, there was a problem loading the images for this item.</p>
                 <% end %>
               <% else %>
-                <div class="p-3">
-                  <%= render CollectionItemsComponent.new(
-                    documentId: params[:id],
-                    page: params[:page] || 1,
-                    per_page: 12
-                  ) %>
-                </div>
+                <%= render CollectionItemsComponent.new(
+                  documentId: params[:id],
+                  page: params[:page] || 1,
+                  per_page: 12
+                ) %>
               <% end %>
             </div>
           </div>
