@@ -6,7 +6,11 @@
         <div class="card-img-top" id="osd-<%= collection_item['id'] %>" style="height: 250px; border-bottom: 1px solid #ccc; margin-bottom: 1rem;"></div>
           <div class="card-body">
             <% if collection_item['subtitle_tsim'] %>
-              <h5 class="card-title"><%= collection_item['subtitle_tsim'][0] %></h5>
+              <h5 class="card-title">
+                <a class="" href="/catalog/<%= collection_item['id'] %>">
+                  <%= collection_item['subtitle_tsim'][0] %>
+                </a>
+              </h5>
             <% end %>
 
             <% if collection_item['pub_date_si'] %>
@@ -15,10 +19,6 @@
             <% if collection_item['collection_tsim'] %>
                 <p class="card-text"><%= collection_item['collection_tsim'].last %></p>
             <% end %>
-
-            <a class="btn btn-primary" href="/catalog/<%= collection_item['id'] %>">
-              <%= t('labels.L_VIEW_ISSUE') %>
-            </a>
           </div>
         </div>
       <% end %>
