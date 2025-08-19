@@ -80,9 +80,11 @@
     transition: transform 0.3s ease-in-out;
     min-width: 350px;
     max-width: 350px;
-    border-right: 1px solid rgba(0, 0, 0, 0.175);
+    /*border: 1px solid rgba(0, 0, 0, 0.175);*/
     background-color: #fff; /* to cover content underneath */
     z-index: 1020;          /* keep above main content when sliding */
+    padding-left: 0 !important;
+    padding-top: 1rem !important
 }
 
 /* When sidebar is collapsed, slide it out to the left */
@@ -91,8 +93,11 @@
 }
 
 /* Ensure main content adjusts */
-main {
+#doc-main {
     transition: margin-left 0.3s ease-in-out;
+    margin:0 !important;
+    padding: 0 !important;
+        position: relative;
 }
 
 /* Responsive adjustments */
@@ -106,18 +111,25 @@ main {
     display:none;
 }
 
+#toggle-doc-metadata2 {
+    position: absolute;
+    z-index: 1000;
+    left: -70px;
+    top:1rem;
+}
+
 #document-togglable-content {
     background-color: white;
-    border: 1px solid rgba(0, 0, 0, 0.175);
     border-radius: 0.375rem;
 }
-#document-togglable-content #sidebar,  #document-togglable-content #doc-main {
+#document-togglable-content #sidebar {
     /*height: 90vh;*/
     overflow-y: auto; 
 } 
 
 #document-togglable-content #sidebar {
     height: 100vh;
+    border-radius: 0.375rem;
 }
 
 #sidebar {
