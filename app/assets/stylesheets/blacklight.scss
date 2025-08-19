@@ -20,8 +20,14 @@
     }
 }
 .document-main-section {
+    .document-record-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
     .doc-record-title {
-        padding: 0.5rem 0;
+        padding: 0;
+        margin: 0;
     }
 }
 
@@ -62,4 +68,34 @@
     .endnote, .refworks {
         display: none; /* TODO: find how to disable in src code */
     }
+}
+
+/* Sidebar styles */
+#sidebar {
+    transform: translateX(0); /* Visible by default */
+    transition: transform 0s ease-in-out;
+    min-width: 250px;
+    max-width: 250px;
+    background-color: #f8f9fa;
+}
+
+/* When sidebar is collapsed, slide it out to the left */
+#sidebar:not(.show) {
+    transform: translateX(-100%);
+}
+
+/* Ensure main content adjusts */
+main {
+    transition: margin-left 0s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #sidebar {
+        min-width: 200px;
+        max-width: 200px;
+    }
+}
+#toggle-doc-metadata2[aria-expanded="true"] {
+    display:none;
 }

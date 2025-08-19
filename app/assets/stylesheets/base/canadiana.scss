@@ -60,6 +60,7 @@
     width: fit-content !important;
     padding: 1.5rem;
     margin: auto;
+    border-radius: 15px;
 }
 .home-search {
     color: white !important;
@@ -86,6 +87,8 @@
     width: fit-content !important;
     left: 58% !important;
     min-width: 410px;
+    border-radius: 15px;
+    /*border-radius: 250px 0 250px 0;*/
 }
 .carousel-caption h5 {
     margin-bottom: 0 !important;

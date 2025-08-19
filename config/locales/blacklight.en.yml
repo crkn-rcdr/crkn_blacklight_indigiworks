@@ -328,8 +328,8 @@ en:
     L_LAC: Libraries and Archives Canada
     L_NEW : "What's New"
     L_READ_MORE: Read more
-    L_RECORD: Document Metadata
-    L_SERIAL_RECORD: Serial Publication Metadata
+    L_RECORD: Metadata
+    L_SERIAL_RECORD: Metadata
     L_SEARCH_BREADCRUMB: Collection search
     L_ALL_ISSUES: List of Issues
     L_VIEW_ISSUE: View Details

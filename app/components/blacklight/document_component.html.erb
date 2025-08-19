@@ -2,65 +2,97 @@
   id: @id,
   data: {
     'document-id': @document.id.to_s.parameterize,
-    'document-counter': @counter,
+    'document-counter': @counter
   },
   itemscope: true,
   itemtype: @document.itemtype,
   class: classes.flatten.join(' ') do %>
+
   <%= header %>
+
   <% if body.present? %>
     <%= body %>
   <% else %>
     <div class="document-main-section">
       <br/>
+
       <% if @component.to_s == 'div' %>
         <div class="crumbs">
-          <a href="/catalog"><%= t('labels.L_SEARCH_BREADCRUMB') %></a> <span>/</span> 
+          <a href="/catalog"><%= t('labels.L_SEARCH_BREADCRUMB') %></a> <span>/</span>
           <% @document._source["collection_tsim"].each do |val| %>
-            <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=<%= val %>"><%= val %></a>  / 
+            <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=<%= val %>"><%= val %></a> /
           <% end %>
-          <% if @document._source['is_issue'] && @document._source['is_issue'][0] == "Yes" && @document._source['serial_title'] %>
-            <a href="/catalog/<%=  @document._source['serial_key'][0] %>"><%=  @document._source['serial_title'][0] %></a>  / 
+          <% if @document._source['is_issue']&.first == "Yes" && @document._source['serial_title'] %>
+            <a href="/catalog/<%= @document._source['serial_key'][0] %>"><%= @document._source['serial_title'][0] %></a> /
           <% end %>
         </div>
         <br/>
       <% end %>
+
       <%= title %>
       <%= embed %>
       <%= content %>
+
       <% if @component == :div %>
-        <% if @document._source["is_serial"] && @document._source['is_serial'][0] == "No" %>
-          <% if @document._source["ark"] %>
-            <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>      
-            <%= render(::IiifComponent.new(document: @document, term: params[:q] )) do %><% end %>  
-            <br/>
-          <% else %>
-            <br/>
-            <img src="/assets/404.webp" class="not-found-icon"/>
-            <p>Sorry, there was a problem loading the images for this item. Please wait a while, and try again, or <a href="https://www.crkn-rcdr.ca/en/contact-us" target="_blank">reach out to us for assistance.</a></p>
-          <% end %>
-          <br/>
-          <h2 class="doc-record-title"><%= t('labels.L_RECORD') %></h2>
-        <% else %>
-          <%= render CollectionItemsComponent.new(
-            documentId: params[:id],
-            page: params[:page] || 1,
-            per_page: 20
-          ) do %><% end %>
-          <h2 class="doc-record-title"><%= t('labels.L_SERIAL_RECORD') %></h2>
+        <div class="container-fluid">
+          <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <div id="sidebar" class="col collapse collapse-horizontal show">
+              <div class="p-3">
+                  <h3><%= t('labels.L_SERIAL_RECORD') %></h3>
+                  <button id="toggle-doc-metadata1" class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="true" aria-controls="sidebar">
+                      <i class="bi bi-list"></i> Toggle Sidebar
+                  </button>
+                  <div>  
+                    <%= metadata %>
+                    <% metadata_sections.each do |section| %>
+                      <%= section %>
+                    <% end %>
+                  </div>
+              </div>
+            </div>
+            <!-- Main Content -->
+            <main class="col">
+              <div class="p-3">
+                  <button id="toggle-doc-metadata2" class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="true" aria-controls="sidebar">
+                      <i class="bi bi-list"></i> Toggle Sidebar
+                  </button>
+                  <div>
+                  <% if @document._source["is_serial"]&.first == "No" %>
+                    <% if @document._source["ark"] %>
+                      <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
+                      <%= render(::IiifComponent.new(document: @document, term: params[:q])) %>
+                    <% else %>
+                      <img src="/assets/404.webp" class="not-found-icon"/>
+                      <p>Sorry, there was a problem loading the images for this item.</p>
+                    <% end %>
+                  <% else %>
+                    <%= render CollectionItemsComponent.new(
+                      documentId: params[:id],
+                      page: params[:page] || 1,
+                      per_page: 20
+                    ) %>
+                  <% end %>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+
+      <% else %>
+        <%= metadata %>
+        <% metadata_sections.each do |section| %>
+          <%= section %>
         <% end %>
+        <%= thumbnail %>
       <% end %>
-      <%= metadata %>
-      <% metadata_sections.each do |section| %>
-        <%= section %>
-      <% end %>
+
       <br/>
       <% partials.each do |partial| %>
         <%= partial %>
       <% end %>
     </div>
-
-    <%= thumbnail %>
   <% end %>
+
   <%= footer %>
 <% end %>
