@@ -181,7 +181,7 @@ class CatalogController < ApplicationController
     #   Published Date
     config.add_index_field 'pub_date_si', label: ->(_field, _config) { I18n.t('blacklight.metadata.date.label') }
     #   Identifier
-    config.add_index_field 'id', label: ->(_field, _config) { I18n.t('blacklight.metadata.id.label') }
+    # config.add_index_field 'id', label: ->(_field, _config) { I18n.t('blacklight.metadata.id.label') }
     #   Subject
     config.add_index_field 'subject_ssim', label: ->(_field, _config) { I18n.t('blacklight.metadata.subject.label') }, helper_method: :format_facet
     #   Collection
@@ -230,7 +230,7 @@ class CatalogController < ApplicationController
     #   Published Date
     config.add_show_field 'pub_date_si', label: ->(_field, _config) { I18n.t('blacklight.metadata.date.label') }
     #   Identifier
-    config.add_show_field 'id', label: ->(_field, _config) { I18n.t('blacklight.metadata.id.label') }
+    # config.add_show_field 'id', label: ->(_field, _config) { I18n.t('blacklight.metadata.id.label') }
     config.add_show_field 'subject_ssim', label: ->(_field, _config) { I18n.t('blacklight.metadata.subject.label') }, helper_method: :format_facet
     config.add_show_field 'collection_tsim', label: ->(_field, _config) { I18n.t('blacklight.metadata.material.label') }, helper_method: :format_facet
     #   Depositor

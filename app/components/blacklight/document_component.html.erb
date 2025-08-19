@@ -34,19 +34,17 @@
       <%= content %>
 
       <% if @component == :div %>
-      
-        <button id="toggle-doc-metadata2" class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="true" aria-controls="sidebar">
-            <i class="bi bi-list"></i> Toggle Sidebar
-        </button>
         <div id="document-togglable-content" class="container-fluid">
           <div class="row flex-nowrap">
             <!-- Sidebar -->
             <div id="sidebar" class="col collapse collapse-horizontal show">
               <div class="p-1">
-                  <h3><%= t('labels.L_SERIAL_RECORD') %></h3>
-                  <button id="toggle-doc-metadata1" class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="true" aria-controls="sidebar">
-                      <i class="bi bi-list"></i> Toggle Sidebar
-                  </button>
+                  <div class="document-sidebar-header">
+                    <h3><%= t('labels.L_SERIAL_RECORD') %></h3>
+                    <button id="toggle-doc-metadata1" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="true" aria-controls="sidebar">
+                        <img src="/assets/arrow-left.svg" width="32"/>
+                    </button>
+                  </div>
                   <div>  
                     <%= metadata %>
                     <% metadata_sections.each do |section| %>
@@ -57,24 +55,25 @@
             </div>
             <!-- Main Content -->
             <div id="doc-main" class="col">
-              <div class="p-3">
-                  <div>
-                  <% if @document._source["is_serial"]&.first == "No" %>
-                    <% if @document._source["ark"] %>
-                      <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
-                    <% else %>
-                      <img src="/assets/404.webp" class="not-found-icon"/>
-                      <p>Sorry, there was a problem loading the images for this item.</p>
-                    <% end %>
-                  <% else %>
-                    <%= render CollectionItemsComponent.new(
-                      documentId: params[:id],
-                      page: params[:page] || 1,
-                      per_page: 20
-                    ) %>
-                  <% end %>
+              <button id="toggle-doc-metadata2" class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="true" aria-controls="sidebar">
+                <i class="bi bi-list"></i> Toggle Sidebar
+              </button>
+              <% if @document._source["is_serial"]&.first == "No" %>
+                <% if @document._source["ark"] %>
+                  <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
+                <% else %>
+                  <img src="/assets/404.webp" class="not-found-icon"/>
+                  <p>Sorry, there was a problem loading the images for this item.</p>
+                <% end %>
+              <% else %>
+                <div class="p-3">
+                  <%= render CollectionItemsComponent.new(
+                    documentId: params[:id],
+                    page: params[:page] || 1,
+                    per_page: 10
+                  ) %>
                 </div>
-              </div>
+              <% end %>
             </div>
           </div>
         </div>
