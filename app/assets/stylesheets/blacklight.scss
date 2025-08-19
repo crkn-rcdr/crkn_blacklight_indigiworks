@@ -73,9 +73,9 @@
 /* Sidebar styles */
 #sidebar {
     transform: translateX(0); /* Visible by default */
-    transition: transform 0s ease-in-out;
-    min-width: 250px;
-    max-width: 250px;
+    transition: transform 0.3s ease-in-out;
+    min-width: 350px;
+    max-width: 350px;
     background-color: #f8f9fa;
 }
 
@@ -86,7 +86,7 @@
 
 /* Ensure main content adjusts */
 main {
-    transition: margin-left 0s ease-in-out;
+    transition: margin-left 0.3s ease-in-out;
 }
 
 /* Responsive adjustments */
