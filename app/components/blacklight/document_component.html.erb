@@ -55,7 +55,7 @@
             <div id="doc-main" class="col">
               <% if @document._source["is_serial"]&.first == "No" %>
                 <button id="toggle-doc-metadata2" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
-                      <img src="/assets/layout-sidebar.svg" width="32"/> <span>Show Details</span>
+                      <img src="/assets/layout-sidebar.svg" width="32"/> <span><%= t('labels.L_RECORD') %></span>
                 </button>
                 <% if @document._source["ark"] %>
                   <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
@@ -65,7 +65,7 @@
                 <% end %>
               <% else %>
               <button id="toggle-doc-metadata3" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
-                    <img src="/assets/layout-sidebar.svg" width="32"/> <span>Show Details</span>
+                    <img src="/assets/layout-sidebar.svg" width="32"/> <span><%= t('labels.L_SERIAL_RECORD') %></span>
               </button>
                 <%= render CollectionItemsComponent.new(
                   documentId: params[:id],
