@@ -129,6 +129,8 @@
     top:0.2rem;*/
     display: flex;
     align-items: center;
+    margin-left: 0.1rem;
+    margin-bottom: 0.3rem;
     span {
         font-size: 20px !important;
         margin-left:0.5rem;
@@ -136,7 +138,7 @@
 }
 #toggle-doc-metadata3 {
     margin-left: 0.5rem;
-    margin-bottom: 0.1rem;
+    margin-bottom: 0.5rem;
 }
 #document-togglable-content {
     background-color: white;
@@ -177,4 +179,76 @@
 }
 .btn-outline-custom:hover {
     background-color: rgba(0, 0, 0, 0.175);
+}
+
+div[title="Zoom in"] img,
+div[title="Zoom out"] img,
+div[title="Go home"] img,
+div[title="Toggle full page"] img,
+div[title="Previous page"] img,
+div[title="Next page"] img {
+  display: none !important;
+}
+
+// Common toolbar button styles
+div[title="Zoom in"],
+div[title="Zoom out"],
+div[title="Go home"],
+div[title="Toggle full page"],
+div[title="Previous page"],
+div[title="Next page"] {
+  cursor: pointer !important;
+  position: relative; // needed for ::before positioning
+  height: 50px;
+  width: 50px;
+  background-color: rgba(255, 255, 255, 0.85) !important;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+    pointer-events: none; // don’t block clicks
+    background: center/contain no-repeat;
+  }
+}
+
+// Individual icons
+div[title="Zoom in"]::before {
+  background-image: url('/assets/zoomin_rest.png');
+}
+
+div[title="Zoom out"]::before {
+  background-image: url('/assets/zoomout_rest.png');
+}
+
+div[title="Go home"]::before {
+  background-image: url('/assets/home_rest.png');
+}
+
+div[title="Toggle full page"]::before {
+  background-image: url('/assets/fullpage_rest.png');
+}
+
+div[title="Previous page"]::before {
+  background-image: url('/assets/previous_rest.png');
+}
+
+div[title="Next page"]::before {
+  background-image: url('/assets/next_rest.png');
+}
+
+// Fullscreen override icon
+.card-img-top.fullpage div[title="Toggle full page"]::before {
+  background-image: url('/assets/arrows-angle-contract.png');
+}
+
+// Style toolbar container
+.openseadragon-canvas + div {
+  border-radius: 50px !important;
+  overflow: hidden !important;
+  margin: 0.5rem !important;
 }

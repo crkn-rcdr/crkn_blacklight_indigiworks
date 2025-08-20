@@ -128,17 +128,7 @@ if(pageViewer) {
     
           },
           osdConfig: {
-            prefixUrl: "/assets/",
-            // Default config used for OpenSeadragon
-            showNavigationControl: 1,
-            /**
-             * fullpage_rest.png:1   GET http://localhost:3000/images/fullpage_rest.png 404 (Not Found)
-                fullpage_pressed.png:1   GET http://localhost:3000/images/fullpage_pressed.png 404 (Not Found)
-                fullpage_grouphover.png:1   GET http://localhost:3000/images/fullpage_grouphover.png 404 (Not Found)
-            zoomin
-            zoomout
-            home
-                */
+            prefixUrl: "/assets/"
           },
           workspace: {
     
@@ -152,7 +142,7 @@ if(pageViewer) {
     
             height: 5000, // height of the elastic mode's virtual canvas
     
-            showZoomControls: false, // Configure if zoom controls should be displayed by default
+            showZoomControls: true, // Configure if zoom controls should be displayed by default
     
             type: "mosaic", // Which workspace type to load by default. Other possible values are "elastic". If "mosaic" or "elastic" are not selected no worksapce type will be used.
     
