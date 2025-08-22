@@ -2,6 +2,9 @@
 @import 'blacklight/blacklight';
 @import 'blacklight_marc';
 
+i {
+    font-family: "bootstrap-icons" !important;
+}
 .show-document {
     width:100%;
 }
@@ -89,6 +92,11 @@
     overflow-wrap: break-word;
 }
 
+button i {
+    font-size: 24px;
+    color: #707070;
+}
+
 @media (max-width: 1350px) {
     #toggle-menu {
         max-width: 250px;
@@ -142,7 +150,7 @@
 }
 #document-togglable-content {
     background-color: white;
-    border-radius: 0.375rem;
+    border-radius: 7px;
 }
 #document-togglable-content #toggle-menu {
     /*height: 90vh;*/
@@ -151,7 +159,7 @@
 
 #document-togglable-content #toggle-menu {
     height: 100vh;
-    border-radius: 0.375rem;
+    border-radius: 7px;
 }
 
 #toggle-menu {
@@ -181,74 +189,81 @@
     background-color: rgba(0, 0, 0, 0.175);
 }
 
-div[title="Zoom in"] img,
-div[title="Zoom out"] img,
-div[title="Go home"] img,
-div[title="Toggle full page"] img,
-div[title="Previous page"] img,
-div[title="Next page"] img {
-  display: none !important;
-}
+.card, .card-img-top {
+    div[title="Zoom in"] img,
+    div[title="Zoom out"] img,
+    div[title="Go home"] img,
+    div[title="Toggle full page"] img,
+    div[title="Previous page"] img,
+    div[title="Next page"] img {
+        display: none !important;
+    }
 
-// Common toolbar button styles
-div[title="Zoom in"],
-div[title="Zoom out"],
-div[title="Go home"],
-div[title="Toggle full page"],
-div[title="Previous page"],
-div[title="Next page"] {
-  cursor: pointer !important;
-  position: relative; // needed for ::before positioning
-  height: 50px;
-  width: 50px;
-  background-color: rgba(255, 255, 255, 0.85) !important;
+    // Common toolbar button styles
+    div[title="Zoom in"],
+    div[title="Zoom out"],
+    div[title="Go home"],
+    div[title="Toggle full page"],
+    div[title="Previous page"],
+    div[title="Next page"] {
+        cursor: pointer !important;
+        position: relative; // needed for ::before positioning
+        height: 50px;
+        width: 50px;
+        font-family: "bootstrap-icons" !important;
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 24px;
-    height: 24px;
-    transform: translate(-50%, -50%);
-    pointer-events: none; // don’t block clicks
-    background: center/contain no-repeat;
-  }
-}
+        &::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            transform: translate(-50%, -50%);
+            pointer-events: none; // don’t block clicks
+            background: center/contain no-repeat;
+            color: #707070  !important;
+        }
+    }
 
-// Individual icons
-div[title="Zoom in"]::before {
-  background-image: url('/assets/zoomin_rest.png');
-}
+    // Individual icons
+    div[title="Zoom in"]::before {
+        content: "\f64d", // bi-zoom-in
+    }
 
-div[title="Zoom out"]::before {
-  background-image: url('/assets/zoomout_rest.png');
-}
+    div[title="Zoom out"]::before {
+        content: "\f63b";
+    }
 
-div[title="Go home"]::before {
-  background-image: url('/assets/home_rest.png');
-}
+    div[title="Go home"]::before {
+        content: "\f425";
+    }
 
-div[title="Toggle full page"]::before {
-  background-image: url('/assets/fullpage_rest.png');
-}
+    div[title="Toggle full page"]::before {
+        content: "\f14a";
+    }
 
-div[title="Previous page"]::before {
-  background-image: url('/assets/previous_rest.png');
-}
+    div[title="Previous page"]::before {
+        content: "\f12f";
+    }
 
-div[title="Next page"]::before {
-  background-image: url('/assets/next_rest.png');
-}
+    div[title="Next page"]::before {
+        content: "\f138";
+    }
 
-// Fullscreen override icon
-.card-img-top.fullpage div[title="Toggle full page"]::before {
-  background-image: url('/assets/arrows-angle-contract.png');
-}
+    // Fullscreen override icon
+    .card-img-top.fullpage div[title="Toggle full page"]::before, .mirador-osd-container.fullpage div[title="Toggle full page"]::before {
+        content: "\f149";
+    }
 
-// Style toolbar container
-.openseadragon-canvas + div {
-  border-radius: 50px !important;
-  overflow: hidden !important;
-  margin: 0.5rem !important;
+    // Style toolbar container
+    .openseadragon-canvas + div {
+        border-radius: 50px !important;
+        overflow: hidden !important;
+        margin: 0.5rem !important;
+        > div {
+            background-color: rgba(255, 255, 255, 0.85) !important;
+        }
+    }
+
 }
