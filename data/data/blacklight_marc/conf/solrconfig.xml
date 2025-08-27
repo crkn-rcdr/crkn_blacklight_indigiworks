@@ -609,36 +609,32 @@
        Not all Request Handlers are defined in the solrconfig.xml, many are implicit.
     -->
   <!-- Primary search handler, expected by most clients, examples and UI frameworks -->
- <requestHandler name="search" class="solr.SearchHandler" default="true">
-    <!-- default values for query parameters can be specified, these
-         will be overridden by parameters in the request
-      -->
+  <requestHandler name="search" class="solr.SearchHandler" default="true">
      <lst name="defaults">
        <str name="defType">edismax</str>
        <str name="echoParams">explicit</str>
        <str name="q.alt">*:*</str>
+       
        <str name="mm">2&lt;-1 5&lt;-2 6&lt;90%</str>
        <int name="qs">1</int>
        <int name="ps">2</int>
        <float name="tie">0.01</float>
-       <!-- this qf and pf are used by default, if not otherwise specified by
-            client. The default blacklight_config will use these for the
-            "keywords" search. See the author_qf/author_pf, title_qf, etc
-            below, which the default blacklight_config will specify for
-            those searches. You may also be interested in:
-            http://wiki.apache.org/solr/LocalParams
-       -->
-        <str name="qf">
+
+       <str name="qf">
           id
           title_tsim
           title_addl_tsim
           author_tsim
           subject_tsim
           all_text_timv
-        </str>
-        <str name="pf">
+          tx_gen             <!-- added -->
+          tx_hant            <!-- added -->
+       </str>
+       <str name="pf">
           all_text_timv^10
-        </str>
+          tx_gen^8           <!-- added -->
+          tx_hant^8          <!-- added -->
+       </str>
 
        <str name="author_qf">
           author_tsim
@@ -657,10 +653,7 @@
        <str name="subject_pf">
        </str>
 
-       <str name="fl">
-         *,
-         score
-       </str>
+       <str name="fl">*,score</str>
 
        <str name="facet">true</str>
        <str name="facet.mincount">1</str>
@@ -673,57 +666,46 @@
        <str name="spellcheck.extendedResults">true</str>
        <str name="spellcheck.collate">false</str>
        <str name="spellcheck.count">5</str>
-
      </lst>
-    <arr name="last-components">
-      <str>spellcheck</str>
-    </arr>
+     <arr name="last-components">
+       <str>spellcheck</str>
+     </arr>
   </requestHandler>
 
+
   <requestHandler name="/advanced" class="solr.SearchHandler">
-    <!-- a lucene request handler for using the JSON Query DSL,
-         specifically for advanced search.
-         Using a separate requestHandler is a workaround to
-         https://issues.apache.org/jira/browse/SOLR-16916, although
-         it could be desirable for other reasons as well.
-      -->
      <lst name="defaults">
        <str name="defType">lucene</str>
        <str name="echoParams">explicit</str>
-        <str name="df">title_tsim</str>
-        <str name="qf">
+       <str name="df">title_tsim</str>
+
+       <str name="qf">
           id
           title_tsim
           title_addl_tsim
           author_tsim
           subject_tsim
           all_text_timv
-        </str>
-        <str name="pf">
+          tx_gen             <!-- added -->
+          tx_hant            <!-- added -->
+       </str>
+       <str name="pf">
           all_text_timv^10
-        </str>
+          tx_gen^8           <!-- added -->
+          tx_hant^8          <!-- added -->
+       </str>
 
-       <str name="author_qf">
-          author_tsim
-       </str>
-       <str name="author_pf">
-       </str>
+       <str name="author_qf">author_tsim</str>
+       <str name="author_pf"></str>
        <str name="title_qf">
           title_tsim
           title_addl_tsim
        </str>
-       <str name="title_pf">
-       </str>
-       <str name="subject_qf">
-          subject_tsim
-       </str>
-       <str name="subject_pf">
-       </str>
+       <str name="title_pf"></str>
+       <str name="subject_qf">subject_tsim</str>
+       <str name="subject_pf"></str>
 
-       <str name="fl">
-         *,
-         score
-       </str>
+       <str name="fl">*,score</str>
 
        <str name="facet">true</str>
        <str name="facet.mincount">1</str>
@@ -736,12 +718,69 @@
        <str name="spellcheck.extendedResults">true</str>
        <str name="spellcheck.collate">false</str>
        <str name="spellcheck.count">5</str>
-
      </lst>
-    <arr name="last-components">
-      <str>spellcheck</str>
-    </arr>
+     <arr name="last-components">
+       <str>spellcheck</str>
+     </arr>
   </requestHandler>
+
+
+  <requestHandler name="/select" class="solr.SearchHandler">
+     <lst name="defaults">
+       <str name="defType">edismax</str>
+       <str name="echoParams">explicit</str>
+       <str name="q.alt">*:*</str>
+       
+       <str name="mm">2&lt;-1 5&lt;-2 6&lt;90%</str>
+       <int name="qs">1</int>
+       <int name="ps">2</int>
+       <float name="tie">0.01</float>
+
+       <str name="qf">
+          id
+          title_tsim
+          title_addl_tsim
+          author_tsim
+          subject_tsim
+          all_text_timv
+          tx_gen             <!-- added -->
+          tx_hant            <!-- added -->
+       </str>
+       <str name="pf">
+          all_text_timv^10
+          tx_gen^8           <!-- added -->
+          tx_hant^8          <!-- added -->
+       </str>
+
+       <str name="author_qf">author_tsim</str>
+       <str name="author_pf"></str>
+       <str name="title_qf">
+          title_tsim
+          title_addl_tsim
+       </str>
+       <str name="title_pf"></str>
+       <str name="subject_qf">subject_tsim</str>
+       <str name="subject_pf"></str>
+
+       <str name="fl">*,score</str>
+
+       <str name="facet">true</str>
+       <str name="facet.mincount">1</str>
+       <str name="facet.limit">10</str>
+       <str name="facet.field">subject_ssim</str>
+
+       <str name="spellcheck">true</str>
+       <str name="spellcheck.dictionary">default</str>
+       <str name="spellcheck.onlyMorePopular">true</str>
+       <str name="spellcheck.extendedResults">true</str>
+       <str name="spellcheck.collate">false</str>
+       <str name="spellcheck.count">5</str>
+     </lst>
+     <arr name="last-components">
+       <str>spellcheck</str>
+     </arr>
+  </requestHandler>
+
 
   <requestHandler name="permissions" class="solr.SearchHandler" >
     <lst name="defaults">
@@ -780,78 +819,6 @@
       <str name="wt">json</str>
       <str name="indent">true</str>
     </lst>
-  </requestHandler>
-
-  <!-- A request handler that returns indented JSON by default -->
-  <requestHandler name="/select" class="solr.SearchHandler">
-    <!-- default values for query parameters can be specified, these
-         will be overridden by parameters in the request
-      -->
-     <lst name="defaults">
-       <str name="defType">edismax</str>
-       <str name="echoParams">explicit</str>
-       <str name="q.alt">*:*</str>
-       <str name="mm">2&lt;-1 5&lt;-2 6&lt;90%</str>
-       <int name="qs">1</int>
-       <int name="ps">2</int>
-       <float name="tie">0.01</float>
-       <!-- this qf and pf are used by default, if not otherwise specified by
-            client. The default blacklight_config will use these for the
-            "keywords" search. See the author_qf/author_pf, title_qf, etc
-            below, which the default blacklight_config will specify for
-            those searches. You may also be interested in:
-            http://wiki.apache.org/solr/LocalParams
-       -->
-        <str name="qf">
-          id
-          title_tsim
-          title_addl_tsim
-          author_tsim
-          subject_tsim
-          all_text_timv
-        </str>
-        <str name="pf">
-          all_text_timv^10
-        </str>
-
-       <str name="author_qf">
-          author_tsim
-       </str>
-       <str name="author_pf">
-       </str>
-       <str name="title_qf">
-          title_tsim
-          title_addl_tsim
-       </str>
-       <str name="title_pf">
-       </str>
-       <str name="subject_qf">
-          subject_tsim
-       </str>
-       <str name="subject_pf">
-       </str>
-
-       <str name="fl">
-         *,
-         score
-       </str>
-
-       <str name="facet">true</str>
-       <str name="facet.mincount">1</str>
-       <str name="facet.limit">10</str>
-       <str name="facet.field">subject_ssim</str>
-
-       <str name="spellcheck">true</str>
-       <str name="spellcheck.dictionary">default</str>
-       <str name="spellcheck.onlyMorePopular">true</str>
-       <str name="spellcheck.extendedResults">true</str>
-       <str name="spellcheck.collate">false</str>
-       <str name="spellcheck.count">5</str>
-
-    </lst>
-    <arr name="last-components">
-      <str>spellcheck</str>
-    </arr>
   </requestHandler>
 
   <!-- Shared parameters for multiple Request Handlers -->

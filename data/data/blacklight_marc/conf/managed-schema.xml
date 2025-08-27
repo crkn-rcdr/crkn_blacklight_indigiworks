@@ -447,6 +447,39 @@
       <tokenizer name="whitespace"/>
     </analyzer>
   </fieldType>
+  <fieldType name="text_zh_hant"
+           class="solr.TextField"
+           positionIncrementGap="100">
+    <analyzer type="index">
+      <!-- Tokenizer: split on whitespace -->
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+
+      <!-- Normalize width, case, diacritics -->
+      <filter class="solr.ICUFoldingFilterFactory"/>
+
+      <!-- Normalize to Traditional (Hant) -->
+      <filter class="solr.ICUTransformFilterFactory" id="Any-Hant"/>
+
+      <!-- Word segmentation for Chinese -->
+      <filter class="solr.CJKBigramFilterFactory"/>
+
+      <!-- Clean up -->
+      <filter class="solr.TrimFilterFactory"/>
+      <filter class="solr.HyphenatedWordsFilterFactory"/>
+      <filter class="solr.FlattenGraphFilterFactory"/>
+    </analyzer>
+
+    <analyzer type="query">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.ICUFoldingFilterFactory"/>
+      <filter class="solr.ICUTransformFilterFactory" id="Any-Hant"/>
+      <filter class="solr.CJKBigramFilterFactory"/>
+      <filter class="solr.TrimFilterFactory"/>
+      <filter class="solr.HyphenatedWordsFilterFactory"/>
+      <filter class="solr.FlattenGraphFilterFactory"/>
+    </analyzer>
+  </fieldType>
+
   <field name="_nest_path_" type="_nest_path_"/>
   <field name="_root_" type="string" indexed="true" stored="false"/>
   <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
@@ -467,7 +500,6 @@
   <field name="format" type="text_general"/>
   <field name="full_title_ssm" type="text_general"/>
   <field name="full_title_tsim" type="text_general"/>
-  <field name="full_txt" type="text_general" uninvertible="true" indexed="true" stored="false"/>
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
   <field name="is_issue" type="text_general"/>
   <field name="is_serial" type="text_general"/>
@@ -502,6 +534,9 @@
   <field name="title_tsim" type="text_general"/>
   <field name="url_fulltext_ssm" type="text_general"/>
   <field name="url_suppl_ssm" type="text_general"/>
+  <field name="tx_gen" type="text_general" indexed="true" stored="false"/>
+  <field name="tx_hant" type="text_zh_hant" indexed="true" stored="false"/>
+
   <dynamicField name="*_txt_en_split_tight" type="text_en_splitting_tight" indexed="true" stored="true"/>
   <dynamicField name="*_descendent_path" type="descendent_path" indexed="true" stored="true"/>
   <dynamicField name="*_ancestor_path" type="ancestor_path" indexed="true" stored="true"/>
@@ -613,4 +648,5 @@
   <copyField source="source_of_description_tsim" dest="source_of_description_tsim_str" maxChars="256"/>
   <copyField source="full_title_ssm" dest="full_title_ssm_str" maxChars="256"/>
   <copyField source="full_title_tsim" dest="full_title_tsim_str" maxChars="256"/>
+  <copyField source="tx_gen" dest="tx_hant"/>
 </schema>
