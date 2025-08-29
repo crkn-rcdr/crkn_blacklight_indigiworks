@@ -78,9 +78,9 @@ if(pageViewer) {
     
             defaultView: "single", // Configure which viewing mode (e.g. single, book, gallery) for windows to be opened in
     
-            forceDrawAnnotations: false,
+            forceDrawAnnotations: true,
     
-            hideWindowTitle: false, // Configure if the window title is shown in the window title bar or not
+            hideWindowTitle: true, // Configure if the window title is shown in the window title bar or not
     
             highlightAllAnnotations: false, // Configure whether to display annotations on the canvas by default
     
