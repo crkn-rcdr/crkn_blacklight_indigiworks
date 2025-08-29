@@ -1,6 +1,16 @@
 ---
 en:
   blacklight:
+    page_search:
+      matching_pages_for_html: "Matching pages for <strong>%{term}</strong>"
+      no_results_html: "No results for '<strong>%{term}</strong>' in this item"
+      show_more: Show more
+      show_less: Show less
+      go_to_page_aria: "Go to page %{page}"
+      prev_hit: Previous hit
+      next_hit: Next hit
+      prev_hit_aria: Go to previous match
+      next_hit_aria: Go to next match
     iiif_toolbox:
       title: Toolbox
       subtitle: Export, edit, or share this item
@@ -351,6 +361,8 @@ en:
     L_VIEW_ISSUE: View Details
     L_NO_ISSUES_MSG: No issues in this serial
     L_TERMS: Terms of Service
+    L_MATCHING_PAGES_PRE: Matching pages for
+    L_MATCHING_PAGES_SUF: in this item
   links:
     URL_ABOUT: "https://www.crkn-rcdr.ca/en/canadiana"
     URL_CANADA: "https://www.canada.ca/en.html"

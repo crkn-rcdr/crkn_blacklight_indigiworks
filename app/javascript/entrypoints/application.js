@@ -264,3 +264,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   input.setAttribute('aria-describedby', [input.getAttribute('aria-describedby'), helpId].filter(Boolean).join(' '));
 });
+
+// Page search chips: toggle show more/less
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.page-search-toggle');
+  if (!btn) return;
+  const container = btn.closest('.page-search-res-wrap');
+  if (!container) return;
+  const more = container.querySelector('.page-search-more');
+  if (!more) return;
+  const span = btn.querySelector('span');
+  const icon = btn.querySelector('i');
+  const lang = document.documentElement.lang || 'en';
+  const labelMore = lang.startsWith('fr') ? 'Afficher plus' : 'Show more';
+  const labelLess = lang.startsWith('fr') ? 'Afficher moins' : 'Show less';
+
+  const hidden = more.hasAttribute('hidden');
+  if (hidden) {
+    more.removeAttribute('hidden');
+    if (span) span.textContent = labelLess;
+    if (icon) icon.classList.remove('bi-chevron-down'), icon.classList.add('bi-chevron-up');
+  } else {
+    more.setAttribute('hidden', '');
+    if (span) span.textContent = labelMore;
+    if (icon) icon.classList.remove('bi-chevron-up'), icon.classList.add('bi-chevron-down');
+  }
+});

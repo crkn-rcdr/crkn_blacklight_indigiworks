@@ -78,12 +78,15 @@
         </div>
         <%= render(::IiifComponent.new(document: @document, term: params[:q])) %>
 
+
+
       <% else %>
         <%= metadata %>
         <% metadata_sections.each do |section| %>
           <%= section %>
         <% end %>
         <%= thumbnail %>
+        <%= render(::PageSearchComponent.new(docId: @document._source["id"] , arkUrl: @document._source["ark"], term: params[:q])) %>
       <% end %>
 
       <br/>
