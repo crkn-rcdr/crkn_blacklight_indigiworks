@@ -80,8 +80,16 @@
 .navbar-search .search-q.form-control { height: 48px; padding-left: 1rem; }
 .navbar-search #search.btn { height: 50px; padding: 0 1.25rem; display: inline-flex; align-items: center; gap: .35rem; border: 0 !important; align-self: stretch; border-top-right-radius: 999px; border-bottom-right-radius: 999px; }
 .navbar-search .search-btn svg { width: 20px; height: 20px; }
-.navbar-search .btn-clear-search { border: 0 !important; height: 48px; border-radius: 0; }
+.navbar-search .btn-clear-search { border: 0 !important; height: 50px; border-radius: 0; background-color: transparent !important; color: #6c757d !important; }
+.navbar-search .btn-clear-search:hover,
+.navbar-search .btn-clear-search:focus { background-color: rgba(0,0,0,.04) !important; color: #495057 !important; box-shadow: none !important; }
+.navbar-search .btn-clear-search:active { background-color: rgba(0,0,0,.06) !important; color: #343a40 !important; }
 .navbar-search .btn-clear-search[hidden] { display: none !important; }
+
+/* Hide native browser clear (x) inside type=search to avoid double buttons */
+.navbar-search input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; height: 0; width: 0; margin: 0; }
+.navbar-search input[type="search"]::-ms-clear { display: none; width: 0; height: 0; }
+.navbar-search input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
 .search-autocomplete-wrapper {
     border: none !important;
     border-left: 1px solid rgba(0,0,0,.06) !important;
@@ -381,7 +389,7 @@ footer.bg-dark {
 
     /* Mobile catalog results polish */
     .blacklight-catalog-index #main-container.container { padding-left: .75rem; padding-right: .75rem; }
-    .blacklight-catalog-index #appliedParams { margin-bottom: .75rem; margin-top: 1rem; }
+    .blacklight-catalog-index #appliedParams { margin-bottom: .75rem; margin-top: 1rem !important; }
     .blacklight-catalog-index .facets-header .facet-toggle-button { border-radius: 999px; }
 
     .blacklight-catalog-index #sortAndPerPage {
