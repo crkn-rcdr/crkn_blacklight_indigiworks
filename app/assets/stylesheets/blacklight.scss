@@ -258,6 +258,7 @@ button i {
 
     // Style toolbar container
     .openseadragon-canvas + div {
+        top: calc(100% - 60px) !important;
         border-radius: 50px !important;
         overflow: hidden !important;
         margin: 0.5rem !important;
