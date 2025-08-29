@@ -1,50 +1,101 @@
 <% manifest_url = @document['ark']&.gsub('https://n2t.net/ark:', 'https://crkn-iiif-api.azurewebsites.net/manifest') %>
-    
-<ul class="iiif-tools-list">
-  <li>
-    <div style="display:flex; align-items: center;">
-      <img src="/assets/iiif_logo.png" height="48" style="margin-right:0.5rem;" />
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-          Manifest Tools
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <li><a class="dropdown-item" href="https://mcgrawcenter.github.io/croppingtool/?manifest=<%= manifest_url %>" target="_blank">Crop Image</a></li>
-          <li><a class="dropdown-item" href="https://pdiiif.jbaiter.de/?manifest=<%= manifest_url %>" target="_blank">Generate PDF</a></li>
-          <li><a class="dropdown-item" href="https://manifest-editor.digirati.services/share?iiif-content=<%= manifest_url %>" target="_blank">Edit Copy of Manifest</a></li>
-        </ul>
-      </div>
-    </div>
-  </li>
-<li>
-  <button class="copy-link-btn" onclick="copyManifestUrl(this)">
-    <img src="/assets/link_icon.svg" class="icon" width="16" height="16"/>
-    <span>Copy Manifest Link</span>
-  </button>
-  <a id="iiif-manifest-url" href="<%= manifest_url %>" class="visually-hidden">
-    <%= manifest_url %>
-  </a>
 
-</li>
+<div class="toolbox-card card" aria-labelledby="iiif-toolbox-title">
+  <% has_manifest = manifest_url.present? %>
+  <div class="toolbox-header d-flex align-items-center justify-content-between mb-2">
+    <h3 id="iiif-toolbox-title" class="h5 mb-0"><%= t('blacklight.iiif_toolbox.title') %></h3>
+    <%# Optional subtle helper text %>
+    <small class="text-muted d-none d-md-inline"><%= t('blacklight.iiif_toolbox.subtitle') %></small>
+  </div>
 
+  <div class="toolbox-actions d-flex flex-wrap align-items-center gap-2 mb-2">
+    <img src="/assets/iiif_logo.png" height="28" class="me-2" alt="IIIF" />
 
-  <li><a href="">What is IIIF?</a></li>
-</ul>
+    <a class="btn btn-outline-secondary <%= 'disabled' unless has_manifest %>" target="_blank"
+       rel="noopener noreferrer"
+       title="<%= t('blacklight.iiif_toolbox.crop_tooltip') %>"
+       href="<%= has_manifest ? "https://mcgrawcenter.github.io/croppingtool/?manifest=#{manifest_url}" : '#' %>"
+      <i class="bi bi-crop me-1" aria-hidden="true"></i>
+      <%= t('blacklight.iiif_toolbox.crop_image') %>
+    </a>
+
+    <a class="btn btn-outline-secondary <%= 'disabled' unless has_manifest %>" target="_blank"
+       rel="noopener noreferrer"
+       title="<%= t('blacklight.iiif_toolbox.pdf_tooltip') %>"
+       href="<%= has_manifest ? "https://pdiiif.jbaiter.de/?manifest=#{manifest_url}" : '#' %>"
+      <i class="bi bi-filetype-pdf me-1" aria-hidden="true"></i>
+      <%= t('blacklight.iiif_toolbox.generate_pdf') %>
+    </a>
+
+    <a class="btn btn-outline-secondary <%= 'disabled' unless has_manifest %>" target="_blank"
+       rel="noopener noreferrer"
+       title="<%= t('blacklight.iiif_toolbox.edit_manifest_tooltip') %>"
+       href="<%= has_manifest ? "https://manifest-editor.digirati.services/share?iiif-content=#{manifest_url}" : '#' %>"
+      <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>
+      <%= t('blacklight.iiif_toolbox.edit_manifest_copy') %>
+    </a>
+
+    <button class="copy-link-btn" <%= 'disabled' unless has_manifest %>
+            type="button"
+            onclick="copyManifestUrl(this)"
+            title="<%= t('blacklight.iiif_toolbox.copy_tooltip') %>">
+      <i class="bi bi-link-45deg" aria-hidden="true"></i>
+      <span><%= t('blacklight.iiif_toolbox.copy_manifest_link') %></span>
+    </button>
+  </div>
+
+  <div class="toolbox-links">
+    <% lang_qs = params[:lang].present? ? "?lang=#{params[:lang]}" : '' %>
+    <ul class="list-unstyled mb-0">
+      <li class="mb-1">
+        <a href="https://iiif.io/get-started/" target="_blank" rel="noopener">
+          <i class="bi bi-question-circle me-1" aria-hidden="true"></i>
+          <%= t('blacklight.iiif_toolbox.what_is_iiif') %>
+        </a>
+      </li>
+      <li class="mb-1">
+        <a href="/catalog/<%= @document.id %>/librarian_view<%= lang_qs %>" data-blacklight-modal="trigger" data-turbo="false">
+          <i class="bi bi-journal-text me-1" aria-hidden="true"></i>
+          <%= t('blacklight.iiif_toolbox.librarian_view') %>
+        </a>
+      </li>
+      <li>
+        <a href="/catalog/<%= @document.id %>/citation<%= lang_qs %>" data-blacklight-modal="trigger" data-turbo="false">
+          <i class="bi bi-quote me-1" aria-hidden="true"></i>
+          <%= t('blacklight.iiif_toolbox.cite') %>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <a id="iiif-manifest-url" href="<%= manifest_url %>" class="visually-hidden"><%= manifest_url %></a>
+  <span id="iiif-copy-feedback" class="visually-hidden" aria-live="polite"></span>
+</div>
 
 <script>
   function copyManifestUrl(button) {
     const text = document.getElementById("iiif-manifest-url").textContent.trim();
     const label = button.querySelector("span");
+    const live = document.getElementById("iiif-copy-feedback");
 
     if (!label) return;
 
     const originalText = label.textContent;
+    const copiedText = <%= raw t('blacklight.iiif_toolbox.copied_js').to_json %>;
+    const copyFailedText = <%= raw t('blacklight.iiif_toolbox.copy_failed_js').to_json %>;
 
     function setCopiedFeedback() {
-      label.textContent = "Copied!";
+      label.textContent = copiedText;
+      if (live) live.textContent = copiedText;
       setTimeout(() => {
         label.textContent = originalText;
+        if (live) live.textContent = "";
       }, 2000);
+    }
+
+    function setFailedFeedback() {
+      if (live) live.textContent = copyFailedText;
+      alert(copyFailedText);
     }
 
     if (navigator.clipboard && window.isSecureContext) {
@@ -52,7 +103,7 @@
         .then(setCopiedFeedback)
         .catch(err => {
           console.error("Copy failed", err);
-          alert("Failed to copy to clipboard.");
+          setFailedFeedback();
         });
     } else {
       const tempInput = document.createElement("textarea");
@@ -66,11 +117,11 @@
         if (success) {
           setCopiedFeedback();
         } else {
-          alert("Copy not supported in this browser.");
+          setFailedFeedback();
         }
       } catch (err) {
         console.error("Fallback copy failed", err);
-        alert("Copy not supported in this browser.");
+        setFailedFeedback();
       }
       document.body.removeChild(tempInput);
     }

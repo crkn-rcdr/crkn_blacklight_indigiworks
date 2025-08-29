@@ -56,6 +56,10 @@ i {
         }
     }
 }
+/* Hide separate sidebar Tools; links live in the Toolbox card to avoid duplication */
+.blacklight-catalog-show .page-sidebar[aria-label="Tools"] { display: none; }
+
+/* Make show page content span full page width (mobile only; see block at bottom) */
 @media only screen and (max-width: 1024px) {
     .document-main-section {
         max-width: 66vw !important;
@@ -121,10 +125,55 @@ button i {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    #toggle-menu {
-        min-width: 200px;
-        max-width: 200px;
+  /* Make show page take full width on mobile */
+  .blacklight-catalog-show #main-container.container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: .75rem; padding-right: .75rem;
+  }
+  .blacklight-catalog-show .document-main-section { max-width: 100% !important; }
+    /* Reflow details + viewer vertically on mobile */
+    #document-togglable-content .row { flex-wrap: wrap !important; }
+    #document-togglable-content .row.flex-nowrap { flex-wrap: wrap !important; }
+    /* Each section (details + viewer) should consume full row */
+    #document-togglable-content #toggle-menu,
+    #document-togglable-content #doc-main {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
     }
+    /* Show viewer first, then details */
+    #document-togglable-content #doc-main { order: 1 !important; }
+    #document-togglable-content #toggle-menu { order: 2 !important; }
+    #toggle-menu {
+        position: relative !important;
+        top: auto; height: auto; transform: none !important;
+        width: 100%; min-width: auto; max-width: none;
+        z-index: 1; /* sit under any floating viewer UI */
+        box-shadow: 0 4px 16px rgba(0,0,0,.06);
+        border-radius: 8px;
+        margin-bottom: .75rem;
+        overflow: visible !important; /* remove inner scrolling on mobile */
+    }
+    /* When collapsed, hide the details card entirely */
+    #toggle-menu.collapse:not(.show) { display: none !important; }
+    #doc-main { margin: 0 !important; padding: 0 !important; width: 100%; }
+    /* viewer height on small screens */
+    #doc-main #my-mirador, .mirador-osd-container { min-height: 60vh; width: 100% !important; }
+    /* ensure inner mirador wrappers stretch full width */
+    #doc-main .mirador-viewer, #doc-main .viewer-wrap, #doc-main .mirador-mosaic, #doc-main .mosaic-root {
+        width: 100% !important;
+    }
+
+    /* Hide collapse toggle buttons on mobile */
+    #toggle-doc-metadata1,
+    #toggle-doc-metadata2,
+    #toggle-doc-metadata3 { display: none !important; }
+}
+
+/* Strong mobile overrides placed at end to beat earlier rules */
+@media (max-width: 768px) {
+  #document-togglable-content #toggle-menu { height: auto !important; overflow: visible !important; }
+  .blacklight-catalog-show .document-main-section { max-width: 100% !important; }
 }
 #toggle-doc-metadata2[aria-expanded="true"], #toggle-doc-metadata3[aria-expanded="true"] {
     display:none;

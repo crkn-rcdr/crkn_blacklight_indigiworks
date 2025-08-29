@@ -389,8 +389,36 @@ footer.bg-dark {
     }
     .blacklight-catalog-index .documents-list .document-metadata dd { margin-bottom: .35rem; }
     .blacklight-catalog-index .documents-list .document-metadata p { margin-bottom: .35rem !important; }
-    .blacklight-catalog-index .paginate-section .page-links { font-size: .95rem; }
+  .blacklight-catalog-index .paginate-section .page-links { font-size: .95rem; }
+
+  /* Catalog results – desktop/tablet polish */
+.blacklight-catalog-index .documents-list article.document {
+  padding: 16px 20px 16px 20px !important; /* leave room for format icon */
 }
+}
+
+/* Catalog results – desktop/tablet polish */
+.blacklight-catalog-index .documents-list article.document {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 12px;
+  padding: 16px 20px 16px 96px; /* leave room for format icon */
+  margin: 0 0 16px 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,.04);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.blacklight-catalog-index .documents-list article.document:hover {
+  box-shadow: 0 12px 28px rgba(0,0,0,.08);
+  transform: translateY(-2px);
+}
+.blacklight-catalog-index .documents-list .documentHeader h3 {
+  font-size: 1.15rem; line-height: 1.35; margin-top: 0; margin-bottom: .5rem;
+}
+.blacklight-catalog-index .documents-list .document-metadata dt {
+  margin-top: .5rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .02em; color: #6c757d;
+}
+.blacklight-catalog-index .documents-list .document-metadata p { margin-bottom: .25rem !important; }
+.blacklight-catalog-index #sortAndPerPage { border-bottom: 1px solid rgba(0,0,0,.06); padding-bottom: .5rem; margin-bottom: .75rem; }
 @media only screen and (max-width: 1024px) {
     .home-cards {
         width: 100% !important;
@@ -411,13 +439,44 @@ footer.bg-dark {
     }
 }
 
+/* Unified tools styling (IIIF + sidebar Tools) */
+.show-tools.card,
+.iiif-tools-list,
+.toolbox-card {
+  background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 12px; padding: .75rem 1rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,.04);
+}
+.iiif-tools-list, .show-tools.card, .toolbox-card { margin-top: 1rem; }
+.toolbox-card .toolbox-actions .btn { border-radius: 999px; }
+.toolbox-card .toolbox-header img { filter: drop-shadow(0 2px 4px rgba(0,0,0,.12)); }
+.toolbox-card .toolbox-header small { opacity: .8; }
+.toolbox-card .toolbox-actions .btn i { line-height: 1; vertical-align: middle; }
+.toolbox-card .toolbox-actions { row-gap: .5rem; }
+.iiif-tools-list li { margin-bottom: .5rem; }
+.show-tools .list-group-item { border: 0; padding-left: 0; padding-right: 0; }
+.show-tools .card-header { background: transparent; border: 0; padding: .25rem 0 .5rem; }
+.iiif-tools-list .dropdown > .btn { border-radius: 999px; }
+.iiif-tools-list .copy-link-btn { border-radius: 999px; }
+
+@media (max-width: 768px) {
+  /* Place tools after viewer and details, full width */
+  .page-sidebar[aria-label="Tools"] { width: 100%; }
+  .blacklight-catalog-show #main-container .row { gap: .5rem 0; }
+  .iiif-tools-list, .toolbox-card { margin-top: .75rem; }
+}
+
+/* Desktop spacing between viewer and tools */
+@media (min-width: 992px) {
+  .iiif-tools-list, .show-tools.card, .toolbox-card { margin-top: 1.5rem; }
+}
+
 .copy-link-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: #eeeeee;
-  color: black;
-  border: none;
+  background-color: #f3f4f6;
+  color: #111;
+  border: 1px solid rgba(0,0,0,.08);
   border-radius: var( --bs-btn-border-radius);
   padding: 8px 16px;
   font-size: 0.95rem;
@@ -427,10 +486,12 @@ footer.bg-dark {
 }
 
 .copy-link-btn:hover {
-  background-color: #cecece;
+  background-color: #e5e7eb;
 }
 
 .copy-link-btn .icon {
   width: 18px;
   height: 18px;
 }
+
+.copy-link-btn:focus-visible { outline: 3px solid rgba(13,110,253,.4); outline-offset: 2px; }

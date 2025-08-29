@@ -1,6 +1,22 @@
 ---
 fr:
   blacklight:
+    iiif_toolbox:
+      title: Boîte à outils
+      subtitle: Exporter, modifier ou partager cet item
+      crop_image: Rogner l’images
+      crop_tooltip: Ouvrir l’outil de rognage dans un nouvel onglet
+      generate_pdf: Générer un PDF
+      pdf_tooltip: Créer un PDF à partir du manifeste IIIF
+      edit_manifest_copy: Éditer une copie du manifeste
+      edit_manifest_tooltip: Ouvrir une copie du manifeste IIIF dans l’éditeur
+      copy_manifest_link: Copier le lien du manifeste
+      copy_tooltip: Copier l’URL du manifeste IIIF
+      copied_js: Copié !
+      copy_failed_js: Échec de la copie dans le presse‑papiers.
+      what_is_iiif: Qu’est‑ce que IIIF ?
+      librarian_view: Vue bibliothécaire
+      cite: Citer
     and: et
     application_name: Blacklight
     back_to_bookmarks: Retour aux favoris

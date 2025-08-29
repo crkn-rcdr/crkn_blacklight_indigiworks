@@ -4,7 +4,8 @@
 }
 .documents-list {
     article.document {
-        padding-left: 100px;
+        position: relative; /* anchor the absolute icon inside the card */
+        padding-left: 84px; /* room for the format icon */
     }
     .document-metadata {
         margin-top: 5px;
@@ -15,19 +16,21 @@
     }
     dd.blacklight-format {
         position: absolute;
+        left: 16px;
+        top: 16px;
         padding-left: 0;
-        margin-left: -90px;
-        margin-top: -35px;
-        width: 100px;
+        margin-left: 0;
+        margin-top: 0;
+        width: 72px;
     }
     .blacklight-format li .icon {
         display: inline-block !important;
         background-size: 100%;
         background-repeat: no-repeat;
         margin-right: 0;
-        width: 80px;
-        height: 80px;
-        opacity: 0.5;
+        width: 56px;
+        height: 56px;
+        opacity: 0.45;
     }
     .blacklight-format li .format-text {
         visibility: hidden;
