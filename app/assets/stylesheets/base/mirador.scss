@@ -30,8 +30,15 @@
 .mirador-viewer {
     margin: 0 !important;
     padding: 0 !important;
+    nav {
+        form[aria-label="Search"] {
+            padding-bottom: 0 !important;
+        }
+    }
+    div[role="button"][class*="GalleryView-thumbnail"] {
+        height: fit-content !important;
+    }
 }
-
 .mosaic-root {
     inset: 0px !important;
 }
