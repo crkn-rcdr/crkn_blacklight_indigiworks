@@ -33,9 +33,11 @@ let pageViewer = document.getElementById("my-mirador")
 if(pageViewer) {
     let language = document.documentElement.lang || "en";
     const documentId = pageViewer.getAttribute("data-docid")
+    let contentSearch = {}
     let canvasIndex = 0
     const params = new URLSearchParams(window.location.search)
     if(params.has("pageNum")) canvasIndex = parseInt(params.get("pageNum")-1)
+    if(params.has("q")) contentSearch = {  query: params.get("q") }
     let manifest = documentId.replace("https://n2t.net/ark:/", "https://crkn-iiif-api.azurewebsites.net/manifest/")
     const manifestList = {} 
     manifestList[manifest] = { "provider": "Canadian Research Knowledge Network" }
@@ -47,7 +49,8 @@ if(pageViewer) {
         {
             manifestId: manifest,
             //view: 'single',
-            canvasIndex: canvasIndex,
+            canvasIndex,
+            contentSearch
         }],
         view: "catalogueView",
         selectedTheme: 'light', // light | dark

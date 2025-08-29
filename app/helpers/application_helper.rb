@@ -2,6 +2,14 @@
 require 'cgi'  # For URL escaping
 
 module ApplicationHelper
+  # Ensure document links carry current search query and language by default.
+  # This overrides Blacklight's helper in the view context.
+  def url_for_document(document, options = {})
+    opts = options.symbolize_keys
+    opts[:q] = params[:q] if params[:q].present? && !opts.key?(:q)
+    opts[:lang] = params[:lang] if params[:lang].present? && !opts.key?(:lang)
+    solr_document_path(document, opts)
+  end
   def render_icon(var)
     "<span title='#{var.parameterize}' class='icon icon-#{var.parameterize}' aria-hidden='true'></span>"
   end

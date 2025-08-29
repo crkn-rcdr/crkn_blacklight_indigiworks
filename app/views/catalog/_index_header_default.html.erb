@@ -1,0 +1,16 @@
+<%# Override Blacklight default to append current search query to each result link %>
+<% presenter = document_presenter(document) %>
+<% title = presenter.heading.presence || presenter.label %>
+
+<h3 class="document-title-heading">
+  <%= link_to title,
+              url_for_document(document, q: params[:q].presence),
+              document_link_params(document, counter: document_counter) %>
+  <%# Optionally show the query as a subtle chip next to the title %>
+  <% if params[:q].present? %>
+    <span class="badge bg-light text-dark" style="margin-left: .5rem;">
+      <%= params[:q] %>
+    </span>
+  <% end %>
+</h3>
+
