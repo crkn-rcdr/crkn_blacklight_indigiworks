@@ -62,15 +62,19 @@
 }
 .home-search-wrap {
     position: absolute;
-    top: 44vh;
+    top: 42vh;
     width:99vw;
 }
 .home-search {
-    background-color: rgba(34, 34, 34, .65) !important;
+    background-color: rgba(20, 20, 20, .55) !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: 0 8px 28px rgba(0,0,0,.35);
     width: fit-content !important;
-    padding: 1.5rem;
+    padding: 1.25rem 1.25rem 1rem;
     margin: auto;
-    border-radius: var( --bs-btn-border-radius);
+    border-radius: 999px;
 }
 .home-search {
     color: white !important;
@@ -80,6 +84,54 @@
 }
 .home-search input {
     min-width: 28rem !important;
+}
+.home-search .input-group {
+    border-radius: 999px;
+    overflow: hidden; /* unify pill edges */
+    background: none;
+}
+.home-search .input-group > .form-select,
+.home-search .input-group > .form-control {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+.home-search .input-group > .form-control { border-right: 0 !important; }
+.home-search .input-group .btn { 
+    margin-left: 0 !important; 
+    border-left: 0 !important; 
+    display: flex; 
+    align-items: center; 
+}
+.home-search .input-group .form-select {
+    height: 52px;
+    border: none;
+    border-top-left-radius: 999px;
+    border-bottom-left-radius: 999px;
+    padding-left: 1rem;
+    min-width: 9rem;
+}
+.home-search .input-group .form-control {
+    height: 52px;
+    border: none;
+    padding-right: 1rem;
+}
+.home-search .input-group .btn-primary {
+    height: 52px;
+    border: none;
+    /* Let the input-group's overflow:hidden handle the rounding to avoid seams */
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: 0 1.25rem;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+.home-search .input-group .btn-primary:hover {
+    filter: brightness(1.05);
+}
+.home-search .input-group .btn-primary:focus,
+.home-search .input-group .btn-primary:focus-visible,
+.home-search .input-group .btn-primary:active {
+    outline: none !important;
+    box-shadow: none !important; /* remove bootstrap focus ring that looks like an outline */
 }
 .home-search svg {
     width: 1.5rem !important;
@@ -104,8 +156,23 @@
     margin-bottom: 0 !important;
 }
 .banner-img {
-    width: 99vw;
+    width: 100%; /* prevent horizontal scroll */
     height: 87vh;
+    display: block; /* remove inline-img whitespace */
+    object-fit: cover;
+    object-position: center;
+}
+.home-main-images,
+.carousel.home-main-images {
+    width: 100%; /* match page width without causing vw overflow */
+}
+.home-main-images { position: relative; }
+.home-main-images::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 0; height: 40vh;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.45), rgba(0,0,0,0));
+    pointer-events: none;
 }
 .home-cards {
     width: 70rem;
@@ -113,7 +180,7 @@
     margin: auto !important;
 }
 .home-cards .card {
-    width: 33rem !important;
+    width: 100% !important;
     margin-bottom: 1rem;
     min-height:585px;
 }
@@ -124,14 +191,47 @@
 .home-cards .card-body p {
     height: 80px;
 }
+/* Enhanced home cards */
+.card-collection {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.card-collection:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 10px 24px rgba(0,0,0,.12);
+}
+.card-collection .card-header {
+    background: #fff;
+    font-weight: 600;
+    border-bottom: 0;
+    padding: .75rem 1rem;
+    position: relative;
+}
+.card-collection .card-header::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    /*background: var(--theme-primary);*/
+}
+.card-collection .card-img-top { border-bottom: 1px solid rgba(0,0,0,.06); }
+.card-collection .card-body { padding: 1rem; }
+.card-collection .card-body p { color: #334; line-height: 1.5; }
+.card-collection .card-footer { background: transparent; border-top: 0; padding: 0 1rem 1rem; }
+
+/* CTA button look for card links */
+.card-collection .card-link.btn { color: #fff !important; }
 footer a {
     color: white !important;
 }
 .blacklight-pages-home #main-container {
-    max-width: 100vw !important;
+    max-width: 100% !important; /* avoid vw scrollbar overflow */
+    width: 100% !important;
     padding: 0 !important;
-    overflow: hidden;
+    overflow-x: hidden;
 }
+.blacklight-pages-home { overflow-x: hidden; }
 .blacklight-pages-home .navbar-search {
     display: none;
 }
@@ -140,14 +240,20 @@ footer a {
     z-index: 2;
     left: 0;
     right: 0;
-    background: #00000063 !important;
+    background: rgba(0,0,0,0.35) !important;
+    backdrop-filter: saturate(140%) blur(8px);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
     color: white;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
 }
 .navbar a {
     color: var(--theme-primary) !important;
 }
 .blacklight-pages-home .navbar a {
     color: white !important;
+}
+.blacklight-pages-home .navbar a:hover {
+    color: #e8f6f8 !important;
 }
 .blacklight-pages-home .navbar-logo {
     background: transparent url(/assets/canadiana-tag-white.svg) no-repeat top left;
@@ -230,19 +336,24 @@ footer.bg-dark {
     .nav-list-upper li {
         margin-top:10px;
     }
-    .home-search input {
-        min-width: 20rem !important;
+    /* Mobile search layout: keep everything on one row */
+    .home-search { 
+        width: calc(100vw - 2rem) !important; 
+        border-radius: 32px; 
+        padding: 0.75rem; 
     }
+    .home-search-wrap { top: 35vh; width: 100vw; }
+    .home-search .input-group { width: 100%; flex-wrap: nowrap; }
+    .home-search input { min-width: 0 !important; }
+    .home-search .input-group .form-select { min-width: 7.5rem; height: 44px; }
+    .home-search .input-group .form-control { height: 44px; }
+    .home-search .input-group .btn-primary { height: 44px; padding: 0 .9rem; font-size: .95rem; }
 }
 @media only screen and (max-width: 1024px) {
     .home-cards {
         width: 100% !important;
     }
-    .home-cards .card {
-        width: 90vw !important;
-        margin-bottom: 1rem;
-        min-height: 585px;
-    }
+    .home-cards .card { width: 100% !important; }
 }
 
 .iiif-tools-list {
