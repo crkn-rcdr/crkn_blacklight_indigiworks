@@ -348,6 +348,48 @@ footer.bg-dark {
     .home-search .input-group .form-select { min-width: 7.5rem; height: 44px; }
     .home-search .input-group .form-control { height: 44px; }
     .home-search .input-group .btn-primary { height: 44px; padding: 0 .9rem; font-size: .95rem; }
+
+    /* Mobile catalog results polish */
+    .blacklight-catalog-index #main-container.container { padding-left: .75rem; padding-right: .75rem; }
+    .blacklight-catalog-index #appliedParams { margin-bottom: .75rem; }
+    .blacklight-catalog-index .facets-header .facet-toggle-button { border-radius: 999px; }
+
+    .blacklight-catalog-index #sortAndPerPage {
+        position: sticky; top: 0; z-index: 4;
+        background: #fff; padding: .5rem .25rem; margin: 0 -.5rem 1rem;
+        border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+
+    .blacklight-catalog-index .documents-list article.document {
+        background: #fff; border: 1px solid rgba(0,0,0,.06);
+        border-radius: 12px; padding: 12px 14px; margin: 0 0 12px 0;
+        box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .blacklight-catalog-index .documents-list .documentHeader h3 {
+        font-size: 1.05rem; line-height: 1.35; margin: 0 0 .5rem;
+    }
+    .blacklight-catalog-index .documents-list .document-counter { color: #6c757d; }
+    .blacklight-catalog-index .documents-list .document-metadata { font-size: .95rem; }
+    .blacklight-catalog-index .documents-list .document-metadata dt {
+        display: block; width: auto; margin: .65rem 0 .15rem; padding: 0;
+        font-size: .75rem; text-transform: uppercase; letter-spacing: .02em; color: #6c757d;
+    }
+    .blacklight-catalog-index .documents-list .document-metadata dd {
+        display: block; width: auto; margin: 0; padding: 0;
+    }
+    /* Break Bootstrap's row/col layout for metadata on mobile to avoid overlap */
+    .blacklight-catalog-index .documents-list .document-metadata { display: block !important; margin-left: 0; margin-right: 0; }
+    .blacklight-catalog-index .documents-list .document-metadata > dt,
+    .blacklight-catalog-index .documents-list .document-metadata > dd {
+        flex: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .blacklight-catalog-index .documents-list .document-metadata dd { margin-bottom: .35rem; }
+    .blacklight-catalog-index .documents-list .document-metadata p { margin-bottom: .35rem !important; }
+    .blacklight-catalog-index .paginate-section .page-links { font-size: .95rem; }
 }
 @media only screen and (max-width: 1024px) {
     .home-cards {
