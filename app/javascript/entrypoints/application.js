@@ -196,3 +196,71 @@ import BlacklightRangeLimit from 'blacklight-range-limit';
 //Blacklight.onLoad(() => {});
 BlacklightRangeLimit.init({ onLoadHandler: Blacklight.onLoad });
 console.log("here???")
+
+// Enhance top search bar UX/accessibility without changing server templates
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('.navbar-search form.search-query-form');
+  const input = document.querySelector('.navbar-search input#q');
+  const submit = document.querySelector('.navbar-search #search');
+
+  if (!form || !input || !submit) return;
+
+  // Add a clear button (shows when there is text)
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'btn btn-outline-secondary btn-clear-search';
+  const lang = document.documentElement.lang || 'en';
+  const clearLabel = lang.startsWith('fr') ? 'Effacer la recherche' : 'Clear search';
+  const clearText = lang.startsWith('fr') ? 'Effacer' : 'Clear';
+  clearBtn.innerHTML = `<i class="bi bi-x-circle" aria-hidden="true"></i><span class="visually-hidden">${clearText}</span>`;
+  clearBtn.setAttribute('aria-label', clearLabel);
+  clearBtn.hidden = !input.value;
+
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    input.focus();
+    clearBtn.hidden = true;
+  });
+
+  input.addEventListener('input', () => {
+    clearBtn.hidden = input.value.length === 0;
+  });
+
+  // Insert clear button before submit
+  submit.parentElement.insertBefore(clearBtn, submit);
+
+  // Keyboard shortcuts
+  // Focus search with '/' or Ctrl/Cmd+K
+  window.addEventListener('keydown', (e) => {
+    const isTypingInInput = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+    if (!isTypingInInput && (e.key === '/' || (e.key.toLowerCase() === 'k' && (e.ctrlKey || e.metaKey)))) {
+      e.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+
+  // ESC clears current query when focused
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && input.value) {
+      input.value = '';
+      clearBtn.hidden = true;
+      e.stopPropagation();
+    }
+  });
+
+  // Improve labeling for assistive tech
+  const helpId = 'search-help-text';
+  let help = document.getElementById(helpId);
+  if (!help) {
+    help = document.createElement('div');
+    help.id = helpId;
+    help.className = 'visually-hidden';
+    const lang = document.documentElement.lang || 'en';
+    help.textContent = lang.startsWith('fr')
+      ? 'Utilisez la barre oblique (/) ou Ctrl+K pour activer la recherche. Appuyez sur Échap pour effacer.'
+      : 'Use slash (/) or Ctrl+K to focus search. Press Escape to clear.';
+    form.appendChild(help);
+  }
+  input.setAttribute('aria-describedby', [input.getAttribute('aria-describedby'), helpId].filter(Boolean).join(' '));
+});
