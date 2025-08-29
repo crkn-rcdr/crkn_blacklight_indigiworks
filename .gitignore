@@ -38,3 +38,6 @@
 /data/log4j2.xml
 config/blacklight.yml
 config/master.key
+.env
+.env.local
+.env.*.local

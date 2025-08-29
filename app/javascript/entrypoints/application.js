@@ -38,7 +38,9 @@ if(pageViewer) {
     const params = new URLSearchParams(window.location.search)
     if(params.has("pageNum")) canvasIndex = parseInt(params.get("pageNum")-1)
     if(params.has("q")) contentSearch = {  query: params.get("q") }
-    let manifest = documentId.replace("https://n2t.net/ark:/", "https://crkn-iiif-api.azurewebsites.net/manifest/")
+    const manifestBase = document.querySelector('meta[name="iiif-manifest-base"]')?.content || "https://crkn-iiif-api.azurewebsites.net/manifest";
+    let normalizedBase = manifestBase.endsWith('/') ? manifestBase : manifestBase + '/';
+    let manifest = documentId.replace("https://n2t.net/ark:/", normalizedBase)
     const manifestList = {} 
     manifestList[manifest] = { "provider": "Canadian Research Knowledge Network" }
     console.log("Mirador", Mirador)

@@ -20,6 +20,8 @@
     <% end %>
 
     <%= csrf_meta_tags %>
+    <meta name="iiif-manifest-base" content="<%= Rails.configuration.x.iiif_manifest_base %>">
+    <meta name="iiif-content-search-base" content="<%= Rails.configuration.x.iiif_content_search_base %>">
     <%= content_for(:head) %>
 
     <%= vite_client_tag %>

@@ -1,4 +1,4 @@
-<% manifest_url = @document['ark']&.gsub('https://n2t.net/ark:', 'https://crkn-iiif-api.azurewebsites.net/manifest') %>
+<% manifest_url = @document['ark']&.gsub('https://n2t.net/ark:', Rails.configuration.x.iiif_manifest_base) %>
 
 <div class="toolbox-card card" aria-labelledby="iiif-toolbox-title">
   <% has_manifest = manifest_url.present? %>

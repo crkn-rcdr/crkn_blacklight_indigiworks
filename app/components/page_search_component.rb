@@ -16,7 +16,8 @@ class PageSearchComponent < ViewComponent::Base
 
     ark = @arkUrl.gsub('https://n2t.net/ark:/', '')
     query = CGI.escape(@term)
-    content_search_endpoint = "https://crkn-iiif-content-search.azurewebsites.net/search/#{ark}?q=#{query}"
+    base_search = Rails.configuration.x.iiif_content_search_base
+    content_search_endpoint = "#{base_search}/#{ark}?q=#{query}"
 
     begin
       annotations = fetch_content_search_items(content_search_endpoint)
@@ -63,7 +64,7 @@ class PageSearchComponent < ViewComponent::Base
   end
 
   def fetch_manifest_canvas_index_map(ark)
-    manifest_url = "https://crkn-iiif-api.azurewebsites.net/manifest/#{ark}"
+    manifest_url = "#{Rails.configuration.x.iiif_manifest_base}/#{ark}"
     json = http_get_json(manifest_url)
     canvases = if json['items'].is_a?(Array)
                  json['items'] # IIIF v3
