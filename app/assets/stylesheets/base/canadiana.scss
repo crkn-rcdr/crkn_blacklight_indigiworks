@@ -82,6 +82,10 @@
 .navbar-search .search-btn svg { width: 20px; height: 20px; }
 .navbar-search .btn-clear-search { border: 0 !important; height: 48px; border-radius: 0; }
 .navbar-search .btn-clear-search[hidden] { display: none !important; }
+.search-autocomplete-wrapper {
+    border: none !important;
+    border-left: 1px solid rgba(0,0,0,.06) !important;
+}
 
 @media (max-width: 576px) {
   .navbar-search .search-field.form-select { min-width: 8.5rem; }
@@ -377,7 +381,7 @@ footer.bg-dark {
 
     /* Mobile catalog results polish */
     .blacklight-catalog-index #main-container.container { padding-left: .75rem; padding-right: .75rem; }
-    .blacklight-catalog-index #appliedParams { margin-bottom: .75rem; }
+    .blacklight-catalog-index #appliedParams { margin-bottom: .75rem; margin-top: 1rem; }
     .blacklight-catalog-index .facets-header .facet-toggle-button { border-radius: 999px; }
 
     .blacklight-catalog-index #sortAndPerPage {
