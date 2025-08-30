@@ -333,6 +333,7 @@ button i {
         margin: 0.5rem !important;
         /* ensure the group wrappers are fully opaque and neatly laid out */
         display: flex !important;
+        flex-wrap: nowrap !important; /* keep toolbar on one row */
         gap: 10px;
         align-items: center;
         /* drop shadow to lift from the image */
@@ -347,6 +348,49 @@ button i {
             align-items: center;
             opacity: 1 !important; // override inline 0.552
         }
+    }
+
+    /* Tablet: slightly smaller controls and tighter layout */
+    @media (max-width: 1024px) {
+        .openseadragon-canvas + div {
+            top: auto !important;           /* anchor using bottom for stability */
+            bottom: 10px !important;
+            margin: 0.35rem !important;
+            gap: 8px;
+        }
+        div[title="Zoom in"],
+        div[title="Zoom out"],
+        div[title="Go home"],
+        div[title="Toggle full page"],
+        div[title="Previous page"],
+        div[title="Next page"] {
+            height: 42px;
+            width: 42px;
+            margin: 2px; /* reduce outer spacing */
+            &::before { width: 22px; height: 22px; font-size: 20px; }
+        }
+        .openseadragon-canvas + div > div { padding: 4px !important; }
+    }
+
+    /* Mobile: compact controls to avoid wrapping/overlap */
+    @media (max-width: 576px) {
+        .openseadragon-canvas + div {
+            bottom: 8px !important;
+            margin: 0.25rem !important;
+            gap: 6px;
+        }
+        div[title="Zoom in"],
+        div[title="Zoom out"],
+        div[title="Go home"],
+        div[title="Toggle full page"],
+        div[title="Previous page"],
+        div[title="Next page"] {
+            height: 36px;
+            width: 36px;
+            margin: 2px;
+            &::before { width: 20px; height: 20px; font-size: 18px; }
+        }
+        .openseadragon-canvas + div > div { padding: 3px !important; }
     }
 
     // Make disabled nav (often inline-styled with low opacity) clearly disabled

@@ -220,6 +220,17 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     width: 1.5rem !important;
     height: 1.5rem !important;
 }
+/* Tablet-friendly home search sizing */
+@media only screen and (max-width: 1024px) {
+  /* Avoid SassC unit mixing by not using min() */
+  .home-search { width: 96vw !important; max-width: 720px; border-radius: 32px; padding: 0.75rem; }
+  .home-search .input-group { width: 100%; flex-wrap: nowrap; align-items: stretch; }
+  .home-search input { min-width: 0 !important; }
+  .home-search .input-group .form-select { min-width: 9rem; height: 46px; }
+  .home-search .input-group .form-control { height: 46px; }
+  .home-search .input-group .btn-primary { height: 46px; padding: 0 1rem; font-size: 1rem; }
+  .home-search .btn-clear-search { height: 46px !important; }
+}
 /*.carousel.home-main-images {
     width: 85vw;
     height: 45vh;
@@ -431,6 +442,7 @@ footer.bg-dark {
     .home-search .input-group .form-select { min-width: 7.5rem; height: 44px; }
     .home-search .input-group .form-control { height: 44px; }
     .home-search .input-group .btn-primary { height: 44px; padding: 0 .9rem; font-size: .95rem; }
+    .home-search .btn-clear-search { height: 44px !important; }
 
     /* Mobile catalog results polish */
     .blacklight-catalog-index #main-container.container { padding-left: .75rem; padding-right: .75rem; }
@@ -507,6 +519,15 @@ footer.bg-dark {
         width: 100% !important;
     }
     .home-cards .card { width: 100% !important; }
+}
+
+/* Prevent home card content overlap on tablet and smaller */
+@media only screen and (max-width: 1024px) {
+  /* Let the card grow with its content */
+  .home-cards .card { min-height: auto !important; height: auto !important; }
+  /* Allow description to take its natural height */
+  .home-cards .card-body, 
+  .home-cards .card-body p { height: auto !important; }
 }
 
 .iiif-tools-list {
