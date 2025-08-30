@@ -20,13 +20,14 @@
     </div>
 </div>
 
-<br/>
-<div class="row justify-content-start home-cards">
-    <h2>Explorez les collections Canadiana</h2>
-</div>
-<div class="row justify-content-start home-cards g-4">
-    <div class="col-12 col-md-6">
-        <div class="card card-collection shadow-sm h-100">
+<section class="site-section">
+  <div class="container">
+    <div class="row justify-content-start home-cards">
+      <h2 class="section-title">Explorez les collections Canadiana</h2>
+    </div>
+    <div class="row justify-content-start home-cards g-4">
+    <div class="col-12 col-md-6" style="margin-top: 0 !important">
+        <div class="card card-collection shadow-sm h-100" style="margin-top: 0 !important">
         <h5 class="card-header">Monographies</h5>
             <img src="assets/monog.jpg" class="card-img-top" alt="Image de représentation pour Monographies" loading="lazy">
             <div class="card-body">
@@ -40,14 +41,18 @@
             <li class="list-group-item">A second item</li>
             <li class="list-group-item">A third item</li>
             </ul-->
-            <div class="card-footer bg-transparent">
-                <!--a href="/#" class="card-link">Lire la suite</a-->
-                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Monographs+%7C+Monographies&q=&search_field=all_fields" class="card-link btn btn-primary btn-sm">Parcourir cette collection</a>
+            <div class="card-footer bg-transparent d-flex gap-2">
+                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Monographs+%7C+Monographies&q=&search_field=all_fields" class="btn btn-soft-primary btn-lg">
+                  <i class="bi bi-collection me-1" aria-hidden="true"></i> Parcourir
+                </a>
+                <a href="/about/monographs" class="btn btn-ghost-primary btn-lg">
+                  <i class="bi bi-info-circle me-1" aria-hidden="true"></i> À propos
+                </a>
             </div>
         </div>
     </div>
-    <div class="col-12 col-md-6">
-        <div class="card card-collection shadow-sm h-100">
+    <div class="col-12 col-md-6" style="margin-top: 0 !important">
+        <div class="card card-collection shadow-sm h-100" style="margin-top: 0 !important">
             <h5 class="card-header">Publications en série : périodiques, publications annuelles et journaux</h5>
             <img src="assets/serials.jpg" class="card-img-top" alt="Image de représentation pour Publications en série" loading="lazy">
             <div class="card-body">
@@ -55,9 +60,13 @@
                     La collection des publications en série englobe un large éventail de quotidiens, d’hebdomadaires, de revues spécialisées et de magazines grand public, ainsi que des annuaires de villes et des rapports annuels d’églises, d’écoles et de sociétés. 
                 </p>
             </div>
-            <div class="card-footer bg-transparent">
-                <!--a href="#" class="card-link">Lire la suite</a-->
-                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Serials+%7C+Publications+en+se%CC%81rie&q=&search_field=all_fields" class="card-link btn btn-primary btn-sm">Parcourir cette collection</a>
+            <div class="card-footer bg-transparent d-flex gap-2">
+                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Serials+%7C+Publications+en+se%CC%81rie&q=&search_field=all_fields" class="btn btn-soft-primary btn-lg">
+                  <i class="bi bi-collection me-1" aria-hidden="true"></i> Parcourir
+                </a>
+                <a href="/about/serials" class="btn btn-ghost-primary btn-lg">
+                  <i class="bi bi-info-circle me-1" aria-hidden="true"></i> À propos
+                </a>
             </div>
         </div>
     </div>
@@ -70,9 +79,13 @@
                     La collection des publications gouvernementales d’avant 1920 contient plus de 1,7 million de pages de documents officiels et historiques de l’époque coloniale, ainsi que des gouvernements provinciaux et fédéral.
                 </p>
             </div>
-            <div class="card-footer bg-transparent">
-                <!--a href="#" class="card-link">Lire la suite</a-->
-                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Government Publications+%7C+Publications gouvernementales&q=&search_field=all_fields" class="card-link btn btn-primary btn-sm">Parcourir cette collection</a>
+            <div class="card-footer bg-transparent d-flex gap-2">
+                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Government Publications+%7C+Publications gouvernementales&q=&search_field=all_fields" class="btn btn-soft-primary btn-lg">
+                  <i class="bi bi-collection me-1" aria-hidden="true"></i> Parcourir
+                </a>
+                <a href="/about/government-publications" class="btn btn-ghost-primary btn-lg">
+                  <i class="bi bi-info-circle me-1" aria-hidden="true"></i> À propos
+                </a>
             </div>
         </div>
     </div>
@@ -85,19 +98,24 @@
                     La collection de cartes contient actuellement près de 24 000 cartes canadiennes numérisées à partir de la Série nationale de référence cartographique à l’échelle 1:50 000. Les cartes datent de 1905 à 2012 et couvrent l’ensemble des provinces et territoires canadiens.
                 </p>
             </div>
-            <div class="card-footer bg-transparent">
-                <!--a href="#" class="card-link">Lire la suite</a
-                Naviguer par province/territoire  ou-->
-                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Maps+%7C+Cartes&q=&search_field=all_fields" class="card-link btn btn-primary btn-sm">Parcourir cette collection</a>
+            <div class="card-footer bg-transparent d-flex gap-2">
+                <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=Maps+%7C+Cartes&q=&search_field=all_fields" class="btn btn-soft-primary btn-lg">
+                  <i class="bi bi-collection me-1" aria-hidden="true"></i> Parcourir
+                </a>
+                <a href="/about/maps" class="btn btn-ghost-primary btn-lg">
+                  <i class="bi bi-info-circle me-1" aria-hidden="true"></i> À propos
+                </a>
             </div>
         </div>
     </div>
-</div>
-<br/>
+    </div>
+  </div>
+</section>
 
-<div class="container-fluid home-cards">
-    <h2>Déclaration sur les contenus et les descriptions problématiques dans Canadiana</h2>
-    <p>
+<section class="site-section">
+  <div class="container">
+    <h2 class="section-title">Déclaration sur les contenus et les descriptions problématiques dans Canadiana</h2>
+    <p class="section-lede">
         Les collections de Canadiana renferment des documents créés sur cinq siècles, qui racontent une histoire du Canada incomplète, souvent déformée et parfois préjudiciable. Les contenus, les métadonnées et les descriptions des ressources faisant partie des collections de Canadiana contiennent un langage qui reflète les préjugés, les normes et les perspectives de l’époque à laquelle ils ont été créés. Il peut notamment s’agir de formulations blessantes et offensantes, de références culturelles et de stéréotypes. Afin de refléter fidèlement les attitudes et les points de vue de l’époque à laquelle ces archives historiques ont été créées, les objets des collections Canadiana demeurent inchangés. Reconnaissant l’impact blessant ou douloureux que ce langage et ces images peuvent avoir, le personnel du RCDR s’engage activement à :
     </p>
     <ul>
@@ -107,5 +125,7 @@
     <p>
         Il s’agit d’un processus continu. Si vous voyez des documents dont le langage ou le contenu est inapproprié et que vous pensez que le RCDR devrait les examiner, veuillez remplir notre <a href="https://www.crkn-rcdr.ca/sites/crkn/files/2021-09/Final%20-%20Review%20Request%20Process%20for%20the%20Canadiana%20Collection%20-%20FR.pdf" target="_blank">Formulaire de demande de révision.</a>
     </p>
-</div>
-<br/>
+  </div>
+</section>
+
+<%= render MembersComponent.new %>

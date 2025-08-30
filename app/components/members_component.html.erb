@@ -1,0 +1,66 @@
+<section class="members-section" aria-labelledby="members-title">
+  <div class="container">
+    <div class="d-flex align-items-end justify-content-between flex-wrap gap-2 mb-2">
+      <div>
+        <h2 id="members-title" class="section-title mb-1"><%= t('blacklight.members.title') %></h2>
+        <p class="text-muted small mb-1"><%= t('blacklight.members.subtitle') %></p>
+        <p class="mb-0 members-blurb">
+          <%= t('blacklight.members.blurb_html', count: (@institutional.size + @associate.size)) %>
+        </p>
+      </div>
+      <div class="members-tabs members-segmented btn-group" role="tablist" aria-label="<%= t('blacklight.members.category_aria') %>">
+        <button type="button" class="btn btn-outline-secondary btn-sm active" data-members-tab="institutional"><%= t('blacklight.members.institutional') %></button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-members-tab="associate"><%= t('blacklight.members.associate') %></button>
+      </div>
+    </div>
+
+    <div class="members-filters d-flex flex-wrap align-items-center gap-2 mb-3">
+      <button type="button" class="chip chip-filter active" data-province="all"><i class="bi bi-mortarboard" aria-hidden="true"></i> <%= t('blacklight.members.all') %></button>
+      <% @provinces.each do |prov| %>
+        <button type="button" class="chip chip-filter" data-province="<%= prov %>"><%= prov %></button>
+      <% end %>
+      <div class="ms-auto members-search">
+        <label for="members-filter-input" class="visually-hidden"><%= t('blacklight.members.search_label') %></label>
+        <input id="members-filter-input" class="form-control form-control-sm" type="search" placeholder="<%= t('blacklight.members.search_placeholder') %>">
+      </div>
+    </div>
+
+    <div class="members-grid" data-members-group="institutional">
+      <% @institutional.each do |m| %>
+        <% card = capture do %>
+          <div class="member-avatar" aria-hidden="true"><span><%= m['name'][0] %></span></div>
+          <h3 class="member-name"><%= m['name'] %></h3>
+          <span class="badge rounded-pill member-province"><%= m['province'] %></span>
+        <% end %>
+        <% if m['url'].present? %>
+          <a class="member-card is-link" href="<%= m['url'] %>" target="_blank" rel="noopener" data-province="<%= m['province'] %>" aria-label="<%= t('blacklight.members.visit_site_aria', name: m['name']) %>">
+            <%= card %>
+          </a>
+        <% else %>
+          <article class="member-card" data-province="<%= m['province'] %>" tabindex="0">
+            <%= card %>
+          </article>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="members-grid d-none" data-members-group="associate">
+      <% @associate.each do |m| %>
+        <% card = capture do %>
+          <div class="member-avatar" aria-hidden="true"><span><%= m['name'][0] %></span></div>
+          <h3 class="member-name"><%= m['name'] %></h3>
+          <span class="badge rounded-pill member-province"><%= m['province'] %></span>
+        <% end %>
+        <% if m['url'].present? %>
+          <a class="member-card is-link" href="<%= m['url'] %>" target="_blank" rel="noopener" data-province="<%= m['province'] %>" aria-label="<%= t('blacklight.members.visit_site_aria', name: m['name']) %>">
+            <%= card %>
+          </a>
+        <% else %>
+          <article class="member-card" data-province="<%= m['province'] %>" tabindex="0">
+            <%= card %>
+          </article>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,91 @@
+institutional:
+  - { name: "Acadia University", province: "NS" }
+  - { name: "Algoma University", province: "ON" }
+  - { name: "Athabasca University", province: "AB" }
+  - { name: "Bibliothèque et Archives nationales du Québec", province: "QC" }
+  - { name: "Bishop's University", province: "QC" }
+  - { name: "Brandon University", province: "MB" }
+  - { name: "Brock University", province: "ON" }
+  - { name: "Cape Breton University", province: "NS" }
+  - { name: "Capilano University", province: "BC" }
+  - { name: "Carleton University", province: "ON" }
+  - { name: "Concordia University", province: "QC" }
+  - { name: "Concordia University of Edmonton", province: "AB" }
+  - { name: "Dalhousie University", province: "NS" }
+  - { name: "École Polytechnique de Montréal", province: "QC" }
+  - { name: "HEC Montréal", province: "QC" }
+  - { name: "Kwantlen Polytechnic University", province: "BC" }
+  - { name: "Lakehead University", province: "ON" }
+  - { name: "Laurentian University", province: "ON" }
+  - { name: "Library and Archives Canada", province: "ON" }
+  - { name: "MacEwan University", province: "AB" }
+  - { name: "McGill University", province: "QC" }
+  - { name: "McMaster University", province: "ON" }
+  - { name: "Memorial University of Newfoundland", province: "NL" }
+  - { name: "Mount Allison University", province: "NB" }
+  - { name: "Mount Royal University", province: "AB" }
+  - { name: "Mount Saint Vincent University", province: "NS" }
+  - { name: "Nipissing University", province: "ON" }
+  - { name: "Nova Scotia College of Art and Design University", province: "NS" }
+  - { name: "OCAD University", province: "ON" }
+  - { name: "Ontario Tech University", province: "ON" }
+  - { name: "Queen's University", province: "ON" }
+  - { name: "Royal Military College of Canada", province: "ON" }
+  - { name: "Royal Roads University", province: "BC" }
+  - { name: "Saint Mary's University", province: "NS" }
+  - { name: "Simon Fraser University", province: "BC" }
+  - { name: "St. Francis Xavier University", province: "NS" }
+  - { name: "The King's University", province: "AB" }
+  - { name: "Thompson Rivers University", province: "BC" }
+  - { name: "Toronto Metropolitan University", province: "ON" }
+  - { name: "Toronto Public Library", province: "ON" }
+  - { name: "Trent University", province: "ON" }
+  - { name: "Trinity Western University", province: "BC" }
+  - { name: "Université de Moncton", province: "NB" }
+  - { name: "Université de Montréal", province: "QC" }
+  - { name: "Université de Sherbrooke", province: "QC" }
+  - { name: "École nationale d'administration publique (UQ)", province: "QC" }
+  - { name: "École de technologie supérieure (UQ)", province: "QC" }
+  - { name: "Institut national de la recherche scientifique (UQ)", province: "QC" }
+  - { name: "Université du Québec à Chicoutimi", province: "QC" }
+  - { name: "Université du Québec à Montréal", province: "QC" }
+  - { name: "Université du Québec à Rimouski", province: "QC" }
+  - { name: "Université du Québec à Trois-Rivières", province: "QC" }
+  - { name: "Université du Québec en Abitibi-Témiscamingue", province: "QC" }
+  - { name: "Université du Québec en Outaouais", province: "QC" }
+  - { name: "Télé-université du Québec", province: "QC" }
+  - { name: "Université Laval", province: "QC" }
+  - { name: "Université Sainte-Anne", province: "NS" }
+  - { name: "University of Alberta", province: "AB" }
+  - { name: "University of British Columbia", province: "BC" }
+  - { name: "University of Calgary", province: "AB" }
+  - { name: "University of Guelph", province: "ON" }
+  - { name: "University of Lethbridge", province: "AB" }
+  - { name: "University of Manitoba", province: "MB" }
+  - { name: "University of New Brunswick", province: "NB" }
+  - { name: "University of Northern British Columbia", province: "BC" }
+  - { name: "University of Ottawa", province: "ON" }
+  - { name: "University of Prince Edward Island", province: "PEI" }
+  - { name: "University of Regina", province: "SK" }
+  - { name: "University of Saskatchewan", province: "SK" }
+  - { name: "University of the Fraser Valley", province: "BC" }
+  - { name: "University of Toronto", province: "ON" }
+  - { name: "University of Victoria", province: "BC" }
+  - { name: "University of Waterloo", province: "ON" }
+  - { name: "University of Windsor", province: "ON" }
+  - { name: "University of Winnipeg", province: "MB" }
+  - { name: "Vancouver Island University", province: "BC" }
+  - { name: "Western University", province: "ON" }
+  - { name: "Wilfrid Laurier University", province: "ON" }
+  - { name: "York University", province: "ON" }
+  - { name: "Yukon University", province: "YT" }
+
+associate:
+  - { name: "Library of Parliament", province: "ON" }
+  - { name: "National Research Council Canada", province: "ON" }
+  - { name: "NOSM University", province: "ON" }
+  - { name: "OurDigitalWorld", province: "ON" }
+  - { name: "Research and Development Institute for the Agri-environment", province: "QC" }
+  - { name: "Université de Hearst", province: "ON" }
+  - { name: "Université de l'Ontario français", province: "ON" }
+

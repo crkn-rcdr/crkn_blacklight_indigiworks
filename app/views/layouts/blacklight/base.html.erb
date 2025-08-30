@@ -11,6 +11,9 @@
     </script>
     <%= opensearch_description_tag application_name, opensearch_catalog_url(format: 'xml') %>
     <%= favicon_link_tag %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload"  %>
 
     <% if defined? Importmap %>

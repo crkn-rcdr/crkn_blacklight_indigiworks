@@ -59,6 +59,60 @@
                 </button>
                 <% if @document._source["ark"] %>
                   <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
+                  <div class="mt-2 d-flex gap-2 flex-wrap" id="download-toolbar"
+                       data-docid="<%= @document._source['id'] %>"
+                       data-arkpath="<%= @document._source['ark'].to_s.gsub('https://n2t.net/ark:/','') %>">
+                    <a id="btn-download-img" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
+                      <i class="bi bi-image" aria-hidden="true"></i>
+                      Download current image
+                    </a>
+                    <a id="btn-download-page" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
+                      <i class="bi bi-file-earmark-arrow-down" aria-hidden="true"></i>
+                      Download current image as PDF
+                    </a>
+                    <a id="btn-download-full" class="btn btn-ghost-primary btn-sm" target="_blank" rel="noopener">
+                      <i class="bi bi-filetype-pdf" aria-hidden="true"></i>
+                      Download full searchable PDF
+                    </a>
+                  </div>
+                  <script>
+                    (function(){
+                      const bar = document.getElementById('download-toolbar');
+                      if(!bar) return;
+                      const docid = bar.dataset.docid;
+                      const ark = bar.dataset.arkpath;
+                      fetch(`/dl/${encodeURIComponent(docid)}/${ark}`)
+                        .then(r => r.json())
+                        .then(data => {
+                          const full = document.getElementById('btn-download-full');
+                          if (data.docPdfUri) full.href = data.docPdfUri;
+                          const page = document.getElementById('btn-download-page');
+                          const params = new URLSearchParams(window.location.search);
+                          let idx = 0;
+                          if (params.has('pageNum')) {
+                            const p = parseInt(params.get('pageNum'), 10);
+                            if (!isNaN(p) && p > 0) idx = p - 1;
+                          }
+                          const list = data.canvasDownloadPdfUris || [];
+                          if (list[idx]) {
+                            page.href = list[idx];
+                          } else {
+                            page.classList.add('disabled');
+                            page.setAttribute('aria-disabled','true');
+                          }
+
+                          const pageImg = document.getElementById('btn-download-img');
+                          const listImg = data.canvasDownloadImgUris || [];
+                          if (listImg[idx]) {
+                            pageImg.href = listImg[idx];
+                          } else {
+                            pageImg.classList.add('disabled');
+                            pageImg.setAttribute('aria-disabled','true');
+                          }
+                        })
+                        .catch(() => {});
+                    })();
+                  </script>
                 <% else %>
                   <img src="/assets/404.webp" class="not-found-icon"/>
                   <p>Sorry, there was a problem loading the images for this item.</p>

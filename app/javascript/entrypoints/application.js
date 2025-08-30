@@ -34,9 +34,9 @@ if(pageViewer) {
     let language = document.documentElement.lang || "en";
     const documentId = pageViewer.getAttribute("data-docid")
     let contentSearch = {}
-    let canvasIndex = 0
+    //let canvasIndex = 0
     const params = new URLSearchParams(window.location.search)
-    if(params.has("pageNum")) canvasIndex = parseInt(params.get("pageNum")-1)
+    //if(params.has("pageNum")) canvasIndex = parseInt(params.get("pageNum")-1)
     if(params.has("q")) contentSearch = {  query: params.get("q") }
     const manifestBase = document.querySelector('meta[name="iiif-manifest-base"]')?.content || "https://crkn-iiif-api.azurewebsites.net/manifest";
     let normalizedBase = manifestBase.endsWith('/') ? manifestBase : manifestBase + '/';
@@ -51,7 +51,7 @@ if(pageViewer) {
         {
             manifestId: manifest,
             //view: 'single',
-            canvasIndex,
+            //canvasIndex,
             contentSearch
         }],
         view: "catalogueView",
@@ -184,14 +184,9 @@ if(pageViewer) {
     let miradorViewer = Mirador.viewer(mconfig);
     console.log("miradorViewer", miradorViewer)
 
-    /*miradorViewer.store.subscribe(() => {
-      const titleElement = document.querySelector('dd.blacklight-title_ssm p')
-      const titleText = titleElement?.textContent?.trim()
-      const h2Element = document.querySelector('h2.MuiTypography-h2')
-      if (titleText && h2Element) {
-        h2Element.textContent = h2Element.textContent.replace(titleText, '').replace(/\s+:\s+/, '').trim()
-      }
-    })*/
+    miradorViewer.store.subscribe((e) => {
+      console.log("m?", e)
+    })
 }
 import "bootstrap-icons/font/bootstrap-icons.css";
 import BlacklightRangeLimit from 'blacklight-range-limit';
@@ -199,22 +194,25 @@ import BlacklightRangeLimit from 'blacklight-range-limit';
 BlacklightRangeLimit.init({ onLoadHandler: Blacklight.onLoad });
 console.log("here???")
 
-// Enhance top search bar UX/accessibility without changing server templates
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.querySelector('.navbar-search form.search-query-form');
-  const input = document.querySelector('.navbar-search input#q');
-  const submit = document.querySelector('.navbar-search #search');
-
+// Enhance search bars (navbar + home hero) consistently
+function enhanceSearchBar(rootSelector) {
+  const root = document.querySelector(rootSelector);
+  if (!root) return;
+  const form = root.querySelector('form.search-query-form');
+  const input = root.querySelector('input#q');
+  const submit = root.querySelector('#search');
   if (!form || !input || !submit) return;
 
-  // Add a clear button (shows when there is text)
+  // Prevent duplicate clear button
+  if (submit.previousElementSibling && submit.previousElementSibling.classList?.contains('btn-clear-search')) return;
+
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
   clearBtn.className = 'btn btn-outline-secondary btn-clear-search';
   const lang = document.documentElement.lang || 'en';
   const clearLabel = lang.startsWith('fr') ? 'Effacer la recherche' : 'Clear search';
   const clearText = lang.startsWith('fr') ? 'Effacer' : 'Clear';
-  clearBtn.innerHTML = `<i class="bi bi-x-circle" aria-hidden="true"></i><span class="visually-hidden">${clearText}</span>`;
+  clearBtn.innerHTML = `<i class="bi bi-x-lg" aria-hidden="true"></i><span class="visually-hidden">${clearText}</span>`;
   clearBtn.setAttribute('aria-label', clearLabel);
   clearBtn.hidden = !input.value;
 
@@ -228,11 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
     clearBtn.hidden = input.value.length === 0;
   });
 
-  // Insert clear button before submit
   submit.parentElement.insertBefore(clearBtn, submit);
 
   // Keyboard shortcuts
-  // Focus search with '/' or Ctrl/Cmd+K
   window.addEventListener('keydown', (e) => {
     const isTypingInInput = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
     if (!isTypingInInput && (e.key === '/' || (e.key.toLowerCase() === 'k' && (e.ctrlKey || e.metaKey)))) {
@@ -242,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ESC clears current query when focused
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && input.value) {
       input.value = '';
@@ -251,20 +246,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Improve labeling for assistive tech
-  const helpId = 'search-help-text';
+  // Accessibility hint
+  const helpId = `${rootSelector.replace(/[^a-z]/gi,'')}-search-help`;
   let help = document.getElementById(helpId);
   if (!help) {
     help = document.createElement('div');
     help.id = helpId;
     help.className = 'visually-hidden';
-    const lang = document.documentElement.lang || 'en';
-    help.textContent = lang.startsWith('fr')
+    const lng = document.documentElement.lang || 'en';
+    help.textContent = lng.startsWith('fr')
       ? 'Utilisez la barre oblique (/) ou Ctrl+K pour activer la recherche. Appuyez sur Échap pour effacer.'
       : 'Use slash (/) or Ctrl+K to focus search. Press Escape to clear.';
     form.appendChild(help);
   }
   input.setAttribute('aria-describedby', [input.getAttribute('aria-describedby'), helpId].filter(Boolean).join(' '));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  enhanceSearchBar('.navbar-search');
+  enhanceSearchBar('.home-search');
 });
 
 // Page search chips: toggle show more/less
@@ -291,4 +291,57 @@ document.addEventListener('click', (e) => {
     if (span) span.textContent = labelMore;
     if (icon) icon.classList.remove('bi-chevron-up'), icon.classList.add('bi-chevron-down');
   }
+});
+
+// Members section interactions: tabs, province chips, name filter
+document.addEventListener('DOMContentLoaded', () => {
+  const section = document.querySelector('.members-section');
+  if (!section) return;
+
+  const tabs = section.querySelectorAll('[data-members-tab]');
+  const grids = section.querySelectorAll('.members-grid');
+  const filterChips = section.querySelectorAll('.chip-filter');
+  const input = section.querySelector('#members-filter-input');
+
+  let activeGroup = 'institutional';
+  let activeProvince = 'all';
+  let text = '';
+
+  function applyFilters() {
+    grids.forEach(grid => {
+      grid.classList.toggle('d-none', grid.dataset.membersGroup !== activeGroup);
+      if (grid.dataset.membersGroup === activeGroup) {
+        grid.querySelectorAll('.member-card').forEach(card => {
+          const prov = card.dataset.province || '';
+          const name = card.querySelector('.member-name')?.textContent?.toLowerCase() || '';
+          const provOk = activeProvince === 'all' || prov === activeProvince;
+          const textOk = text === '' || name.includes(text);
+          card.style.display = (provOk && textOk) ? '' : 'none';
+        });
+      }
+    });
+  }
+
+  tabs.forEach(btn => btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeGroup = btn.dataset.membersTab;
+    applyFilters();
+  }));
+
+  filterChips.forEach(chip => chip.addEventListener('click', () => {
+    filterChips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeProvince = chip.dataset.province;
+    applyFilters();
+  }));
+
+  if (input) {
+    input.addEventListener('input', () => {
+      text = input.value.trim().toLowerCase();
+      applyFilters();
+    });
+  }
+
+  applyFilters();
 });

@@ -2,6 +2,13 @@ Rails.application.routes.draw do
   concern :range_searchable, BlacklightRangeLimit::Routes::RangeSearchable.new
   mount Blacklight::Engine => '/'
   root to: "pages#home"
+  # Simple about pages for collections
+  get '/about/monographs', to: 'pages#about_monographs'
+  get '/about/serials', to: 'pages#about_serials'
+  get '/about/government-publications', to: 'pages#about_govpubs'
+  get '/about/maps', to: 'pages#about_maps'
+  # Allow slashes inside :ark (e.g., ark:/69429/m0k35m90313z)
+  get '/dl/:id/*ark', to: 'downloads#index', constraints: { id: /[0-z\.]+/ }, format: false
   #root to: "catalog#index"
   concern :marc_viewable, Blacklight::Marc::Routes::MarcViewable.new
   concern :searchable, Blacklight::Routes::Searchable.new
