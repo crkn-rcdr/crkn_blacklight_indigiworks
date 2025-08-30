@@ -647,9 +647,11 @@ footer.bg-dark {
 .facet-values { margin: .25rem 0 0; font-size: .95rem; }
 .facet-values li {
   display: flex; align-items: center; justify-content: space-between;
+  column-gap: .5rem;
   padding: .4rem .5rem; border-radius: 8px;
 }
 .facet-values li:hover { background: #f7f9fb; }
+.facet-values .facet-label { flex: 1 1 auto; min-width: 0; }
 .facet-values .facet-label a { text-decoration: none; color: #0f172a; }
 .facet-values .facet-count {
   background: #eef2f7;
@@ -658,6 +660,9 @@ footer.bg-dark {
   padding: .15rem .5rem;
   font-weight: 600;
   min-width: 2ch; text-align: center;
+  display: inline-flex; align-items: center; justify-content: center;
+  white-space: nowrap; word-break: normal; overflow-wrap: normal;
+  flex: 0 0 auto; line-height: 1;
 }
 
 /* Details/summary (Range List) */
