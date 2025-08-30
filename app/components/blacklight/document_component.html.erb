@@ -49,6 +49,21 @@
                 <% metadata_sections.each do |section| %>
                   <%= section %>
                 <% end %>
+
+                <ul class="list-unstyled mb-0">
+                  <li class="mb-1">
+                    <a href="/catalog/<%= params[:id] %>/librarian_view" data-blacklight-modal="trigger" data-turbo="false">
+                      <i class="bi bi-journal-text me-1" aria-hidden="true"></i>
+                      <%= t('blacklight.tools.librarian_view') %>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/catalog/<%= params[:id] %>/citation" data-blacklight-modal="trigger" data-turbo="false">
+                      <i class="bi bi-quote me-1" aria-hidden="true"></i>
+                      <%= t('blacklight.tools.cite') %>
+                    </a>
+                  </li>
+                </ul>
               </div>
             </div>
             <!-- Main Content -->
@@ -59,6 +74,14 @@
                 </button>
                 <% if @document._source["ark"] %>
                   <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
+                  
+                <% else %>
+                  <img src="/assets/404.webp" class="not-found-icon"/>
+                  <p>Sorry, there was a problem loading the images for this item.</p>
+                <% end %>
+
+                
+              <div>
                   <div class="mt-2 d-flex gap-2 flex-wrap" id="download-toolbar"
                        data-docid="<%= @document._source['id'] %>"
                        data-arkpath="<%= @document._source['ark'].to_s.gsub('https://n2t.net/ark:/','') %>">
@@ -70,7 +93,7 @@
                       <i class="bi bi-file-earmark-arrow-down" aria-hidden="true"></i>
                       Download current image as PDF
                     </a>
-                    <a id="btn-download-full" class="btn btn-ghost-primary btn-sm" target="_blank" rel="noopener">
+                    <a id="btn-download-full" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
                       <i class="bi bi-filetype-pdf" aria-hidden="true"></i>
                       Download full searchable PDF
                     </a>
@@ -85,7 +108,12 @@
                         .then(r => r.json())
                         .then(data => {
                           const full = document.getElementById('btn-download-full');
-                          if (data.docPdfUri) full.href = data.docPdfUri;
+                          if (data.docPdfUri) {
+                            full.href = data.docPdfUri;
+                          } else {
+                            full.classList.add('disabled');
+                            full.setAttribute('aria-disabled','true');
+                          }
                           const page = document.getElementById('btn-download-page');
                           const params = new URLSearchParams(window.location.search);
                           let idx = 0;
@@ -113,10 +141,10 @@
                         .catch(() => {});
                     })();
                   </script>
-                <% else %>
-                  <img src="/assets/404.webp" class="not-found-icon"/>
-                  <p>Sorry, there was a problem loading the images for this item.</p>
-                <% end %>
+                </div>
+
+                
+                <%= render(::IiifComponent.new(document: @document, term: params[:q])) %>
               <% else %>
               <button id="toggle-doc-metadata3" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
                   <i class="bi bi-layout-sidebar"></i><span><%= t('labels.L_SERIAL_RECORD') %></span>
@@ -130,7 +158,6 @@
             </div>
           </div>
         </div>
-        <%= render(::IiifComponent.new(document: @document, term: params[:q])) %>
 
 
 

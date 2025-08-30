@@ -2,15 +2,15 @@
 en:
   blacklight:
     members:
-      title: CRKN Members
-      subtitle: Our community of libraries, archives, and institutions
+      title: Canadiana is made possible by CRKN members
+      subtitle: CRKN is a Canadian community of libraries, archives, and institutions across Canada
       category_aria: Member category tabs
       institutional: Institutional Members
       associate: Associate Members
       all: All
       search_label: Filter members
       search_placeholder: Search members…
-      blurb_html: "CRKN members represent <strong>%{count}</strong> institutions across Canada — world-class academic libraries and research organizations, two national libraries, and Canada’s largest public library system. The Canadiana collections are funded and brought to you by our members."
+      blurb_html: "CRKN brings together <strong>%{count}</strong> member organizations from coast to coast: leading universities and research libraries, Canada’s two national libraries, and even the country’s largest public library system. By working together, our members make the Canadiana collections possible—so everyone can explore, discover, and connect with Canada's documentary heritage."
       visit_site_aria: "Visit %{name} website"
     page_search:
       matching_pages_for_html: "Matching pages for <strong>%{term}</strong>"
@@ -22,7 +22,7 @@ en:
       next_hit: Next hit
       prev_hit_aria: Go to previous match
       next_hit_aria: Go to next match
-    iiif_toolbox:
+    tools:
       title: Toolbox
       subtitle: Export, edit, or share this item
       crop_image: Crop Images

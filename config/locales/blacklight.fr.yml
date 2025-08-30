@@ -2,15 +2,15 @@
 fr:
   blacklight:
     members:
-      title: Membres du RCDR
-      subtitle: Notre communauté de bibliothèques, archives et institutions
-      category_aria: Onglets des catégories de membres
+      title: Canadiana existe grâce aux membres du RCDR
+      subtitle: Le RCDR est une communauté canadienne de bibliothèques, d’archives et d’institutions d’un océan à l’autre
+      category_aria: Onglets de catégories de membres
       institutional: Membres institutionnels
       associate: Membres associés
       all: Tous
       search_label: Filtrer les membres
       search_placeholder: Rechercher des membres…
-      blurb_html: "Les membres du RCDR représentent <strong>%{count}</strong> institutions partout au Canada — des bibliothèques et organismes de recherche de calibre mondial, deux bibliothèques nationales et le plus grand réseau de bibliothèques publiques du pays. Les collections Canadiana sont rendues possibles grâce au soutien de nos membres."
+      blurb_html: "Le RCDR réunit <strong>%{count}</strong> organisations membres d’un océan à l’autre : de grandes bibliothèques universitaires et de recherche, les deux bibliothèques nationales du Canada et le plus grand réseau de bibliothèques publiques du pays. Ensemble, nos membres rendent possibles les collections Canadiana — pour que chacun puisse explorer, découvrir et se connecter au patrimoine documentaire du Canada."
       visit_site_aria: "Visiter le site de %{name}"
     page_search:
       matching_pages_for_html: "Pages correspondantes pour <strong>%{term}</strong>"
@@ -22,7 +22,7 @@ fr:
       next_hit: Occurrence suivante
       prev_hit_aria: Aller à l’occurrence précédente
       next_hit_aria: Aller à l’occurrence suivante
-    iiif_toolbox:
+    tools:
       title: Boîte à outils
       subtitle: Exporter, modifier ou partager cet item
       crop_image: Rogner l’images
