@@ -23,9 +23,10 @@ en:
       prev_hit_aria: Go to previous match
       next_hit_aria: Go to next match
     tools:
-      title: Toolbox
+      toolbox_title: Toolbox
+      title: Tools
       subtitle: Export, edit, or share this item
-      crop_image: Crop Images
+      crop_image: Crop Image
       crop_tooltip: Open cropping tool in a new tab
       generate_pdf: Generate PDF
       pdf_tooltip: Create a PDF from the IIIF manifest
@@ -38,6 +39,10 @@ en:
       what_is_iiif: What is IIIF?
       librarian_view: Librarian View
       cite: Cite
+      citation: Cite
+      clear: Clear
+      email: Email
+      sms: SMS This
     advanced_search:
       any_of: "Any of:"
       form:
@@ -255,12 +260,6 @@ en:
       success: SMS Sent
       text:
         url: "Link: %{url}"
-    tools:
-      citation: Cite
-      clear: Clear
-      email: Email
-      sms: SMS This
-      title: Tools
     top_navbar:
       aria:
         container_label: Main navigation

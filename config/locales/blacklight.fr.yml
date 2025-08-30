@@ -23,9 +23,10 @@ fr:
       prev_hit_aria: Aller à l’occurrence précédente
       next_hit_aria: Aller à l’occurrence suivante
     tools:
-      title: Boîte à outils
+      toolbox_title: Boîte à outils
+      title: Outils
       subtitle: Exporter, modifier ou partager cet item
-      crop_image: Rogner l’images
+      crop_image: Rogner l’image
       crop_tooltip: Ouvrir l’outil de rognage dans un nouvel onglet
       generate_pdf: Générer un PDF
       pdf_tooltip: Créer un PDF à partir du manifeste IIIF
@@ -38,6 +39,10 @@ fr:
       what_is_iiif: Qu’est‑ce que IIIF ?
       librarian_view: Vue bibliothécaire
       cite: Citer
+      citation: Citer
+      clear: Effacer
+      email: Envoyer
+      sms: SMS
     and: et
     application_name: Canadiana
     back_to_bookmarks: Retour aux favoris
@@ -236,12 +241,6 @@ fr:
       success: SMS envoyé
       text:
         url: "Lien : %{url}"
-    tools:
-      citation: Citer
-      clear: Effacer
-      email: Envoyer
-      sms: SMS
-      title: Outils
     top_navbar:
       aria:
         container_label: Navigation principale
