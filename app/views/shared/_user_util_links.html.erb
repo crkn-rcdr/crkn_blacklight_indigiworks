@@ -5,10 +5,12 @@
     </li>
     <% content_lang = request.get_header('HTTP_CONTENT_LANGUAGE') || I18n.locale.to_s %>
     <li>
+      <% en_url = request.path + "?" + request.query_parameters.merge(lang: 'en').to_query %>
+      <% fr_url = request.path + "?" + request.query_parameters.merge(lang: 'fr').to_query %>
       <% if content_lang == 'fr' %>
-        <%= link_to "English", url_for(params.permit!.to_h.merge(lang: 'en')) %> | <b>Français</b>
+        <%= link_to "English", en_url %> | <b>Français</b>
       <% else %>
-        <b>English</b> | <%= link_to "Français", url_for(params.permit!.to_h.merge(lang: 'fr')) %>
+        <b>English</b> | <%= link_to "Français", fr_url %>
       <% end %>
     </li>
     <li>
