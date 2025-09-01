@@ -648,8 +648,7 @@ footer.bg-dark {
 }
 .facet-limit .collapse-toggle:hover { background: #f8f9fa; }
 .facet-limit .collapse-toggle:focus-visible { box-shadow: 0 0 0 3px rgba(29,128,139,.18); }
-/* Use default collapse indicators; remove custom chevron pseudo-element */
-
+.facet-limit-active .card-header .btn { color: #1d808b; }
 .facet-limit .facet-content { border-top: 1px solid rgba(0,0,0,.06); }
 .facet-limit .card-body { padding: .75rem .9rem; }
 
