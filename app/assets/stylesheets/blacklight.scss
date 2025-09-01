@@ -414,8 +414,9 @@ button i {
         }
     }
 }
-
-
 .MuiChip-icon:before {
     line-height: 1.8 !important;
+}
+.members-section .chip-filter {
+    display: flex !important;
 }
