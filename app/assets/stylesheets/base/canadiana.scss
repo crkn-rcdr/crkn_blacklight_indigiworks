@@ -738,7 +738,48 @@ footer.bg-dark {
 .member-name { font-size: 1rem; margin: 0; }
 .member-province { background: #eef3f5; color: #205b63; }
 .member-card.is-link { text-decoration: none; color: inherit; }
-.members-blurb { color: #2f3b3d; }
+  .members-blurb { color: #2f3b3d; }
+
+  /* Members search input: deep pill styling to match site */
+  .members-search { min-width: 260px; }
+  .members-search .input-group {
+    border: 1px solid rgba(0,0,0,.12);
+    border-radius: 999px; /* deep pill */
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  }
+  .members-search .input-group:focus-within {
+    border-color: rgba(29,128,139,.45);
+    box-shadow: 0 0 0 3px rgba(29,128,139,.08), 0 8px 24px rgba(0,0,0,.06);
+  }
+  .members-search .input-group-text {
+    background: transparent;
+    border: 0;
+    color: #6c757d;
+    display: inline-flex; align-items: center;
+    padding: .25rem .5rem .25rem .75rem;
+  }
+  .members-search .form-control {
+    border: 0 !important;
+    box-shadow: none !important;
+    height: 36px;
+    padding-left: .25rem; padding-right: .25rem;
+  }
+  .members-search .btn-clear-search {
+    height: 36px !important;
+    border: 0 !important;
+    border-left: 0 !important;
+    border-radius: 0; /* rely on input-group rounding */
+    background: transparent !important;
+    color: #8a9aa1 !important;
+  }
+  .members-search .btn-clear-search:hover,
+  .members-search .btn-clear-search:focus {
+    background-color: rgba(0,0,0,.04) !important;
+    color: #2f3b3d !important;
+    box-shadow: none !important;
+  }
 
 /* Collection cards – unify header sizing and spacing */
 .card-collection { border-radius: 16px; overflow: hidden; }

@@ -20,8 +20,15 @@
         <button type="button" class="chip chip-filter" data-province="<%= prov %>"><%= prov %></button>
       <% end %>
       <div class="ms-auto members-search">
-        <label for="members-filter-input" class="visually-hidden"><%= t('blacklight.members.search_label') %></label>
-        <input id="members-filter-input" class="form-control form-control-sm" type="search" placeholder="<%= t('blacklight.members.search_placeholder') %>">
+        <div class="input-group input-group-sm">
+          <span class="input-group-text" aria-hidden="true"><i class="bi bi-search"></i></span>
+          <label for="members-filter-input" class="visually-hidden"><%= t('blacklight.members.search_label') %></label>
+          <input id="members-filter-input" class="form-control" type="search" placeholder="<%= t('blacklight.members.search_placeholder') %>">
+          <button type="button" class="btn btn-outline-secondary btn-clear-search btn-clear-members" hidden aria-label="<%= t('blacklight.members.clear_search', default: 'Clear search') %>">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+            <span class="visually-hidden"><%= t('blacklight.members.clear', default: 'Clear') %></span>
+          </button>
+        </div>
       </div>
     </div>
 
