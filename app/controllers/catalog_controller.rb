@@ -8,6 +8,10 @@ class CatalogController < ApplicationController
 
   include Blacklight::Marc::Catalog
 
+  # Blacklight's track action is a redirect used for click tracking and may
+  # be invoked without an authenticity token. Skip CSRF verification for it.
+  skip_before_action :verify_authenticity_token, only: [:track]
+
 
   # If you'd like to handle errors returned by Solr in a certain way,
   # you can use Rails rescue_from with a method you define in this controller,
