@@ -216,6 +216,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .home-search input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; height: 0; width: 0; margin: 0; }
 .home-search input[type="search"]::-ms-clear { display: none; width: 0; height: 0; }
 .home-search input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
+.members-search input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; height: 0; width: 0; margin: 0; }
+.members-search input[type="search"]::-ms-clear { display: none; width: 0; height: 0; }
+.members-search input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
 .home-search svg {
     width: 1.5rem !important;
     height: 1.5rem !important;

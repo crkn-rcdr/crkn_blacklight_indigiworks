@@ -302,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const grids = section.querySelectorAll('.members-grid');
   const filterChips = section.querySelectorAll('.chip-filter');
   const input = section.querySelector('#members-filter-input');
+  const clearBtn = section.querySelector('.btn-clear-members');
 
   let activeGroup = 'institutional';
   let activeProvince = 'all';
@@ -337,8 +338,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
 
   if (input) {
+    // initialize clear visibility
+    if (clearBtn) clearBtn.hidden = input.value.length === 0;
     input.addEventListener('input', () => {
       text = input.value.trim().toLowerCase();
+      if (clearBtn) clearBtn.hidden = input.value.length === 0;
+      applyFilters();
+    });
+  }
+
+  if (clearBtn && input) {
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      text = '';
+      clearBtn.hidden = true;
+      input.focus();
       applyFilters();
     });
   }
