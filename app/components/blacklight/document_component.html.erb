@@ -102,43 +102,91 @@
                     (function(){
                       const bar = document.getElementById('download-toolbar');
                       if(!bar) return;
+
                       const docid = bar.dataset.docid;
                       const ark = bar.dataset.arkpath;
-                      fetch(`/dl/${encodeURIComponent(docid)}/${ark}`)
-                        .then(r => r.json())
-                        .then(data => {
-                          const full = document.getElementById('btn-download-full');
+
+                      const full = document.getElementById('btn-download-full');
+                      const page = document.getElementById('btn-download-page');
+                      const pageImg = document.getElementById('btn-download-img');
+
+                      // Update links based on current pageNum in the URL
+                      function updateForCurrentPage(data){
+                        if (!data) return;
+
+                        // Full-document PDF (static once data is fetched)
+                        if (full) {
                           if (data.docPdfUri) {
                             full.href = data.docPdfUri;
+                            full.classList.remove('disabled');
+                            full.removeAttribute('aria-disabled');
                           } else {
                             full.classList.add('disabled');
                             full.setAttribute('aria-disabled','true');
                           }
-                          const page = document.getElementById('btn-download-page');
-                          const params = new URLSearchParams(window.location.search);
-                          let idx = 0;
-                          if (params.has('pageNum')) {
-                            const p = parseInt(params.get('pageNum'), 10);
-                            if (!isNaN(p) && p > 0) idx = p - 1;
-                          }
-                          const list = data.canvasDownloadPdfUris || [];
-                          if (list[idx]) {
-                            page.href = list[idx];
+                        }
+
+                        const params = new URLSearchParams(window.location.search);
+                        let idx = 0;
+                        if (params.has('pageNum')) {
+                          const p = parseInt(params.get('pageNum'), 10);
+                          if (!isNaN(p) && p > 0) idx = p - 1;
+                        }
+
+                        const listPdf = data.canvasDownloadPdfUris || [];
+                        if (page) {
+                          if (listPdf[idx]) {
+                            page.href = listPdf[idx];
+                            page.classList.remove('disabled');
+                            page.removeAttribute('aria-disabled');
                           } else {
                             page.classList.add('disabled');
                             page.setAttribute('aria-disabled','true');
                           }
+                        }
 
-                          const pageImg = document.getElementById('btn-download-img');
-                          const listImg = data.canvasDownloadImgUris || [];
+                        const listImg = data.canvasDownloadImgUris || [];
+                        if (pageImg) {
                           if (listImg[idx]) {
                             pageImg.href = listImg[idx];
+                            pageImg.classList.remove('disabled');
+                            pageImg.removeAttribute('aria-disabled');
                           } else {
                             pageImg.classList.add('disabled');
                             pageImg.setAttribute('aria-disabled','true');
                           }
+                        }
+                      }
+
+                      // Fetch once, then update on URL changes
+                      let dlData = null;
+                      fetch(`/dl/${encodeURIComponent(docid)}/${ark}`)
+                        .then(r => r.json())
+                        .then(data => {
+                          dlData = data;
+                          updateForCurrentPage(dlData);
                         })
                         .catch(() => {});
+
+                      // Listen for navigation events that may change the query string
+                      function onLocationChange(){ updateForCurrentPage(dlData); }
+                      window.addEventListener('popstate', onLocationChange);
+                      window.addEventListener('hashchange', onLocationChange);
+
+                      // Patch history methods so pushState/replaceState also trigger updates
+                      (function() {
+                        const wrap = function(type){
+                          const orig = history[type];
+                          return function(){
+                            const res = orig.apply(this, arguments);
+                            try { window.dispatchEvent(new Event('locationchange')); } catch(e) {}
+                            return res;
+                          };
+                        };
+                        history.pushState = wrap('pushState');
+                        history.replaceState = wrap('replaceState');
+                        window.addEventListener('locationchange', onLocationChange);
+                      })();
                     })();
                   </script>
                 </div>
