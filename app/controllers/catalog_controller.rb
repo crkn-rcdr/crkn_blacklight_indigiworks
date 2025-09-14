@@ -303,6 +303,15 @@ class CatalogController < ApplicationController
       field.label = ->(_config) { I18n.t('blacklight.metadata.subject.label') }
     end
 
+    config.add_search_field('tx_gen') do |field|
+      # solr_parameters hash are sent to Solr as ordinary url query params.
+      field.solr_parameters = {
+        qf: 'tx_gen',
+        pf: 'tx_gen'
+      }
+      field.label = ->(_config) { I18n.t('blacklight.metadata.fulltx.label') }
+    end
+
     # "sort results by" select (pulldown)
     # label in pulldown is followed by the name of the Solr field to sort by and
     # whether the sort is ascending or descending (it must be asc or desc

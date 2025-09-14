@@ -275,6 +275,8 @@ en:
     metadata:
       title:
         label: Title
+      fulltx:
+        label: Full Text
       subtitle:
         label: Subtitle
       other_titles:

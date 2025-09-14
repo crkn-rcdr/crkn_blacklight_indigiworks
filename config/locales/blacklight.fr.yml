@@ -256,6 +256,8 @@ fr:
     metadata:
       title:
         label: Titre
+      fulltx:
+        label: Texte complet
       subtitle:
         label: Sous-titre
       other_titles:
