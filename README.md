@@ -16,13 +16,15 @@ This repo is configured to pull and run solr through docker compose, and has the
 
 For CRKN in production, we are using a solr instance running independantly from this docker compose. To configure the Solr instance to work with the Blacklight container, I sshed onto the Solr server, and performed the following:
 
+`sudo cat /home/bitnami/bitnami_credentials`
+
 Connect to the solr vm:
 
-`ssh -i ~/.ssh/<id file>.pem <user>@4.204.49.142`
+`ssh -i ~/.ssh/<id file>.pem <user>@4.229.225.26`
 
 Created the blacklight_marc core config directory:
 
-`sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc/conf`
+`sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc &&sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc/conf`
 
 Copied the default configs to my new core:
 

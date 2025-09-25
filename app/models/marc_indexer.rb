@@ -17,26 +17,21 @@ class MarcIndexer < Blacklight::Marc::Indexer
     # https://github.com/traject/traject/blob/5d720e2ba0a277cf7af455763f520cd6a2d956c7/README.md?plain=1#L279
     to_field "id", extract_marc("001"), trim, first_only
     # TODO: could use the serials 990 instead 
+    # 901 = "Is issue"  => Yes; otherwise (missing/different) => No
     to_field "is_issue" do |record, accumulator|
-      if record["901"]&.value&.casecmp("Is issue")
-        accumulator.replace ["Yes"]
-      else
-        accumulator.replace ["No"]
-      end
+      v = record["901"]&.value&.strip
+      accumulator.replace [ (v&.casecmp("Is issue")&.zero?) ? "Yes" : "No" ]
     end
+
+    # 901 = "Is serial" => Yes; otherwise (missing/different) => No
     to_field "is_serial" do |record, accumulator|
-      is_in_serials = record["999"]&.value&.match?(/serials/i)
-      is_issue = record["901"]&.value&.match?(/is issue/i)
-      if is_in_serials && !is_issue
-        accumulator.replace ["Yes"]
-      else
-        accumulator.replace ["No"]
-      end
+      v = record["901"]&.value&.strip
+      accumulator.replace [ (v&.casecmp("Is serial")&.zero?) ? "Yes" : "No" ]
     end
-    to_field "serial_key",  extract_marc('490v'), first_only do |rec, acc|
-      parts = acc[0].split('_')
-      acc.replace [parts[0...-1].join('_')]
-    end
+
+    # serial_key from 902$b (first only)
+    to_field "serial_key", extract_marc('902b'), first_only
+
     to_field "serial_title",  extract_marc('245a'), first_only do |rec, acc|
       if acc[0] && acc[0].count(":") >= 1
         parts = acc[0].split(':', 2)

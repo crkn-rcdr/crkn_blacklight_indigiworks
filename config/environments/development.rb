@@ -69,4 +69,6 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
   config.hosts << 'canadiana-beta.azurewebsites.net'
   config.hosts << "canadiana-beta.ca:3000"
+  config.hosts << "canadiana-demo.azurewebsites.net"
+  config.hosts << "canadiana-demo.ca:3000"
 end
