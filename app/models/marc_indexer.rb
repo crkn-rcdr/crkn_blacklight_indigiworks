@@ -26,7 +26,7 @@ class MarcIndexer < Blacklight::Marc::Indexer
     # 901 = "Is serial" => Yes; otherwise (missing/different) => No
     to_field "is_serial" do |record, accumulator|
       v = record["901"]&.value&.strip
-      accumulator.replace [ (v&.casecmp("Is serial")&.zero?) ? "Yes" : "No" ]
+      accumulator.replace [ (v&.casecmp("Is series")&.zero?) ? "Yes" : "No" ]
     end
 
     # serial_key from 902$b (first only)
