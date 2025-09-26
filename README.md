@@ -95,9 +95,9 @@ Ensure docker and docker compose are installed. Then, enter the directory in you
 # Deployment Instructions
 Run the following to push the image to docker hub:
 
-`docker tag crkn_canadiana_blacklight-web brilap/crkn`
+`docker tag crkn_canadiana_blacklight-web brilap/crkn-iw`
 
-`docker push brilap/crkn`
+`docker push brilap/crkn-iw`
 
 Then restart the web app on [Azure](https://portal.azure.com/#@crkn.ca/resource/subscriptions/1bf1b056-be1d-4b1c-991f-2f154caf3061/resourceGroups/CRKN-demo-test/providers/Microsoft.Web/sites/canadiana-beta/appServices) to pull the new docker image.
 
