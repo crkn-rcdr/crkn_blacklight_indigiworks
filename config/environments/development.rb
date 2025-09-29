@@ -67,8 +67,6 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
-  config.hosts << 'canadiana-beta.azurewebsites.net'
-  config.hosts << "canadiana-beta.ca:3000"
-  config.hosts << "canadiana-demo.azurewebsites.net"
-  config.hosts << "canadiana-demo.ca:3000"
+  config.hosts << "canadiana-indigenous-works.azurewebsites.net"
+  config.hosts << "canadiana-indigenous-works.ca:3000"
 end

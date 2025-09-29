@@ -22,17 +22,17 @@ Connect to the solr vm:
 
 `ssh -i ~/.ssh/<id file>.pem <user>@4.229.225.26`
 
-Created the blacklight_marc core config directory:
+Created the blacklight_marc_iw core config directory:
 
-`sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc &&sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc/conf`
+`sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc_iw &&sudo mkdir /opt/bitnami/solr/server/solr/blacklight_marc_iw/conf`
 
 Copied the default configs to my new core:
 
-`sudo cp -r /opt/bitnami/solr/server/solr/configsets/_default/conf/* /opt/bitnami/solr/server/solr/blacklight_marc/conf/`
+`sudo cp -r /opt/bitnami/solr/server/solr/configsets/_default/conf/* /opt/bitnami/solr/server/solr/blacklight_marc_iw/conf/`
 
 Went into the new core's config directory:
 
-`cd /opt/bitnami/solr/server/solr/blacklight_marc/conf/`
+`cd /opt/bitnami/solr/server/solr/blacklight_marc_iw/conf/`
 
 Removed the default solr config:
 
@@ -95,7 +95,7 @@ Ensure docker and docker compose are installed. Then, enter the directory in you
 # Deployment Instructions
 Run the following to push the image to docker hub:
 
-`docker tag crkn_blacklight_indigiworks-web-1 brilap/crkn-iw`
+`docker tag crkn_blacklight_indigiworks-web brilap/crkn-iw`
 
 `docker push brilap/crkn-iw`
 
@@ -108,12 +108,12 @@ See Blacklight Wiki and Tutorials:
 
 To index a marc record from the terminal, you can enter the container on Docker Desktop (or through the docker exec command in your terminal) and run: 
 
-`rake solr:marc:index MARC_FILE=marc-file-name-here.mrc`
+`rake solr:marc:index MARC_FILE=iw.mrc`
 
 A quick command to clear the solr index is:
 
-`curl -X POST -H 'Content-Type: application/json' 'http://username:password@host/solr/blacklight_marc/update?commit=true' -d '{ "delete": {"query":"*:*"} }'`
-`curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/blacklight_marc/update?commit=true' -d '{ "delete": {"query":"*:*"} }'`
+`curl -X POST -H 'Content-Type: application/json' 'http://username:password@host/solr/blacklight_marc_iw/update?commit=true' -d '{ "delete": {"query":"*:*"} }'`
+`curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/blacklight_marc_iw/update?commit=true' -d '{ "delete": {"query":"*:*"} }'`
 
 I ran these commands and saved the app directory as a mapped volume, so you shouldn't have to:
 

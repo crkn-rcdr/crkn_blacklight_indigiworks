@@ -1,4 +1,5 @@
 require 'time'
+require 'json'
 $:.unshift './config'
 class MarcIndexer < Blacklight::Marc::Indexer
   # this mixin defines lambda factory method get_format for legacy marc formats
@@ -125,6 +126,37 @@ class MarcIndexer < Blacklight::Marc::Indexer
       662#{ATOZ}
       688#{ATOZ}
     ).join(':'))
+
+    to_field 'subject_geo_ssim', extract_marc('651a:650z'), trim_punctuation
+
+    to_field 'coordinates_srpt' do |record, accumulator|
+      spatial = self.class.extract_spatial_geometries(record)
+      values = []
+
+      spatial[:boxes].each do |box|
+        envelope = self.class.build_envelope_string(box)
+        values << envelope if envelope
+        center = self.class.box_center(box)
+        values << self.class.format_point(center) if center
+      end
+
+      spatial[:points].each do |point|
+        values << self.class.format_point(point)
+      end
+
+      values.compact!
+      values.uniq!
+      accumulator.concat(values)
+    end
+
+    to_field 'geojson_ssim' do |record, accumulator, context|
+      spatial = self.class.extract_spatial_geometries(record)
+      placenames = Array(context&.output_hash&.[]('subject_geo_ssim')).map { |value| value.to_s.strip }
+      placenames.reject!(&:empty?)
+
+      features = self.class.build_geojson_features(spatial, placenames)
+      accumulator.concat(features) unless features.empty?
+    end
 
     to_field 'subject_ssim', extract_marc(%W(
       600#{ATOZ}
@@ -271,5 +303,241 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     to_field 'lc_b4cutter_ssim', extract_marc('050a'), first_only
 
+  end
+
+  private
+
+  def self.extract_spatial_geometries(record)
+    boxes = []
+    points = []
+
+    record.fields('034').each do |field|
+      if (box = parse_bounding_box(field))
+        boxes << box
+      end
+      points.concat(parse_point_values(field))
+    end
+
+    boxes.uniq! { |box| [box[:west], box[:east], box[:north], box[:south]] }
+    points.uniq! { |point| [point[:lon], point[:lat]] }
+
+    { boxes: boxes, points: points }
+  end
+
+  def self.parse_bounding_box(field)
+    west = normalize_coordinate(field['d'], :lon)
+    east = normalize_coordinate(field['e'], :lon)
+    north = normalize_coordinate(field['f'], :lat)
+    south = normalize_coordinate(field['g'], :lat)
+
+    return unless [west, east, north, south].all?
+    return if west == east || north == south
+
+    {
+      west: [west, east].min,
+      east: [west, east].max,
+      north: [north, south].max,
+      south: [north, south].min
+    }
+  end
+
+  def self.parse_point_values(field)
+    field.subfields.select { |sf| sf.code == 'p' }.filter_map do |subfield|
+      parse_point(subfield.value)
+    end
+  end
+
+  def self.parse_point(value)
+    tokens = value.to_s.split(/[;,\s]+/).reject(&:empty?)
+    parsed = tokens.filter_map { |token| parse_coordinate_token(token) }
+
+    lat_entry = parsed.find { |entry| entry[:axis] == :lat }
+    lon_entry = parsed.find { |entry| entry[:axis] == :lon }
+
+    parsed.select { |entry| entry[:axis].nil? }.each do |entry|
+      next unless entry[:value]
+      if lat_entry.nil? && entry[:value].abs <= 90
+        lat_entry = entry
+      elsif lon_entry.nil? && entry[:value].abs > 90
+        lon_entry = entry
+      elsif lon_entry.nil?
+        lon_entry = entry
+      elsif lat_entry.nil?
+        lat_entry = entry
+      end
+    end
+
+    return unless lat_entry && lon_entry
+
+    lat = lat_entry[:value]
+    lon = lon_entry[:value]
+
+    return if lat.nil? || lon.nil?
+    return if lat.abs > 90 || lon.abs > 180
+
+    { lat: lat, lon: lon }
+  end
+
+  def self.parse_coordinate_token(token)
+    axis = if token =~ /[NnSs]/
+             :lat
+           elsif token =~ /[EeWw]/
+             :lon
+           end
+
+    value = normalize_coordinate(token, axis)
+    return unless value
+
+    { value: value, axis: axis }
+  end
+
+  def self.normalize_coordinate(raw, axis = nil)
+    return if raw.nil?
+
+    text = raw.to_s.strip
+    return if text.empty?
+
+    dir = nil
+    if text =~ /^([NnSsEeWw])\s*(.+)$/
+      dir = Regexp.last_match(1).upcase
+      text = Regexp.last_match(2)
+    elsif text =~ /^(.+?)([NnSsEeWw])$/
+      dir = Regexp.last_match(2).upcase
+      text = Regexp.last_match(1)
+    end
+
+    sign = 1
+    if dir
+      sign = -1 if dir == 'S' || dir == 'W'
+      axis ||= (dir == 'N' || dir == 'S') ? :lat : :lon
+    end
+
+    text = text.tr('°º', ' ')
+    text = text.gsub(/[^0-9\.\-\+\s]/, ' ')
+    text = text.strip
+
+    if text.start_with?('+', '-')
+      sign = -1 if text[0] == '-'
+      text = text[1..]
+    end
+
+    parts = text.split(/\s+/).reject(&:empty?)
+
+    number = nil
+    if parts.length > 1
+      degrees = parts[0].to_f
+      minutes = parts[1] ? parts[1].to_f : 0.0
+      seconds = parts[2] ? parts[2].to_f : 0.0
+      number = degrees + (minutes / 60.0) + (seconds / 3600.0)
+    else
+      digits = parts.first
+      return unless digits
+
+      if digits.include?('.')
+        number = digits.to_f
+      else
+        digits = digits.sub(/^0+/, '') if digits.length > 1
+        deg_len =
+          if axis == :lat
+            [2, digits.length].min
+          elsif axis == :lon
+            [3, digits.length].min
+          else
+            digits.length >= 5 ? 3 : 2
+          end
+
+        if digits.length > deg_len + 2
+          degrees = digits[0, deg_len].to_i
+          minutes = digits[deg_len, 2].to_i
+          remainder = digits[(deg_len + 2)..]
+          seconds = remainder ? remainder.to_i : 0
+          number = degrees + (minutes / 60.0) + (seconds / 3600.0)
+        elsif digits.length > deg_len
+          degrees = digits[0, deg_len].to_i
+          minutes = digits[deg_len..].to_i
+          number = degrees + (minutes / 60.0)
+        else
+          number = digits.to_f
+        end
+      end
+    end
+
+    return unless number
+
+    number *= sign
+    if axis == :lat
+      return if number.abs > 90
+    elsif axis == :lon
+      return if number.abs > 180
+    end
+
+    number
+  end
+
+  def self.build_envelope_string(box)
+    return unless box
+
+    "ENVELOPE(#{box[:west]}, #{box[:east]}, #{box[:north]}, #{box[:south]})"
+  end
+
+  def self.box_center(box)
+    return unless box
+
+    lon = (box[:west] + box[:east]) / 2.0
+    lat = (box[:north] + box[:south]) / 2.0
+
+    return if lat.abs > 90 || lon.abs > 180
+
+    { lon: lon, lat: lat }
+  end
+
+  def self.format_point(point)
+    return unless point
+    return unless point[:lon] && point[:lat]
+    return if point[:lat].abs > 90 || point[:lon].abs > 180
+
+    format('%.6f %.6f', point[:lon], point[:lat])
+  end
+
+  def self.build_geojson_features(spatial, placenames)
+    names = placenames.map { |value| value.to_s.strip }.reject(&:empty?)
+    placename = names.first
+
+    features = []
+
+    spatial[:boxes].each do |box|
+      polygon = {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [[
+            [box[:west], box[:south]],
+            [box[:east], box[:south]],
+            [box[:east], box[:north]],
+            [box[:west], box[:north]],
+            [box[:west], box[:south]]
+          ]]
+        },
+        bbox: [box[:west], box[:south], box[:east], box[:north]]
+      }
+      polygon[:properties] = { placename: placename } if placename
+      features << JSON.generate(polygon)
+    end
+
+    spatial[:points].each do |point|
+      next unless point[:lon] && point[:lat]
+
+      feature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [point[:lon], point[:lat]]
+        }
+      }
+      feature[:properties] = { placename: placename } if placename
+      features << JSON.generate(feature)
+    end
+
+    features.uniq
   end
 end
