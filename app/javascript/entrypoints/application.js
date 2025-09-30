@@ -456,6 +456,57 @@ function initializeDocumentLeafletMap() {
     if (geometry.type === 'MultiPolygon') return geometry.coordinates.map((coords) => projectPolygon(coords));
     return [];
   };
+  const geometryBounds = (geometry) => {
+    if (!geometry) return null;
+    let minLon = Infinity;
+    let minLat = Infinity;
+    let maxLon = -Infinity;
+    let maxLat = -Infinity;
+    const updateBounds = (coord) => {
+      if (!Array.isArray(coord) || coord.length < 2) return;
+      const [lon, lat] = coord;
+      if (Number.isNaN(lon) || Number.isNaN(lat)) return;
+      if (lon < minLon) minLon = lon;
+      if (lat < minLat) minLat = lat;
+      if (lon > maxLon) maxLon = lon;
+      if (lat > maxLat) maxLat = lat;
+    };
+    const processCoords = (coords) => {
+      coords.forEach((item) => {
+        if (Array.isArray(item[0])) {
+          processCoords(item);
+        } else {
+          updateBounds(item);
+        }
+      });
+    };
+    if (geometry.type === 'Point') {
+      updateBounds(geometry.coordinates);
+    } else if (geometry.type === 'MultiPoint' || geometry.type === 'LineString') {
+      processCoords([geometry.coordinates]);
+    } else if (geometry.type === 'MultiLineString' || geometry.type === 'Polygon') {
+      processCoords(geometry.coordinates);
+    } else if (geometry.type === 'MultiPolygon') {
+      geometry.coordinates.forEach((polygon) => processCoords(polygon));
+    } else if (geometry.type === 'GeometryCollection' && Array.isArray(geometry.geometries)) {
+      geometry.geometries.forEach((child) => {
+        const childBounds = geometryBounds(child);
+        if (!childBounds) return;
+        if (childBounds.minLon < minLon) minLon = childBounds.minLon;
+        if (childBounds.minLat < minLat) minLat = childBounds.minLat;
+        if (childBounds.maxLon > maxLon) maxLon = childBounds.maxLon;
+        if (childBounds.maxLat > maxLat) maxLat = childBounds.maxLat;
+      });
+      return Number.isFinite(minLon) ? { minLon, minLat, maxLon, maxLat } : null;
+    } else {
+      return null;
+    }
+    return Number.isFinite(minLon) ? { minLon, minLat, maxLon, maxLat } : null;
+  };
+  const bboxIntersects = (a, b) => {
+    if (!a || !b) return false;
+    return !(a.maxLon < b.minLon || a.minLon > b.maxLon || a.maxLat < b.minLat || a.minLat > b.maxLat);
+  };
   const ringContainsPoint = (point, ring) => {
     if (!ring || ring.length === 0) return false;
     let inside = false;
@@ -579,6 +630,15 @@ function initializeDocumentLeafletMap() {
     }
 
     const baseUrl = container.dataset.nativeLandUrl || 'https://native-land.ca/api/index.php';
+    const defaultNativeBbox = '-172,7,-52,83';
+    const parseBbox = (bboxString) => {
+      if (!bboxString) return null;
+      const parts = bboxString.split(',').map((value) => parseFloat(value.trim()));
+      if (parts.length !== 4 || parts.some((value) => Number.isNaN(value))) return null;
+      const [minLon, minLat, maxLon, maxLat] = parts;
+      return { minLon, minLat, maxLon, maxLat };
+    };
+    const defaultNativeBounds = parseBbox(defaultNativeBbox);
     let nativeUrl;
 
     try {
@@ -599,6 +659,9 @@ function initializeDocumentLeafletMap() {
     if (!nativeUrl.searchParams.has('poly')) {
       nativeUrl.searchParams.set('poly', '1');
     }
+    if (!nativeUrl.searchParams.has('bbox')) {
+      nativeUrl.searchParams.set('bbox', defaultNativeBbox);
+    }
 
     if (usingLocalProxy) {
       if (apiKey) {
@@ -616,6 +679,7 @@ function initializeDocumentLeafletMap() {
     const maskedUrl = apiKey ? requestUrl.replace(apiKey, '***') : requestUrl;
     console.log('[LeafletMap] parsed base url', maskedUrl, usingLocalProxy ? '(same origin)' : '(remote)');
     console.log('[LeafletMap] requesting Native Land territories', maskedUrl);
+    const filterBounds = parseBbox(nativeUrl.searchParams.get('bbox')) || defaultNativeBounds;
 
     return fetch(requestUrl)
       .then((response) => {
@@ -647,6 +711,15 @@ function initializeDocumentLeafletMap() {
         }
 
         console.log('[LeafletMap] Native Land features available', featureCollection.features.length, featureCollection.features.slice(0, 3));
+        const filteredFeatures = featureCollection.features.filter((feature) => {
+          const bounds = geometryBounds(feature.geometry);
+          return bounds ? bboxIntersects(bounds, filterBounds) : false;
+        });
+        if (filteredFeatures.length === 0) {
+          console.log('[LeafletMap] Native Land features filtered out by bbox', filterBounds);
+          return null;
+        }
+        console.log('[LeafletMap] Native Land features after bbox filter', filteredFeatures.length, filteredFeatures.slice(0, 3));
         const computeLabelMinZoom = (rankRatio) => {
           if (rankRatio >= 0.9) return 3;
           if (rankRatio >= 0.75) return 4;
@@ -655,7 +728,7 @@ function initializeDocumentLeafletMap() {
           if (rankRatio >= 0.2) return 7;
           return 8;
         };
-        const featuresWithArea = featureCollection.features.map((feature) => ({
+        const featuresWithArea = filteredFeatures.map((feature) => ({
           feature,
           area: geometryArea(feature.geometry)
         }));
@@ -719,10 +792,8 @@ function initializeDocumentLeafletMap() {
             layer.on('click', (event) => {
               event?.originalEvent?.preventDefault?.();
               event?.originalEvent?.stopPropagation?.();
-              showTerritoryPopup(event.latlng);
-            });
-            layer.on('mouseover', () => {
               if (map.hasLayer(layer)) layer.bringToFront();
+              showTerritoryPopup(event.latlng);
             });
           }
         });

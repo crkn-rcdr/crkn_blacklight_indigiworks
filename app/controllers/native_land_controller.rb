@@ -17,6 +17,7 @@ class NativeLandController < ApplicationController
   DEFAULT_BASE_URL = 'https://native-land.ca/api/index.php'
   CACHE_TTL = 12.hours
   MAX_REDIRECTS = 5
+  DEFAULT_BBOX = '-172,7,-52,83'
 
   def territories
     render json: retrieve_payload
@@ -54,11 +55,13 @@ class NativeLandController < ApplicationController
     uri = URI.parse(base)
     query = URI.decode_www_form(uri.query.to_s)
     maps = params[:maps].presence || 'territories'
-    query.reject! { |(key, _)| %w[maps key poly].include?(key) }
+    query.reject! { |(key, _)| %w[maps key poly bbox].include?(key) }
     query << ['maps', maps]
     additional = permitted_passthrough_params
     poly = additional.delete('poly') { '1' }
+    bbox = additional.delete('bbox') { DEFAULT_BBOX }
     query << ['poly', poly] if poly.present?
+    query << ['bbox', bbox] if bbox.present?
     query << ['key', api_key]
     additional.each { |key, value| query << [key, value] }
     uri.query = URI.encode_www_form(query)
