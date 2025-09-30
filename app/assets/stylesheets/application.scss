@@ -17,3 +17,47 @@
  @import 'base/canadiana';
  @import 'base/iconography';
  @import 'base/mirador';
+
+.document-leaflet-map {
+  position: relative;
+  width: 100%;
+  min-height: 360px;
+  height: 60vh;
+  max-height: 520px;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+  overflow: hidden;
+  background-color: #f8fafc;
+}
+
+.document-leaflet-map .leaflet-control-container {
+  font-family: inherit;
+}
+
+.native-land-label {
+  pointer-events: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #1f2933;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.95), 0 0 2px rgba(255, 255, 255, 0.85);
+  line-height: 1.1;
+}
+
+.native-land-label .native-land-secondary {
+  font-weight: 500;
+  font-size: 0.72rem;
+}
+
+.native-land-label .leaflet-tooltip-content {
+  margin: 0;
+  padding: 0 0.25rem;
+}
+
+.leaflet-pane.native-land-labels {
+  pointer-events: none;
+}

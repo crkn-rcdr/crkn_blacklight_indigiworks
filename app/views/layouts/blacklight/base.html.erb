@@ -25,6 +25,9 @@
     <%= csrf_meta_tags %>
     <meta name="iiif-manifest-base" content="<%= Rails.configuration.x.iiif_manifest_base %>">
     <meta name="iiif-content-search-base" content="<%= Rails.configuration.x.iiif_content_search_base %>">
+    <% if Rails.configuration.x.native_land_api_key.present? %>
+      <meta name="native-land-api-key" content="<%= Rails.configuration.x.native_land_api_key %>">
+    <% end %>
     <%= content_for(:head) %>
 
     <%= vite_client_tag %>

@@ -335,5 +335,80 @@ class CatalogController < ApplicationController
     # config.autocomplete_suggester = 'mySuggester'
 
     config.filter_search_state_fields = true
+    config.document_solr_path = 'select'
+    config.fetch_by_id_solr_params = lambda do |solr_params, id|
+      solr_params[:qt] = nil
+      solr_params[:q] = %({!term f=#{config.document_unique_id_param}}#{RSolr.solr_escape(id)})
+      solr_params[:rows] = 1
+    end
+    config.fetch_many_document_params = lambda do |solr_params, ids|
+      solr_params[:qt] = nil
+      solr_params[:q] = %({!terms f=#{config.document_unique_id_param}}#{ids.map { |value| RSolr.solr_escape(value) }.join(',')})
+      solr_params[:rows] = ids.length
+    end
+  end
+  def geojson
+    permitted = params.permit(:id, :lang)
+    solr_document = search_service.fetch(permitted[:id])
+    solr_document = solr_document.last if solr_document.is_a?(Array)
+    return head :not_found unless solr_document
+    doc_hash = solr_document.respond_to?(:to_h) ? solr_document.to_h : solr_document
+
+    features = Array(doc_hash['geojson_ssim']).filter_map { |value| parse_geojson_feature(value) }
+    placenames = Array(doc_hash['subject_geo_ssim']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
+    placenames.uniq! if placenames.respond_to?(:uniq!)
+    payload = { type: 'FeatureCollection', features: features }
+    if placenames.respond_to?(:present?) ? placenames.present? : placenames.any?
+      payload[:properties] = { placenames: placenames }
+    end
+    bbox = compute_feature_collection_bbox(features)
+    payload[:bbox] = bbox if bbox
+    render json: payload
+  rescue Blacklight::Exceptions::RecordNotFound
+    head :not_found
+  rescue NoMethodError => e
+    Rails.logger.error("geojson generation failed for #{permitted[:id]}: #{e.message}")
+    head :unprocessable_entity
+  end
+  private
+
+  def parse_geojson_feature(value)
+    return value if value.is_a?(Hash) && value['type'] == 'Feature'
+    json = value.is_a?(String) ? JSON.parse(value) : value
+    return json if json.is_a?(Hash) && json['type'] == 'Feature'
+  rescue JSON::ParserError
+    nil
+  end
+
+  def flatten_geo_coordinates(coords, acc = [])
+    return acc unless coords
+    if coords.is_a?(Array)
+      first = coords.first
+      if first.is_a?(Numeric) || first.is_a?(String)
+        lon, lat = coords[0], coords[1]
+        begin
+          lon_val = Float(lon)
+          lat_val = Float(lat)
+          acc << [lon_val, lat_val] if lon_val.finite? && lat_val.finite?
+        rescue ArgumentError, TypeError
+        end
+      else
+        coords.each { |child| flatten_geo_coordinates(child, acc) }
+      end
+    end
+    acc
+  end
+
+  def compute_feature_collection_bbox(features)
+    points = features.flat_map do |feature|
+      geometry = feature['geometry']
+      next [] unless geometry.is_a?(Hash)
+      flatten_geo_coordinates(geometry['coordinates'])
+    end
+    return nil if points.empty?
+    lons = points.map(&:first)
+    lats = points.map(&:last)
+    [lons.min, lats.min, lons.max, lats.max]
   end
 end
+

@@ -20,6 +20,7 @@ module CrknCanadianaBlacklight
     # config.eager_load_paths << Rails.root.join("extras")
     I18n.available_locales = [:en, :fr]
     I18n.default_locale = :en
+    config.x.native_land_api_key = ENV.fetch('NATIVE_LAND_API_KEY', nil)
 
   end
 end

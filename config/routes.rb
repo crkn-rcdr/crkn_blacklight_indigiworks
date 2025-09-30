@@ -8,7 +8,8 @@ Rails.application.routes.draw do
   get '/about/government-publications', to: 'pages#about_govpubs'
   get '/about/maps', to: 'pages#about_maps'
   # Allow slashes inside :ark (e.g., ark:/69429/m0k35m90313z)
-  get '/dl/:id/*ark', to: 'downloads#index', constraints: { id: /[0-z\.]+/ }, format: false
+  get '/dl/:id/*ark', to: 'downloads#index', constraints: { id: /[0-z\\.]+/ }, format: false
+  get '/native_land/territories', to: 'native_land#territories'
   #root to: "catalog#index"
   concern :marc_viewable, Blacklight::Marc::Routes::MarcViewable.new
   concern :searchable, Blacklight::Routes::Searchable.new
@@ -22,6 +23,9 @@ Rails.application.routes.draw do
   concern :exportable, Blacklight::Routes::Exportable.new
 
   resources :solr_documents, only: [:show], path: '/catalog', controller: 'catalog', id: /[^\/]+/  do
+    member do
+      get :geojson
+    end
     concerns [:exportable, :marc_viewable]
   end
 
@@ -37,3 +41,4 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 end
+

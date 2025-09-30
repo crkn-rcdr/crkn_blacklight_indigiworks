@@ -12,6 +12,7 @@ services:
       - .env
     environment:
       - RAILS_ENV=development
+      - NATIVE_LAND_API_KEY=${NATIVE_LAND_API_KEY}
     volumes:
       - ./bin:/app/bin
       - ./app:/app/app

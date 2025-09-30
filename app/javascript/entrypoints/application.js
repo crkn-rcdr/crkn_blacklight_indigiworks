@@ -3,16 +3,13 @@
 //
 //    <%= vite_client_tag %>
 //    <%= vite_javascript_tag 'application' %>
-console.log('Vite ⚡️ Rails')
-
+console.log('Vite lightning Rails')
 // If using a TypeScript entrypoint file:
 //     <%= vite_typescript_tag 'application' %>
 //
 // If you want to use .jsx or .tsx, add the extension:
 //     <%= vite_javascript_tag 'application.jsx' %>
-
 console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify.app/guide/rails')
-
 // Example: Load Rails libraries in Vite.
 //
 // import * as Turbo from '@hotwired/turbo'
@@ -23,12 +20,10 @@ console.log('Visit the guide for more information: ', 'https://vite-ruby.netlify
 //
 // // Import all channels.
 // const channels = import.meta.globEager('./**/*_channel.js')
-
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
 //import "../javascript/application"
 console.log("mirador", Mirador)
-
 let pageViewer = document.getElementById("my-mirador")
 if(pageViewer) {
     let language = document.documentElement.lang || "en";
@@ -41,7 +36,7 @@ if(pageViewer) {
     const manifestBase = document.querySelector('meta[name="iiif-manifest-base"]')?.content || "https://crkn-iiif-api.azurewebsites.net/manifest";
     let normalizedBase = manifestBase.endsWith('/') ? manifestBase : manifestBase + '/';
     let manifest = documentId.replace("https://n2t.net/ark:/", normalizedBase)
-    const manifestList = {} 
+    const manifestList = {}
     manifestList[manifest] = { "provider": "Canadian Research Knowledge Network" }
     console.log("Mirador", Mirador)
     let mconfig = {
@@ -58,79 +53,42 @@ if(pageViewer) {
         selectedTheme: 'light', // light | dark
         language,
         window: {
-
             imageToolsOpen: false,
-    
             //global window defaults
-    
             allowClose: false, // Configure if windows can be closed or not
-    
             allowFullscreen: true, // Configure to show a "fullscreen" button in the WindowTopBar
-    
             allowMaximize: false, // Configure if windows can be maximized or not
-    
             allowTopMenuButton: true, // Configure if window view and thumbnail display menu are visible or not
-    
             allowWindowSideBar: false, // Configure if side bar menu is visible or not
-    
             authNewWindowCenter: "parent", // Configure how to center a new window created by the authentication flow. Options: parent, screen
-    
             sideBarPanel: "info", // Configure which sidebar is selected by default. Options: info, attribution, canvas, annotations, search
-    
             defaultSidebarPanelHeight: 201, // Configure default sidebar height in pixels
-    
             defaultSidebarPanelWidth: 235, // Configure default sidebar width in pixels
-    
             defaultView: "single", // Configure which viewing mode (e.g. single, book, gallery) for windows to be opened in
-    
             forceDrawAnnotations: true,
-    
             hideWindowTitle: true, // Configure if the window title is shown in the window title bar or not
-    
             highlightAllAnnotations: false, // Configure whether to display annotations on the canvas by default
-    
             showLocalePicker: false, // Configure locale picker for multi-lingual metadata
-    
             sideBarOpen:  false, // Configure if the sidebar (and its content panel) is open by default
-    
             switchCanvasOnSearch: true, // Configure if Mirador should automatically switch to the canvas of the first search result
-    
             panels: {
-    
               // Configure which panels are visible in WindowSideBarButtons
-    
               info: true,
-    
               attribution: false,
-    
               canvas: true, // table of contents
-    
               annotations: false,
-    
               search: false,
-    
               layers: false
-    
             },
-    
             views: [
-    
               { key: "single", behaviors: ["individuals"] },
-    
               { key: "book", behaviors: ["paged"] },
-    
               { key: "scroll", behaviors: ["continuous"] }
-    
             ],
-    
             elastic: {
-    
               height: 400,
-    
               width: 480
-    
             }
-    
           },
           osdConfig: {
             prefixUrl: "/assets/",
@@ -146,44 +104,26 @@ if(pageViewer) {
                 */
           },
           workspace: {
-    
             draggingEnabled: false,
-    
             allowNewWindows: true,
-    
             isWorkspaceAddVisible: false, // Catalog/Workspace add window feature visible by default
-    
             exposeModeOn: false, // unused?
-    
             height: 5000, // height of the elastic mode's virtual canvas
-    
             showZoomControls: false, // Configure if zoom controls should be displayed by default
-    
             type: "mosaic", // Which workspace type to load by default. Other possible values are "elastic". If "mosaic" or "elastic" are not selected no worksapce type will be used.
-    
             viewportPosition: {
-    
               // center coordinates for the elastic mode workspace
-    
               x: 0,
-    
               y: 0
-    
             },
-    
             width: 5000 // width of the elastic mode's virtual canvas
-    
           },
-    
           workspaceControlPanel: {
-    
             enabled: false // Configure if the control panel should be rendered.  Useful if you want to lock the viewer down to only the configured manifests
-    
           },
     }
     let miradorViewer = Mirador.viewer(mconfig);
     console.log("miradorViewer", miradorViewer)
-
     miradorViewer.store.subscribe((e) => {
       console.log("m?", e)
     })
@@ -193,7 +133,6 @@ import BlacklightRangeLimit from 'blacklight-range-limit';
 //Blacklight.onLoad(() => {});
 BlacklightRangeLimit.init({ onLoadHandler: Blacklight.onLoad });
 console.log("here???")
-
 // Enhance search bars (navbar + home hero) consistently
 function enhanceSearchBar(rootSelector) {
   const root = document.querySelector(rootSelector);
@@ -202,10 +141,8 @@ function enhanceSearchBar(rootSelector) {
   const input = root.querySelector('input#q');
   const submit = root.querySelector('#search');
   if (!form || !input || !submit) return;
-
   // Prevent duplicate clear button
   if (submit.previousElementSibling && submit.previousElementSibling.classList?.contains('btn-clear-search')) return;
-
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
   clearBtn.className = 'btn btn-outline-secondary btn-clear-search';
@@ -215,19 +152,15 @@ function enhanceSearchBar(rootSelector) {
   clearBtn.innerHTML = `<i class="bi bi-x-lg" aria-hidden="true"></i><span class="visually-hidden">${clearText}</span>`;
   clearBtn.setAttribute('aria-label', clearLabel);
   clearBtn.hidden = !input.value;
-
   clearBtn.addEventListener('click', () => {
     input.value = '';
     input.focus();
     clearBtn.hidden = true;
   });
-
   input.addEventListener('input', () => {
     clearBtn.hidden = input.value.length === 0;
   });
-
   submit.parentElement.insertBefore(clearBtn, submit);
-
   // Keyboard shortcuts
   window.addEventListener('keydown', (e) => {
     const isTypingInInput = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
@@ -237,7 +170,6 @@ function enhanceSearchBar(rootSelector) {
       input.select();
     }
   });
-
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && input.value) {
       input.value = '';
@@ -245,7 +177,6 @@ function enhanceSearchBar(rootSelector) {
       e.stopPropagation();
     }
   });
-
   // Accessibility hint
   const helpId = `${rootSelector.replace(/[^a-z]/gi,'')}-search-help`;
   let help = document.getElementById(helpId);
@@ -261,12 +192,10 @@ function enhanceSearchBar(rootSelector) {
   }
   input.setAttribute('aria-describedby', [input.getAttribute('aria-describedby'), helpId].filter(Boolean).join(' '));
 }
-
 document.addEventListener('DOMContentLoaded', () => {
   enhanceSearchBar('.navbar-search');
   enhanceSearchBar('.home-search');
 });
-
 // Page search chips: toggle show more/less
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.page-search-toggle');
@@ -280,7 +209,6 @@ document.addEventListener('click', (e) => {
   const lang = document.documentElement.lang || 'en';
   const labelMore = lang.startsWith('fr') ? 'Afficher plus' : 'Show more';
   const labelLess = lang.startsWith('fr') ? 'Afficher moins' : 'Show less';
-
   const hidden = more.hasAttribute('hidden');
   if (hidden) {
     more.removeAttribute('hidden');
@@ -292,22 +220,18 @@ document.addEventListener('click', (e) => {
     if (icon) icon.classList.remove('bi-chevron-up'), icon.classList.add('bi-chevron-down');
   }
 });
-
 // Members section interactions: tabs, province chips, name filter
 document.addEventListener('DOMContentLoaded', () => {
   const section = document.querySelector('.members-section');
   if (!section) return;
-
   const tabs = section.querySelectorAll('[data-members-tab]');
   const grids = section.querySelectorAll('.members-grid');
   const filterChips = section.querySelectorAll('.chip-filter');
   const input = section.querySelector('#members-filter-input');
   const clearBtn = section.querySelector('.btn-clear-members');
-
   let activeGroup = 'institutional';
   let activeProvince = 'all';
   let text = '';
-
   function applyFilters() {
     grids.forEach(grid => {
       grid.classList.toggle('d-none', grid.dataset.membersGroup !== activeGroup);
@@ -322,21 +246,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
   tabs.forEach(btn => btn.addEventListener('click', () => {
     tabs.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeGroup = btn.dataset.membersTab;
     applyFilters();
   }));
-
   filterChips.forEach(chip => chip.addEventListener('click', () => {
     filterChips.forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     activeProvince = chip.dataset.province;
     applyFilters();
   }));
-
   if (input) {
     // initialize clear visibility
     if (clearBtn) clearBtn.hidden = input.value.length === 0;
@@ -346,7 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
       applyFilters();
     });
   }
-
   if (clearBtn && input) {
     clearBtn.addEventListener('click', () => {
       input.value = '';
@@ -356,6 +276,371 @@ document.addEventListener('DOMContentLoaded', () => {
       applyFilters();
     });
   }
-
   applyFilters();
 });
+function initializeDocumentLeafletMap() {
+  console.log('[LeafletMap] initializeDocumentLeafletMap called');
+  console.log('[LeafletMap] script version', '2025-09-30-debug');
+  const container = document.getElementById('document-leaflet-map');
+  if (container) {
+    console.log('[LeafletMap] container dataset', JSON.stringify(container.dataset || {}));
+  }
+  if (!container) {
+    console.log('[LeafletMap] no map container found on page');
+    return;
+  }
+  if (container.dataset.mapInitialized === '1') {
+    console.log('[LeafletMap] map already initialized, skipping');
+    return;
+  }
+  if (typeof L === 'undefined') {
+    console.warn('Leaflet is required to render the document map.');
+    return;
+  }
+  container.dataset.mapInitialized = '1';
+  const geojsonUrl = container.dataset.geojsonUrl;
+  if (!geojsonUrl) {
+    console.log('[LeafletMap] geojson URL missing on container');
+    return;
+  }
+  console.log('[LeafletMap] using geojson endpoint', geojsonUrl);
+  let map;
+  try {
+    map = L.map(container, {
+    scrollWheelZoom: false,
+    worldCopyJump: true
+  });
+  } catch (error) {
+    console.error('[LeafletMap] failed to initialize Leaflet map', error);
+    return;
+  }
+  console.log('[LeafletMap] base tile layer');
+  const base = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '(c) OpenStreetMap contributors'
+  });
+  base.addTo(map);
+  const overlayControl = L.control.layers(null, {}, { collapsed: false }).addTo(map);
+  overlayControl.expand();
+  console.log('[LeafletMap] overlay control created');
+  const nativePolygonPane = map.createPane('native-land-polygons');
+  console.log('[LeafletMap] polygon pane ready');
+  nativePolygonPane.style.zIndex = 420;
+  nativePolygonPane.style.mixBlendMode = 'multiply';
+  const nativeLabelPane = map.createPane('native-land-labels');
+  console.log('[LeafletMap] label pane ready');
+  nativeLabelPane.style.zIndex = 450;
+  nativeLabelPane.style.pointerEvents = 'none';
+  nativeLabelPane.style.display = 'none';
+  const labelZoomThreshold = 4;
+  const updateLabelVisibility = () => {
+    const show = map.getZoom() >= labelZoomThreshold;
+    nativeLabelPane.style.opacity = show ? '1' : '0';
+  };
+  map.on('zoomend', updateLabelVisibility);
+  const territoryColorPalette = [
+    '#f97316', '#ec4899', '#6366f1', '#22d3ee', '#14b8a6', '#a855f7',
+    '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#fb7185'
+  ];
+  const hashString = (value) => {
+    const str = value || '';
+    let hash = 0;
+    for (let i = 0; i < str.length; i += 1) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  };
+  const colorForTerritory = (name) => territoryColorPalette[hashString(name) % territoryColorPalette.length];
+  const projectToMercator = ([lon, lat]) => {
+    const rad = Math.PI / 180;
+    const x = (lon * 20037508.34) / 180;
+    const safeLat = Math.min(Math.max(lat, -89.9999), 89.9999);
+    const y = Math.log(Math.tan((90 + safeLat) * rad / 2)) * 6378137;
+    return [x, y];
+  };
+  const ringArea = (ring) => {
+    let sum = 0;
+    for (let i = 0; i < ring.length; i += 1) {
+      const current = projectToMercator(ring[i]);
+      const next = projectToMercator(ring[(i + 1) % ring.length]);
+      sum += current[0] * next[1] - next[0] * current[1];
+    }
+    return Math.abs(sum / 2);
+  };
+  const polygonArea = (coords) => coords.reduce((total, ring) => total + ringArea(ring), 0);
+  const geometryArea = (geometry) => {
+    if (!geometry) return 0;
+    if (geometry.type === 'Polygon') return polygonArea(geometry.coordinates);
+    if (geometry.type === 'MultiPolygon') return geometry.coordinates.reduce((total, coords) => total + polygonArea(coords), 0);
+    return 0;
+  };
+  const primaryNameFromProps = (props = {}) => {
+    const candidates = ['Name', 'name', 'English', 'english', 'Nation', 'Tribe', 'Tribal Affiliation'];
+    for (const field of candidates) {
+      const value = props[field];
+      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+      if (Array.isArray(value) && value.length > 0) return value[0];
+    }
+    return 'Territory';
+  };
+  const secondaryNameFromProps = (props = {}) => {
+    const candidates = ['Other_names', 'other_names', 'Alternate Name', 'French', 'Language'];
+    for (const field of candidates) {
+      const value = props[field];
+      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+      if (Array.isArray(value) && value.length > 0) return value[0];
+    }
+    return '';
+  };
+  let combinedBounds = null;
+  const extendBounds = (layer) => {
+    if (!layer || typeof layer.getBounds !== 'function') return;
+    const layerBounds = layer.getBounds();
+    if (!layerBounds || typeof layerBounds.isValid !== 'function' || !layerBounds.isValid()) return;
+    combinedBounds = combinedBounds ? combinedBounds.extend(layerBounds) : layerBounds;
+  };
+  const fetchDocumentLayer = () => {
+    console.log('[LeafletMap] requesting document geometry', geojsonUrl);
+    return fetch(geojsonUrl, { headers: { Accept: 'application/json' } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!data || !Array.isArray(data.features) || data.features.length === 0) {
+          console.log('[LeafletMap] document geometry request returned no features', data);
+          return null;
+        }
+        const featureCount = data.features.length;
+        console.log('[LeafletMap] document features received', featureCount, data);
+        const fallbackPlacename = Array.isArray(data.properties?.placenames)
+          ? data.properties.placenames.find((name) => typeof name === 'string' && name.trim().length > 0)
+          : null;
+        const documentLayer = L.geoJSON(data, {
+          pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
+            radius: 6,
+            weight: 1,
+            color: '#1d4ed8',
+            fillColor: '#60a5fa',
+            fillOpacity: 0.85
+          }),
+          style: () => ({
+            color: '#1d4ed8',
+            weight: 1,
+            fillColor: '#93c5fd',
+            fillOpacity: 0.2
+          }),
+          onEachFeature: (feature, layer) => {
+            const props = feature && feature.properties ? feature.properties : {};
+            const placename = typeof props.placename === 'string' && props.placename.trim().length > 0
+              ? props.placename.trim()
+              : fallbackPlacename;
+            if (placename) {
+              layer.bindPopup('<strong>' + placename + '</strong>');
+            }
+          }
+        });
+        if (!documentLayer.getLayers || documentLayer.getLayers().length === 0) {
+          console.log('[LeafletMap] document layer contained no renderable geometries');
+          return null;
+        }
+        documentLayer.addTo(map);
+        console.log('[LeafletMap] document layer added to map');
+        overlayControl.addOverlay(documentLayer, 'Collection Locations');
+        if (Array.isArray(data.bbox) && data.bbox.length === 4) {
+          console.log('[LeafletMap] applying bbox from document data', data.bbox);
+          const bboxBounds = L.latLngBounds(
+            [data.bbox[1], data.bbox[0]],
+            [data.bbox[3], data.bbox[2]]
+          );
+          if (bboxBounds.isValid()) {
+            combinedBounds = combinedBounds ? combinedBounds.extend(bboxBounds) : bboxBounds;
+          }
+        } else {
+          console.log('[LeafletMap] computing bounds from document layer geometry');
+          extendBounds(documentLayer);
+        }
+        return documentLayer;
+      })
+      .catch((error) => {
+        console.error('[LeafletMap] fetchNativeTerritories error', error);
+        console.warn('Unable to load document geometry for the map.', error);
+        return null;
+      });
+  };
+  const fetchNativeTerritories = () => {
+    const apiKeySource = container.dataset.nativeLandKey || document.querySelector('meta[name="native-land-api-key"]')?.content;
+    let apiKey = (apiKeySource || '').trim();
+    if (apiKey) {
+      apiKey = apiKey.replace(/^["']+|["']+$/g, '');
+    }
+
+    const baseUrl = container.dataset.nativeLandUrl || 'https://native-land.ca/api/index.php';
+    let nativeUrl;
+
+    try {
+      nativeUrl = new URL(baseUrl);
+    } catch (error) {
+      try {
+        nativeUrl = new URL(baseUrl, window.location.origin);
+      } catch (fallbackError) {
+        console.warn('[LeafletMap] invalid Native Land base URL', baseUrl, fallbackError);
+        return Promise.resolve(null);
+      }
+    }
+
+    const usingLocalProxy = nativeUrl.origin === window.location.origin;
+    if (!nativeUrl.searchParams.has('maps')) {
+      nativeUrl.searchParams.set('maps', 'territories');
+    }
+    if (!nativeUrl.searchParams.has('poly')) {
+      nativeUrl.searchParams.set('poly', '1');
+    }
+
+    if (usingLocalProxy) {
+      if (apiKey) {
+        nativeUrl.searchParams.set('key', apiKey);
+      }
+    } else {
+      if (!apiKey) {
+        console.warn('[LeafletMap] Native Land API key missing; skipping territories layer');
+        return Promise.resolve(null);
+      }
+      nativeUrl.searchParams.set('key', apiKey);
+    }
+
+    const requestUrl = nativeUrl.toString();
+    const maskedUrl = apiKey ? requestUrl.replace(apiKey, '***') : requestUrl;
+    console.log('[LeafletMap] parsed base url', maskedUrl, usingLocalProxy ? '(same origin)' : '(remote)');
+    console.log('[LeafletMap] requesting Native Land territories', maskedUrl);
+
+    return fetch(requestUrl)
+      .then((response) => {
+        if (!response.ok) {
+          console.warn('[LeafletMap] Native Land response not ok', response.status, response.statusText);
+          return null;
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (!data) {
+          console.log('[LeafletMap] Native Land API returned no data');
+          return null;
+        }
+
+        const featureCollection = Array.isArray(data)
+          ? { type: 'FeatureCollection', features: data.filter((feature) => feature && feature.geometry) }
+          : data;
+
+        if (!featureCollection || !Array.isArray(featureCollection.features)) {
+          console.warn('[LeafletMap] featureCollection invalid', featureCollection);
+          console.log('[LeafletMap] Native Land feature collection malformed', data);
+          return null;
+        }
+
+        if (featureCollection.features.length === 0) {
+          console.log('[LeafletMap] Native Land feature collection empty');
+          return null;
+        }
+
+        console.log('[LeafletMap] Native Land features available', featureCollection.features.length, featureCollection.features.slice(0, 3));
+        const sortedFeatures = [...featureCollection.features].sort((a, b) => geometryArea(a.geometry) - geometryArea(b.geometry));
+        console.log('[LeafletMap] sorted feature sample', sortedFeatures.slice(0, 2));
+
+        console.log('[LeafletMap] creating territory layer with features', sortedFeatures.length);
+
+        const territoryLayer = L.geoJSON(sortedFeatures, {
+          pane: 'native-land-polygons',
+          smoothFactor: 0.4,
+          style: (feature) => {
+            const props = feature && feature.properties ? feature.properties : {};
+            const primary = primaryNameFromProps(props);
+            const color = colorForTerritory(primary);
+            return {
+              color,
+              weight: 1,
+              opacity: 0.9,
+              fillColor: color,
+              fillOpacity: 0.35,
+            };
+          },
+          onEachFeature: (feature, layer) => {
+            const props = feature && feature.properties ? feature.properties : {};
+            const primary = primaryNameFromProps(props);
+            const secondary = secondaryNameFromProps(props);
+            const tooltipHtml = secondary
+              ? `<div class="native-land-label-content"><div>${primary}</div><div class="native-land-secondary">${secondary}</div></div>`
+              : `<div class="native-land-label-content"><div>${primary}</div></div>`;
+            layer.bindTooltip(tooltipHtml, {
+              permanent: true,
+              direction: 'center',
+              className: 'native-land-label',
+              pane: 'native-land-labels',
+              opacity: 0.95,
+              sticky: false
+            });
+            layer.on('click', (event) => {
+              const popupLines = [primary];
+              if (secondary) popupLines.push(secondary);
+              L.popup({ autoPan: true })
+                .setLatLng(event.latlng)
+                .setContent(popupLines
+                  .map((line, index) => (index === 0 ? `<strong>${line}</strong>` : `<div>${line}</div>`))
+                  .join(''))
+                .openOn(map);
+            });
+            layer.on('mouseover', () => {
+              if (map.hasLayer(layer)) layer.bringToFront();
+            });
+          }
+        });
+
+        territoryLayer.on('add', () => {
+          console.log('[LeafletMap] native layer added to map');
+          nativeLabelPane.style.display = 'block';
+          updateLabelVisibility();
+        });
+        territoryLayer.on('remove', () => {
+          console.log('[LeafletMap] native layer removed from map');
+          nativeLabelPane.style.display = 'none';
+        });
+
+        return territoryLayer;
+      })
+      .catch((error) => {
+        console.error('[LeafletMap] fetchNativeTerritories error', error);
+        console.warn('Unable to load Native Land territories.', error);
+        return null;
+      });
+  };
+  map.on('focus', () => map.scrollWheelZoom.enable());
+  map.on('blur', () => map.scrollWheelZoom.disable());
+  Promise.all([fetchDocumentLayer(), fetchNativeTerritories()]).then(([documentLayer, nativeLayer]) => {
+    if (nativeLayer) {
+      overlayControl.addOverlay(nativeLayer, 'Native Land Territories');
+      console.log('[LeafletMap] overlay count now', Object.keys(overlayControl._layers || {}).length);
+      console.log('[LeafletMap] Native Land layer ready; use the layer control to toggle it');
+    }
+    if (combinedBounds && typeof combinedBounds.isValid === 'function' && combinedBounds.isValid()) {
+      console.log('[LeafletMap] fitting map to combined bounds');
+      map.fitBounds(combinedBounds, { padding: [24, 24], maxZoom: 8 });
+    } else {
+      console.log('[LeafletMap] using default fallback view');
+      map.setView([56.1304, -106.3468], 3);
+    }
+    setTimeout(() => {
+      map.invalidateSize();
+      console.log('[LeafletMap] map invalidateSize triggered');
+    }, 200);
+    console.log('[LeafletMap] map initialization complete');
+  });
+}
+if (typeof document !== 'undefined') {
+  const lifecycleEvents = ['DOMContentLoaded', 'turbo:load', 'turbo:frame-load', 'blacklight:load'];
+  console.log('[LeafletMap] bootstrap', 'readyState:', document.readyState, 'events:', lifecycleEvents);
+  lifecycleEvents.forEach((eventName) => {
+    document.addEventListener(eventName, initializeDocumentLeafletMap);
+  });
+  if (document.readyState !== 'loading') {
+    console.log('[LeafletMap] document already loaded; running initializeDocumentLeafletMap immediately');
+    initializeDocumentLeafletMap();
+  }
+}
