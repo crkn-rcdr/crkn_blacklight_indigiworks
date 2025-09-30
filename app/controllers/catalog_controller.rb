@@ -357,10 +357,26 @@ class CatalogController < ApplicationController
     features = Array(doc_hash['geojson_ssim']).filter_map { |value| parse_geojson_feature(value) }
     placenames = Array(doc_hash['subject_geo_ssim']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
     placenames.uniq! if placenames.respond_to?(:uniq!)
-    payload = { type: 'FeatureCollection', features: features }
-    if placenames.respond_to?(:present?) ? placenames.present? : placenames.any?
-      payload[:properties] = { placenames: placenames }
+    authors = Array(doc_hash['author_ssm']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
+    authors += Array(doc_hash['author_ssm_str']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
+    authors += Array(doc_hash['creator_ssm']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
+    authors.uniq! if authors.respond_to?(:uniq!)
+
+    features.each do |feature|
+      next unless feature.is_a?(Hash)
+      props = feature['properties'] ||= {}
+      props['author_ssm'] ||= authors if authors.any?
+      props['author_ssm_str'] ||= authors.first if authors.any?
+      props['authors'] ||= authors if authors.any?
+      props['placename'] ||= placenames.first if placenames.respond_to?(:present?) ? placenames.present? : placenames.any?
     end
+
+    payload = { type: 'FeatureCollection', features: features }
+    properties_payload = {}
+    properties_payload[:placenames] = placenames if placenames.respond_to?(:present?) ? placenames.present? : placenames.any?
+    properties_payload[:authors] = authors if authors.any?
+    payload[:properties] = properties_payload if properties_payload.any?
+
     bbox = compute_feature_collection_bbox(features)
     payload[:bbox] = bbox if bbox
     render json: payload

@@ -1,0 +1,253 @@
+<%= content_tag @component,
+  id: @id,
+  data: {
+    'document-id': @document.id.to_s.parameterize,
+    'document-counter': @counter
+  },
+  itemscope: true,
+  itemtype: @document.itemtype,
+  class: classes.flatten.join(' ') do %>
+
+  <%= header %>
+
+  <% if body.present? %>
+    <%= body %>
+  <% else %>
+    <div class="document-main-section">
+      <br/>
+
+      <% if @component.to_s == 'div' %>
+        <div class="crumbs">
+          <a href="/catalog"><%= t('labels.L_SEARCH_BREADCRUMB') %></a> <span>/</span>
+          <% @document._source["collection_tsim"].each do |val| %>
+            <a href="/catalog?f%5Bcollection_tsim_str%5D%5B%5D=<%= val %>"><%= val %></a> /
+          <% end %>
+          <% if @document._source['is_issue']&.first == "Yes" && @document._source['serial_title'] %>
+            <a href="/catalog/<%= @document._source['serial_key'][0] %>"><%= @document._source['serial_title'][0] %></a> /
+          <% end %>
+        </div>
+        <br/>
+      <% end %>
+
+      <%= title %>
+      <%= embed %>
+      <%= content %>
+
+      <% if @component == :div %>
+        <div id="document-togglable-content" class="container-fluid">
+          <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <div id="toggle-menu" class="col collapse collapse-horizontal show">
+              <div class="document-sidebar-header">
+                <h3><%= t('labels.L_SERIAL_RECORD') %></h3>
+                <button id="toggle-doc-metadata1" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+              </div>
+              <div>  
+                <%= metadata %>
+                <% metadata_sections.each do |section| %>
+                  <%= section %>
+                <% end %>
+
+                <ul class="list-unstyled mb-0">
+                  <li class="mb-1">
+                    <a href="/catalog/<%= params[:id] %>/librarian_view" data-blacklight-modal="trigger" data-turbo="false">
+                      <i class="bi bi-journal-text me-1" aria-hidden="true"></i>
+                      <%= t('blacklight.tools.librarian_view') %>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/catalog/<%= params[:id] %>/citation" data-blacklight-modal="trigger" data-turbo="false">
+                      <i class="bi bi-quote me-1" aria-hidden="true"></i>
+                      <%= t('blacklight.tools.cite') %>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- Main Content -->
+            <div id="doc-main" class="col">
+              <% if @document._source["is_serial"]&.first == "No" %>
+                <button id="toggle-doc-metadata2" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
+                    <i class="bi bi-layout-sidebar"></i><span><%= t('labels.L_RECORD') %></span>
+                </button>
+                <% if @document._source["ark"] %>
+                  <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
+                  
+                <% else %>
+                  <img src="/assets/404.webp" class="not-found-icon"/>
+                  <p>Sorry, there was a problem loading the images for this item.</p>
+                <% end %>
+
+                
+              <div>
+                  <div class="mt-2 d-flex gap-2 flex-wrap" id="download-toolbar"
+                       data-docid="<%= @document._source['id'] %>"
+                       data-arkpath="<%= @document._source['ark'].to_s.gsub('https://n2t.net/ark:/','') %>">
+                    <a id="btn-download-img" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
+                      <i class="bi bi-image" aria-hidden="true"></i>
+                      Download current image
+                    </a>
+                    <a id="btn-download-page" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
+                      <i class="bi bi-file-earmark-arrow-down" aria-hidden="true"></i>
+                      Download current image as PDF
+                    </a>
+                    <a id="btn-download-full" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
+                      <i class="bi bi-filetype-pdf" aria-hidden="true"></i>
+                      Download full searchable PDF
+                    </a>
+                  </div>
+                  <script>
+                    (function(){
+                      const bar = document.getElementById('download-toolbar');
+                      if(!bar) return;
+
+                      const docid = bar.dataset.docid;
+                      const ark = bar.dataset.arkpath;
+
+                      const full = document.getElementById('btn-download-full');
+                      const page = document.getElementById('btn-download-page');
+                      const pageImg = document.getElementById('btn-download-img');
+
+                      // Update links based on current pageNum in the URL
+                      function updateForCurrentPage(data){
+                        if (!data) return;
+
+                        // Full-document PDF (static once data is fetched)
+                        if (full) {
+                          if (data.docPdfUri) {
+                            full.href = data.docPdfUri;
+                            full.classList.remove('disabled');
+                            full.removeAttribute('aria-disabled');
+                          } else {
+                            full.classList.add('disabled');
+                            full.setAttribute('aria-disabled','true');
+                          }
+                        }
+
+                        const params = new URLSearchParams(window.location.search);
+                        let idx = 0;
+                        if (params.has('pageNum')) {
+                          const p = parseInt(params.get('pageNum'), 10);
+                          if (!isNaN(p) && p > 0) idx = p - 1;
+                        }
+
+                        const listPdf = data.canvasDownloadPdfUris || [];
+                        if (page) {
+                          if (listPdf[idx]) {
+                            page.href = listPdf[idx];
+                            page.classList.remove('disabled');
+                            page.removeAttribute('aria-disabled');
+                          } else {
+                            page.classList.add('disabled');
+                            page.setAttribute('aria-disabled','true');
+                          }
+                        }
+
+                        const listImg = data.canvasDownloadImgUris || [];
+                        if (pageImg) {
+                          if (listImg[idx]) {
+                            pageImg.href = listImg[idx];
+                            pageImg.classList.remove('disabled');
+                            pageImg.removeAttribute('aria-disabled');
+                          } else {
+                            pageImg.classList.add('disabled');
+                            pageImg.setAttribute('aria-disabled','true');
+                          }
+                        }
+                      }
+
+                      // Fetch once, then update on URL changes
+                      let dlData = null;
+                      fetch(`/dl/${encodeURIComponent(docid)}/${ark}`)
+                        .then(r => r.json())
+                        .then(data => {
+                          dlData = data;
+                          updateForCurrentPage(dlData);
+                        })
+                        .catch(() => {});
+
+                      // Listen for navigation events that may change the query string
+                      function onLocationChange(){ updateForCurrentPage(dlData); }
+                      window.addEventListener('popstate', onLocationChange);
+                      window.addEventListener('hashchange', onLocationChange);
+
+                      // Patch history methods so pushState/replaceState also trigger updates
+                      (function() {
+                        const wrap = function(type){
+                          const orig = history[type];
+                          return function(){
+                            const res = orig.apply(this, arguments);
+                            try { window.dispatchEvent(new Event('locationchange')); } catch(e) {}
+                            return res;
+                          };
+                        };
+                        history.pushState = wrap('pushState');
+                        history.replaceState = wrap('replaceState');
+                        window.addEventListener('locationchange', onLocationChange);
+                      })();
+                    })();
+                  </script>
+                </div>
+
+                
+                <%= render(::IiifComponent.new(document: @document, term: params[:q])) %>
+              <% else %>
+              <button id="toggle-doc-metadata3" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
+                  <i class="bi bi-layout-sidebar"></i><span><%= t('labels.L_SERIAL_RECORD') %></span>
+              </button>
+                <%= render CollectionItemsComponent.new(
+                  documentId: params[:id],
+                  page: params[:page] || 1,
+                  per_page: 12
+                ) %>
+              <% end %>
+              <% geojson_values = Array(@document._source&.[]('geojson_ssim') || @document['geojson_ssim']) %>
+              <% if geojson_values.present? %>
+                <% unless content_for?(:leaflet_assets) %>
+                  <% content_for :leaflet_assets do %>
+                    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+                    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+                  <% end %>
+                  <% content_for :head do %>
+                    <%= content_for :leaflet_assets %>
+                  <% end %>
+                <% end %>
+              <% native_land_key = Rails.configuration.x.native_land_api_key.presence %>
+                <div
+                  id="document-leaflet-map"
+                  class="document-leaflet-map"
+                  data-geojson-url="<%= geojson_solr_document_path(@document) %>"
+                  data-native-land-url="<%= native_land_territories_path %>"
+                  <%= "data-native-land-key=\"#{native_land_key}\"" if native_land_key %>
+                  tabindex="0"
+                  role="region"
+                  aria-label="<%= t('labels.L_LOCATION_MAP', default: 'Location map') %>">
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+
+
+      <% else %>
+        <%= metadata %>
+        <% metadata_sections.each do |section| %>
+          <%= section %>
+        <% end %>
+        <%= thumbnail %>
+        <%= render(::PageSearchComponent.new(docId: @document._source["id"] , arkUrl: @document._source["ark"], term: params[:q])) %>
+      <% end %>
+
+      <br/>
+      <% partials.each do |partial| %>
+        <%= partial %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= footer %>
+<% end %>
+

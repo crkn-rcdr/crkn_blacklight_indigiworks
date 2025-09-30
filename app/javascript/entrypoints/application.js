@@ -526,6 +526,18 @@ function initializeDocumentLeafletMap() {
     }
     return '';
   };
+  const authorFromProps = (props = {}) => {
+    const candidates = ['author_ssm_str', 'author_ssm', 'author_ssim', 'author_tsim', 'author', 'creator_ssm_str', 'creator_ssm', 'authors'];
+    for (const field of candidates) {
+      const value = props[field];
+      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+      if (Array.isArray(value) && value.length > 0) {
+        const match = value.find((item) => typeof item === 'string' && item.trim().length > 0);
+        if (match) return match.trim();
+      }
+    }
+    return null;
+  };
   let combinedBounds = null;
   const extendBounds = (layer) => {
     if (!layer || typeof layer.getBounds !== 'function') return;
@@ -544,6 +556,7 @@ function initializeDocumentLeafletMap() {
         }
         const featureCount = data.features.length;
         console.log('[LeafletMap] document features received', featureCount, data);
+        const fallbackAuthor = authorFromProps(data.properties || {});
         const fallbackPlacename = Array.isArray(data.properties?.placenames)
           ? data.properties.placenames.find((name) => typeof name === 'string' && name.trim().length > 0)
           : null;
@@ -566,11 +579,13 @@ function initializeDocumentLeafletMap() {
           }),
           onEachFeature: (feature, layer) => {
             const props = feature && feature.properties ? feature.properties : {};
+            const author = authorFromProps(props) || fallbackAuthor;
             const placename = typeof props.placename === 'string' && props.placename.trim().length > 0
               ? props.placename.trim()
               : fallbackPlacename;
-            if (placename) {
-              layer.bindPopup('<strong>' + placename + '</strong>');
+            const popupText = author || placename;
+            if (popupText) {
+              layer.bindPopup('<strong>' + popupText + '</strong>');
             }
             layer.on('click', (event) => {
               if (event && L.DomEvent?.stop) L.DomEvent.stop(event);
