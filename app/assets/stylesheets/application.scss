@@ -89,3 +89,8 @@
   font-size: 0.76rem;
   margin-top: 0.1rem;
 }
+
+.document-leaflet-map .leaflet-interactive:focus {
+  outline: none;
+  box-shadow: none;
+}
