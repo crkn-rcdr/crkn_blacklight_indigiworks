@@ -351,49 +351,9 @@ function initializeDocumentLeafletMap() {
   nativeLabelPane.style.pointerEvents = 'none';
   nativeLabelPane.style.display = 'none';
   const territoryLabelLayers = [];
-  const labelZoomThreshold = 4;
-  const maxLabelsForZoom = (zoom) => {
-    if (zoom <= 3) return 12;
-    if (zoom === 4) return 20;
-    if (zoom === 5) return 36;
-    if (zoom === 6) return 60;
-    if (zoom === 7) return 120;
-    return Infinity;
-  };
   const refreshNativeLabels = () => {
-    const overlayActive = territoryLayer && map.hasLayer(territoryLayer);
-    nativeLabelPane.style.display = overlayActive ? 'block' : 'none';
-    const zoom = map.getZoom();
-    const showPane = overlayActive && zoom >= labelZoomThreshold;
-    nativeLabelPane.style.opacity = showPane ? '1' : '0';
-    const activeLayers = new Set();
-    if (showPane) {
-      const eligible = [];
-      territoryLabelLayers.forEach((layer) => {
-        if (!map.hasLayer(layer)) {
-          if (layer.isTooltipOpen && layer.isTooltipOpen()) layer.closeTooltip();
-          return;
-        }
-        const meta = layer._nativeMeta || {};
-        if (zoom >= (meta.labelMinZoom || labelZoomThreshold)) {
-          eligible.push(layer);
-        } else if (layer.isTooltipOpen && layer.isTooltipOpen()) {
-          layer.closeTooltip();
-        }
-      });
-      eligible.sort((a, b) => (b._nativeMeta?.priority || 0) - (a._nativeMeta?.priority || 0));
-      const limit = maxLabelsForZoom(zoom);
-      eligible.slice(0, limit).forEach((layer) => activeLayers.add(layer));
-    }
-    territoryLabelLayers.forEach((layer) => {
-      if (!layer.getTooltip) return;
-      const tooltipOpen = layer.isTooltipOpen && layer.isTooltipOpen();
-      if (activeLayers.has(layer)) {
-        if (!tooltipOpen) layer.openTooltip();
-      } else if (tooltipOpen) {
-        layer.closeTooltip();
-      }
-    });
+    nativeLabelPane.style.display = 'none';
+    nativeLabelPane.style.opacity = '0';
   };
   map.on('zoomend', refreshNativeLabels);
   map.on('moveend', refreshNativeLabels);
@@ -776,6 +736,7 @@ function initializeDocumentLeafletMap() {
         console.log('[LeafletMap] sorted feature sample', featuresWithArea.slice(0, 2).map((entry) => entry.feature));
         console.log('[LeafletMap] creating territory layer with features', featuresWithArea.length);
         territoryLabelLayers.length = 0;
+
         territoryLayer = L.geoJSON(featuresWithArea.map((entry) => entry.feature), {
           pane: 'native-land-polygons',
           smoothFactor: 0.4,
@@ -795,17 +756,6 @@ function initializeDocumentLeafletMap() {
             const props = feature && feature.properties ? feature.properties : {};
             const primary = primaryNameFromProps(props);
             const secondary = secondaryNameFromProps(props);
-            const tooltipHtml = secondary
-              ? `<div class="native-land-label-content"><div>${primary}</div><div class="native-land-secondary">${secondary}</div></div>`
-              : `<div class="native-land-label-content"><div>${primary}</div></div>`;
-            layer.bindTooltip(tooltipHtml, {
-              permanent: false,
-              direction: 'center',
-              className: 'native-land-label',
-              pane: 'native-land-labels',
-              opacity: 0.9,
-              sticky: false
-            });
             const meta = metadataByFeature.get(feature) || {};
             const bounds = typeof layer.getBounds === 'function' ? layer.getBounds() : null;
             layer._nativeMeta = {
