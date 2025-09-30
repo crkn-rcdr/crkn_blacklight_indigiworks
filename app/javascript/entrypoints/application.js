@@ -314,6 +314,7 @@ function initializeDocumentLeafletMap() {
     console.error('[LeafletMap] failed to initialize Leaflet map', error);
     return;
   }
+  let territoryLayer = null;
   console.log('[LeafletMap] base tile layer');
   const base = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -332,12 +333,85 @@ function initializeDocumentLeafletMap() {
   nativeLabelPane.style.zIndex = 450;
   nativeLabelPane.style.pointerEvents = 'none';
   nativeLabelPane.style.display = 'none';
+  const territoryLabelLayers = [];
   const labelZoomThreshold = 4;
-  const updateLabelVisibility = () => {
-    const show = map.getZoom() >= labelZoomThreshold;
-    nativeLabelPane.style.opacity = show ? '1' : '0';
+  const maxLabelsForZoom = (zoom) => {
+    if (zoom <= 3) return 12;
+    if (zoom === 4) return 20;
+    if (zoom === 5) return 36;
+    if (zoom === 6) return 60;
+    if (zoom === 7) return 120;
+    return Infinity;
   };
-  map.on('zoomend', updateLabelVisibility);
+  const refreshNativeLabels = () => {
+    const overlayActive = territoryLayer && map.hasLayer(territoryLayer);
+    nativeLabelPane.style.display = overlayActive ? 'block' : 'none';
+    const zoom = map.getZoom();
+    const showPane = overlayActive && zoom >= labelZoomThreshold;
+    nativeLabelPane.style.opacity = showPane ? '1' : '0';
+    const activeLayers = new Set();
+    if (showPane) {
+      const eligible = [];
+      territoryLabelLayers.forEach((layer) => {
+        if (!map.hasLayer(layer)) {
+          if (layer.isTooltipOpen && layer.isTooltipOpen()) layer.closeTooltip();
+          return;
+        }
+        const meta = layer._nativeMeta || {};
+        if (zoom >= (meta.labelMinZoom || labelZoomThreshold)) {
+          eligible.push(layer);
+        } else if (layer.isTooltipOpen && layer.isTooltipOpen()) {
+          layer.closeTooltip();
+        }
+      });
+      eligible.sort((a, b) => (b._nativeMeta?.priority || 0) - (a._nativeMeta?.priority || 0));
+      const limit = maxLabelsForZoom(zoom);
+      eligible.slice(0, limit).forEach((layer) => activeLayers.add(layer));
+    }
+    territoryLabelLayers.forEach((layer) => {
+      if (!layer.getTooltip) return;
+      const tooltipOpen = layer.isTooltipOpen && layer.isTooltipOpen();
+      if (activeLayers.has(layer)) {
+        if (!tooltipOpen) layer.openTooltip();
+      } else if (tooltipOpen) {
+        layer.closeTooltip();
+      }
+    });
+  };
+  map.on('zoomend', refreshNativeLabels);
+  map.on('moveend', refreshNativeLabels);
+  const geometryContainsLatLng = (latlng, meta) => {
+    if (!meta || !meta.projectedPolygons || meta.projectedPolygons.length === 0) return false;
+    if (meta.bounds && typeof meta.bounds.contains === 'function' && !meta.bounds.contains(latlng)) return false;
+    const projectedPoint = projectToMercator([latlng.lng, latlng.lat]);
+    return projectedGeometryContainsPoint(projectedPoint, meta.projectedPolygons);
+  };
+  const showTerritoryPopup = (latlng) => {
+    if (!territoryLayer || !map.hasLayer(territoryLayer)) return;
+    const matches = [];
+    territoryLabelLayers.forEach((layer) => {
+      if (!map.hasLayer(layer)) return;
+      const meta = layer._nativeMeta;
+      if (!meta) return;
+      if (geometryContainsLatLng(latlng, meta)) matches.push(layer);
+    });
+    if (matches.length === 0) return;
+    matches.sort((a, b) => (a._nativeMeta?.area || 0) - (b._nativeMeta?.area || 0));
+    const html = matches.map((layer) => {
+      const meta = layer._nativeMeta || {};
+      const lines = [`<strong>${meta.primary || 'Territory'}</strong>`];
+      if (meta.secondary) {
+        lines.push(`<div class="native-land-popup-secondary">${meta.secondary}</div>`);
+      }
+      return `<div class="native-land-popup-territory">${lines.join('')}</div>`;
+    }).join('');
+    L.popup({ autoPan: true, className: 'native-land-popup' })
+      .setLatLng(latlng)
+      .setContent(`<div class="native-land-popup-list">${html}</div>`)
+      .openOn(map);
+  };
+  map.on('overlayadd', refreshNativeLabels);
+  map.on('overlayremove', refreshNativeLabels);
   const territoryColorPalette = [
     '#f97316', '#ec4899', '#6366f1', '#22d3ee', '#14b8a6', '#a855f7',
     '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#fb7185'
@@ -375,6 +449,37 @@ function initializeDocumentLeafletMap() {
     if (geometry.type === 'MultiPolygon') return geometry.coordinates.reduce((total, coords) => total + polygonArea(coords), 0);
     return 0;
   };
+  const projectPolygon = (coords) => coords.map((ring) => ring.map(projectToMercator));
+  const projectGeometry = (geometry) => {
+    if (!geometry) return [];
+    if (geometry.type === 'Polygon') return [projectPolygon(geometry.coordinates)];
+    if (geometry.type === 'MultiPolygon') return geometry.coordinates.map((coords) => projectPolygon(coords));
+    return [];
+  };
+  const ringContainsPoint = (point, ring) => {
+    if (!ring || ring.length === 0) return false;
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+      const xi = ring[i][0];
+      const yi = ring[i][1];
+      const xj = ring[j][0];
+      const yj = ring[j][1];
+      const denominator = yj - yi;
+      const intersects = ((yi > point[1]) !== (yj > point[1]))
+        && (point[0] < ((xj - xi) * (point[1] - yi)) / (denominator === 0 ? 1e-12 : denominator) + xi);
+      if (intersects) inside = !inside;
+    }
+    return inside;
+  };
+  const polygonContainsPoint = (point, polygon) => {
+    if (!polygon || polygon.length === 0) return false;
+    if (!ringContainsPoint(point, polygon[0])) return false;
+    for (let i = 1; i < polygon.length; i += 1) {
+      if (ringContainsPoint(point, polygon[i])) return false;
+    }
+    return true;
+  };
+  const projectedGeometryContainsPoint = (point, polygons) => polygons.some((polygon) => polygonContainsPoint(point, polygon));
   const primaryNameFromProps = (props = {}) => {
     const candidates = ['Name', 'name', 'English', 'english', 'Nation', 'Tribe', 'Tribal Affiliation'];
     for (const field of candidates) {
@@ -542,12 +647,34 @@ function initializeDocumentLeafletMap() {
         }
 
         console.log('[LeafletMap] Native Land features available', featureCollection.features.length, featureCollection.features.slice(0, 3));
-        const sortedFeatures = [...featureCollection.features].sort((a, b) => geometryArea(a.geometry) - geometryArea(b.geometry));
-        console.log('[LeafletMap] sorted feature sample', sortedFeatures.slice(0, 2));
-
-        console.log('[LeafletMap] creating territory layer with features', sortedFeatures.length);
-
-        const territoryLayer = L.geoJSON(sortedFeatures, {
+        const computeLabelMinZoom = (rankRatio) => {
+          if (rankRatio >= 0.9) return 3;
+          if (rankRatio >= 0.75) return 4;
+          if (rankRatio >= 0.55) return 5;
+          if (rankRatio >= 0.35) return 6;
+          if (rankRatio >= 0.2) return 7;
+          return 8;
+        };
+        const featuresWithArea = featureCollection.features.map((feature) => ({
+          feature,
+          area: geometryArea(feature.geometry)
+        }));
+        featuresWithArea.sort((a, b) => a.area - b.area);
+        const totalFeatures = featuresWithArea.length || 1;
+        const metadataByFeature = new Map();
+        featuresWithArea.forEach((entry, index) => {
+          const rankRatio = (totalFeatures - index) / totalFeatures;
+          metadataByFeature.set(entry.feature, {
+            area: entry.area,
+            priority: rankRatio,
+            labelMinZoom: computeLabelMinZoom(rankRatio),
+            projectedPolygons: projectGeometry(entry.feature.geometry)
+          });
+        });
+        console.log('[LeafletMap] sorted feature sample', featuresWithArea.slice(0, 2).map((entry) => entry.feature));
+        console.log('[LeafletMap] creating territory layer with features', featuresWithArea.length);
+        territoryLabelLayers.length = 0;
+        territoryLayer = L.geoJSON(featuresWithArea.map((entry) => entry.feature), {
           pane: 'native-land-polygons',
           smoothFactor: 0.4,
           style: (feature) => {
@@ -570,39 +697,44 @@ function initializeDocumentLeafletMap() {
               ? `<div class="native-land-label-content"><div>${primary}</div><div class="native-land-secondary">${secondary}</div></div>`
               : `<div class="native-land-label-content"><div>${primary}</div></div>`;
             layer.bindTooltip(tooltipHtml, {
-              permanent: true,
+              permanent: false,
               direction: 'center',
               className: 'native-land-label',
               pane: 'native-land-labels',
-              opacity: 0.95,
+              opacity: 0.9,
               sticky: false
             });
+            const meta = metadataByFeature.get(feature) || {};
+            const bounds = typeof layer.getBounds === 'function' ? layer.getBounds() : null;
+            layer._nativeMeta = {
+              primary,
+              secondary,
+              area: meta.area || 0,
+              priority: meta.priority || 0,
+              labelMinZoom: meta.labelMinZoom || labelZoomThreshold,
+              projectedPolygons: meta.projectedPolygons || [],
+              bounds
+            };
+            territoryLabelLayers.push(layer);
             layer.on('click', (event) => {
-              const popupLines = [primary];
-              if (secondary) popupLines.push(secondary);
-              L.popup({ autoPan: true })
-                .setLatLng(event.latlng)
-                .setContent(popupLines
-                  .map((line, index) => (index === 0 ? `<strong>${line}</strong>` : `<div>${line}</div>`))
-                  .join(''))
-                .openOn(map);
+              event?.originalEvent?.preventDefault?.();
+              event?.originalEvent?.stopPropagation?.();
+              showTerritoryPopup(event.latlng);
             });
             layer.on('mouseover', () => {
               if (map.hasLayer(layer)) layer.bringToFront();
             });
           }
         });
-
+        territoryLayer.addTo(map);
         territoryLayer.on('add', () => {
           console.log('[LeafletMap] native layer added to map');
-          nativeLabelPane.style.display = 'block';
-          updateLabelVisibility();
+          refreshNativeLabels();
         });
         territoryLayer.on('remove', () => {
           console.log('[LeafletMap] native layer removed from map');
-          nativeLabelPane.style.display = 'none';
+          refreshNativeLabels();
         });
-
         return territoryLayer;
       })
       .catch((error) => {
@@ -618,6 +750,7 @@ function initializeDocumentLeafletMap() {
       overlayControl.addOverlay(nativeLayer, 'Native Land Territories');
       console.log('[LeafletMap] overlay count now', Object.keys(overlayControl._layers || {}).length);
       console.log('[LeafletMap] Native Land layer ready; use the layer control to toggle it');
+      refreshNativeLabels();
     }
     if (combinedBounds && typeof combinedBounds.isValid === 'function' && combinedBounds.isValid()) {
       console.log('[LeafletMap] fitting map to combined bounds');

@@ -37,27 +37,55 @@
 
 .native-land-label {
   pointer-events: none;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  color: #1f2933;
-  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
+  color: #0f172a;
+  font-size: 0.78rem;
   font-weight: 600;
   text-align: center;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.95), 0 0 2px rgba(255, 255, 255, 0.85);
   line-height: 1.1;
-}
-
-.native-land-label .native-land-secondary {
-  font-weight: 500;
-  font-size: 0.72rem;
 }
 
 .native-land-label .leaflet-tooltip-content {
   margin: 0;
-  padding: 0 0.25rem;
+  padding: 0.15rem 0.4rem;
+}
+
+.native-land-label .native-land-secondary {
+  display: block;
+  font-weight: 500;
+  font-size: 0.7rem;
+  color: #475569;
+  margin-top: 0.1rem;
 }
 
 .leaflet-pane.native-land-labels {
   pointer-events: none;
+}
+
+.leaflet-popup.native-land-popup .leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.native-land-popup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 12rem;
+}
+
+.native-land-popup-territory {
+  font-size: 0.85rem;
+  line-height: 1.25;
+  color: #0f172a;
+}
+
+.native-land-popup-secondary {
+  color: #475569;
+  font-size: 0.76rem;
+  margin-top: 0.1rem;
 }
