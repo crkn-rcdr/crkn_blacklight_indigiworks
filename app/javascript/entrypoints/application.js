@@ -314,6 +314,18 @@ function initializeDocumentLeafletMap() {
     console.error('[LeafletMap] failed to initialize Leaflet map', error);
     return;
   }
+  let documentLayer = null;
+  const bringDocumentLayerToFront = () => {
+    if (!documentLayer) return;
+    if (typeof documentLayer.bringToFront === 'function') documentLayer.bringToFront();
+    if (documentLayer.eachLayer) {
+      documentLayer.eachLayer((featureLayer) => {
+        if (featureLayer && typeof featureLayer.bringToFront === 'function') {
+          featureLayer.bringToFront();
+        }
+      });
+    }
+  };
   let territoryLayer = null;
   console.log('[LeafletMap] base tile layer');
   const base = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -324,6 +336,11 @@ function initializeDocumentLeafletMap() {
   const overlayControl = L.control.layers(null, {}, { collapsed: false }).addTo(map);
   overlayControl.expand();
   console.log('[LeafletMap] overlay control created');
+  const documentPane = map.createPane('document-geometries');
+  console.log('[LeafletMap] document pane ready');
+  documentPane.style.zIndex = 680;
+  documentPane.style.pointerEvents = 'auto';
+  documentPane.style.mixBlendMode = 'normal';
   const nativePolygonPane = map.createPane('native-land-polygons');
   console.log('[LeafletMap] polygon pane ready');
   nativePolygonPane.style.zIndex = 420;
@@ -570,13 +587,16 @@ function initializeDocumentLeafletMap() {
         const fallbackPlacename = Array.isArray(data.properties?.placenames)
           ? data.properties.placenames.find((name) => typeof name === 'string' && name.trim().length > 0)
           : null;
-        const documentLayer = L.geoJSON(data, {
+        documentLayer = L.geoJSON(data, {
+          pane: 'document-geometries',
           pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
+            pane: 'document-geometries',
             radius: 6,
             weight: 1,
             color: '#1d4ed8',
             fillColor: '#60a5fa',
-            fillOpacity: 0.85
+            fillOpacity: 0.85,
+            zIndexOffset: 1000
           }),
           style: () => ({
             color: '#1d4ed8',
@@ -592,6 +612,13 @@ function initializeDocumentLeafletMap() {
             if (placename) {
               layer.bindPopup('<strong>' + placename + '</strong>');
             }
+            layer.on('click', (event) => {
+              if (event && L.DomEvent?.stop) L.DomEvent.stop(event);
+              event?.originalEvent?.preventDefault?.();
+              event?.originalEvent?.stopPropagation?.();
+              if (layer.getPopup()) layer.openPopup(event.latlng);
+              bringDocumentLayerToFront();
+            });
           }
         });
         if (!documentLayer.getLayers || documentLayer.getLayers().length === 0) {
@@ -599,8 +626,10 @@ function initializeDocumentLeafletMap() {
           return null;
         }
         documentLayer.addTo(map);
+        bringDocumentLayerToFront();
         console.log('[LeafletMap] document layer added to map');
         overlayControl.addOverlay(documentLayer, 'Collection Locations');
+        documentLayer.on('add', bringDocumentLayerToFront);
         if (Array.isArray(data.bbox) && data.bbox.length === 4) {
           console.log('[LeafletMap] applying bbox from document data', data.bbox);
           const bboxBounds = L.latLngBounds(
@@ -823,6 +852,7 @@ function initializeDocumentLeafletMap() {
       console.log('[LeafletMap] Native Land layer ready; use the layer control to toggle it');
       refreshNativeLabels();
     }
+    bringDocumentLayerToFront();
     if (combinedBounds && typeof combinedBounds.isValid === 'function' && combinedBounds.isValid()) {
       console.log('[LeafletMap] fitting map to combined bounds');
       map.fitBounds(combinedBounds, { padding: [24, 24], maxZoom: 8 });
