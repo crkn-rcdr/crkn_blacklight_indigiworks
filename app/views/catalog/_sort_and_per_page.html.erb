@@ -1,0 +1,23 @@
+<% current_view = document_index_view_type %>
+<% base_path = request.path_parameters.symbolize_keys.slice(:controller, :action, :id) %>
+<% query_params = params.to_unsafe_h.except('controller', 'action', 'only_path') %>
+<% list_query = query_params.merge('view' => 'list', 'page' => nil) %>
+<% map_query = query_params.merge('view' => 'map', 'page' => nil) %>
+<% list_params = base_path.merge(list_query).merge(only_path: true) %>
+<% map_params = base_path.merge(map_query).merge(only_path: true) %>
+
+<div class="search-tools d-flex flex-wrap align-items-center justify-content-end gap-2">
+  <div class="search-sort-widget">
+    <%= render 'catalog/sort_widget' %>
+  </div>
+  <div class="d-flex align-items-center gap-2 search-per-page-group">
+    <%= render 'catalog/per_page_widget' %>
+    <div class="btn-group map-view-toggle" role="group" aria-label="View mode">
+      <%= link_to t('blacklight.search.view.list', default: 'List'), url_for(list_params),
+          class: "btn btn-outline-secondary #{'active' if current_view.blank? || current_view == :list}" %>
+      <%= link_to t('blacklight.search.view.map', default: 'Map'), url_for(map_params),
+          class: "btn btn-outline-secondary #{'active' if current_view == :map}" %>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,16 @@
+﻿<%# encoding: UTF-8 %>
+<div id="documents" class="search-map-view">
+  <% map_query_params = request.query_parameters.merge(format: :json) %>
+  <div
+    id="search-results-map"
+    class="search-results-map"
+    data-geojson-url="<%= catalog_map_geojson_path(map_query_params) %>"
+    data-native-land-url="<%= native_land_territories_path %>"
+    <%= Rails.configuration.x.native_land_api_key.present? ? "data-native-land-key=\"#{Rails.configuration.x.native_land_api_key}\"" : '' %>
+  >
+    <div class="search-map-loading" role="status">
+      <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+      <span class="loading-text">Loading map data…</span>
+    </div>
+  </div>
+</div>

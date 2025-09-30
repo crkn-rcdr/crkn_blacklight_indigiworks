@@ -8,8 +8,11 @@ Rails.application.routes.draw do
   get '/about/government-publications', to: 'pages#about_govpubs'
   get '/about/maps', to: 'pages#about_maps'
   # Allow slashes inside :ark (e.g., ark:/69429/m0k35m90313z)
-  get '/dl/:id/*ark', to: 'downloads#index', constraints: { id: /[0-z\\.]+/ }, format: false
-  get '/native_land/territories', to: 'native_land#territories'
+  get '/dl/:id/*ark', to: 'downloads#index', constraints: { id: /[0-z\\.]+/ }, format: false
+
+  get '/native_land/territories', to: 'native_land#territories'
+  get '/catalog/map_geojson', to: 'catalog#map_geojson'
+
   #root to: "catalog#index"
   concern :marc_viewable, Blacklight::Marc::Routes::MarcViewable.new
   concern :searchable, Blacklight::Routes::Searchable.new

@@ -1,3 +1,16 @@
+
+const escapeHtml = (value) => {
+  if (value == null) return '';
+  return value
+    .toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+const escapeAttribute = (value) => escapeHtml(value).replace(/`/g, '&#96;');
+
 // To see this message, add the following to the `<head>` section in your
 // views/layouts/application.html.erb
 //
@@ -832,14 +845,231 @@ function initializeDocumentLeafletMap() {
     console.log('[LeafletMap] map initialization complete');
   });
 }
+function initializeSearchResultsLeafletMap() {
+  const container = document.getElementById('search-results-map');
+  if (!container) return;
+  if (container.dataset.mapInitialized === '1') return;
+  if (typeof L === 'undefined') {
+    console.warn('Leaflet is required to render the search results map.');
+    return;
+  }
+
+  container.dataset.mapInitialized = '1';
+
+  const geojsonUrl = container.dataset.geojsonUrl;
+  if (!geojsonUrl) {
+    console.warn('[LeafletMap] search results geojson URL missing');
+    return;
+  }
+
+  const map = L.map(container, {
+    worldCopyJump: true,
+    scrollWheelZoom: false
+  });
+
+  map.on('focus', () => map.scrollWheelZoom.enable());
+  map.on('blur', () => map.scrollWheelZoom.disable());
+
+  const base = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '(c) OpenStreetMap contributors'
+  });
+  base.addTo(map);
+
+  const resultsPane = map.createPane('search-results-geometries');
+  resultsPane.style.zIndex = 680;
+  resultsPane.style.pointerEvents = 'auto';
+
+  const nativePolygonPane = map.createPane('search-native-land-polygons');
+  nativePolygonPane.style.zIndex = 420;
+  nativePolygonPane.style.mixBlendMode = 'multiply';
+
+  const overlayControl = L.control.layers(null, {}, { collapsed: false }).addTo(map);
+  overlayControl.expand();
+
+  const resultsLayerGroup = L.layerGroup().addTo(map);
+  overlayControl.addOverlay(resultsLayerGroup, 'Collection Locations');
+
+  const removeLoadingState = () => {
+    const loading = container.querySelector('.search-map-loading');
+    if (loading && loading.parentNode) loading.parentNode.removeChild(loading);
+  };
+
+  fetch(geojsonUrl)
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      if (!data || !Array.isArray(data.features)) {
+        removeLoadingState();
+        console.warn('[LeafletMap] search results geojson invalid', data);
+        return;
+      }
+
+      const markerLayer = L.geoJSON(data.features, {
+        pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
+          pane: 'search-results-geometries',
+          radius: 6,
+          weight: 1,
+          color: '#0f172a',
+          fillColor: '#2563eb',
+          fillOpacity: 0.85
+        }),
+        style: (feature) => ({
+          pane: 'search-results-geometries',
+          color: '#0f172a',
+          weight: 1,
+          fillColor: '#38bdf8',
+          fillOpacity: feature.geometry && feature.geometry.type !== 'Point' ? 0.25 : 0
+        }),
+        onEachFeature: (feature, layer) => {
+          const props = feature && feature.properties ? feature.properties : {};
+          const title = props.title || props.placename || props.id || 'Record';
+          const authors = Array.isArray(props.authors) && props.authors.length > 0 ? props.authors : [];
+          const authorLine = authors.length > 0 ? '<div class="map-popup-author">' + escapeHtml(authors[0]) + '</div>' : '';
+          const url = typeof props.url === 'string' ? props.url : '#';
+          const popupHtml = '<div class="map-popup"><a href="' + escapeAttribute(url) + '" class="map-popup-title">' + escapeHtml(title) + '</a>' + authorLine + '</div>';
+          layer.bindPopup(popupHtml);
+          layer.on('click', () => {
+            if (map.hasLayer(layer)) layer.bringToFront();
+          });
+        }
+      });
+
+      markerLayer.addTo(resultsLayerGroup);
+      removeLoadingState();
+
+      const bounds = markerLayer.getBounds();
+      if (bounds && typeof bounds.isValid === 'function' && bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [24, 24], maxZoom: 8 });
+      } else {
+        map.setView([56.1304, -106.3468], 3);
+      }
+    })
+    .catch((error) => {
+      removeLoadingState();
+      console.error('[LeafletMap] failed to load search results geojson', error);
+    });
+
+  const nativeKeyRaw = container.dataset.nativeLandKey || '';
+  const nativeApiKey = nativeKeyRaw.replace(/^['\"]+|['\"]+$/g, '');
+  const nativeBaseUrl = container.dataset.nativeLandUrl || 'https://native-land.ca/api/index.php';
+
+  const territoryColorPalette = [
+    '#f97316', '#ec4899', '#6366f1', '#22d3ee', '#14b8a6', '#a855f7',
+    '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#fb7185'
+  ];
+  const hashString = (value) => {
+    const str = value || '';
+    let hash = 0;
+    for (let i = 0; i < str.length; i += 1) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  };
+  const colorForTerritory = (name) => territoryColorPalette[hashString(name) % territoryColorPalette.length];
+  const primaryNameFromProps = (props = {}) => {
+    const candidates = ['Name', 'name', 'English', 'english', 'Nation', 'Tribe', 'Tribal Affiliation'];
+    for (const field of candidates) {
+      const value = props[field];
+      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+      if (Array.isArray(value) && value.length > 0) return value[0];
+    }
+    return 'Territory';
+  };
+  const secondaryNameFromProps = (props = {}) => {
+    const candidates = ['Other_names', 'other_names', 'Alternate Name', 'French', 'Language'];
+    for (const field of candidates) {
+      const value = props[field];
+      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+      if (Array.isArray(value) && value.length > 0) return value[0];
+    }
+    return '';
+  };
+
+  const buildNativeLandLayer = () => {
+    let nativeUrl;
+    try {
+      nativeUrl = new URL(nativeBaseUrl);
+    } catch (error) {
+      try {
+        nativeUrl = new URL(nativeBaseUrl, window.location.origin);
+      } catch (fallbackError) {
+        console.warn('[LeafletMap] invalid Native Land base URL for search map', nativeBaseUrl, fallbackError);
+        return Promise.resolve(null);
+      }
+    }
+
+    if (!nativeUrl.searchParams.has('maps')) nativeUrl.searchParams.set('maps', 'territories');
+    if (!nativeUrl.searchParams.has('poly')) nativeUrl.searchParams.set('poly', '1');
+    if (!nativeUrl.searchParams.has('bbox')) nativeUrl.searchParams.set('bbox', '-172,7,-52,83');
+
+    if (nativeUrl.origin === window.location.origin) {
+      if (nativeApiKey) nativeUrl.searchParams.set('key', nativeApiKey);
+    } else {
+      if (!nativeApiKey) {
+        console.warn('[LeafletMap] Native Land API key missing for remote request');
+        return Promise.resolve(null);
+      }
+      nativeUrl.searchParams.set('key', nativeApiKey);
+    }
+
+    return fetch(nativeUrl.toString())
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!data) return null;
+        const featureCollection = Array.isArray(data)
+          ? { type: 'FeatureCollection', features: data.filter((feature) => feature && feature.geometry) }
+          : data;
+        if (!featureCollection || !Array.isArray(featureCollection.features)) return null;
+
+        return L.geoJSON(featureCollection.features, {
+          pane: 'search-native-land-polygons',
+          smoothFactor: 0.4,
+          style: (feature) => {
+            const props = feature && feature.properties ? feature.properties : {};
+            const primary = primaryNameFromProps(props);
+            const color = colorForTerritory(primary);
+            return {
+              color,
+              weight: 1,
+              opacity: 0.6,
+              fillColor: color,
+              fillOpacity: 0.3
+            };
+          },
+          onEachFeature: (feature, layer) => {
+            const props = feature && feature.properties ? feature.properties : {};
+            const primary = primaryNameFromProps(props);
+            const secondary = secondaryNameFromProps(props);
+            const popupLines = [primary];
+            if (secondary) popupLines.push(secondary);
+            layer.bindPopup(popupLines.join('<br/>'));
+          }
+        });
+      })
+      .catch((error) => {
+        console.error('[LeafletMap] failed to fetch Native Land data for search map', error);
+        return null;
+      });
+  };
+
+  buildNativeLandLayer().then((nativeLayer) => {
+    if (nativeLayer) {
+      overlayControl.addOverlay(nativeLayer, 'Native Land Territories');
+      nativeLayer.addTo(map);
+    }
+  });
+}
 if (typeof document !== 'undefined') {
   const lifecycleEvents = ['DOMContentLoaded', 'turbo:load', 'turbo:frame-load', 'blacklight:load'];
   console.log('[LeafletMap] bootstrap', 'readyState:', document.readyState, 'events:', lifecycleEvents);
   lifecycleEvents.forEach((eventName) => {
     document.addEventListener(eventName, initializeDocumentLeafletMap);
+    document.addEventListener(eventName, initializeSearchResultsLeafletMap);
   });
   if (document.readyState !== 'loading') {
     console.log('[LeafletMap] document already loaded; running initializeDocumentLeafletMap immediately');
     initializeDocumentLeafletMap();
+    initializeSearchResultsLeafletMap();
   }
 }

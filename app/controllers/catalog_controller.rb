@@ -67,6 +67,7 @@ class CatalogController < ApplicationController
 
     # solr field configuration for search results/index views
     config.index.title_field = 'full_title_tsim'
+    config.view.map = Blacklight::Configuration::ViewConfig.new(partial: 'map', icon: 'bi bi-geo-alt')
     # config.index.display_type_field = 'format'
     # config.index.thumbnail_field = 'thumbnail_path_ss'
 
@@ -347,6 +348,55 @@ class CatalogController < ApplicationController
       solr_params[:rows] = ids.length
     end
   end
+  def map_geojson
+    response, documents = search_service.search_results do |builder|
+      limit_param = params[:map_limit]
+      limit = limit_param.present? ? limit_param.to_i : 1000
+      limit = 1000 if limit <= 0
+      limit = [limit, 1000].min
+      builder.page = 1
+      builder.rows = limit
+    end
+
+    features = documents.flat_map do |document|
+      doc_hash = document.respond_to?(:to_h) ? document.to_h : document
+      next [] unless doc_hash
+
+      authors = []
+      %w[author_ssm author_ssm_str creator_ssm].each do |field|
+        values = Array(doc_hash[field]).filter_map do |value|
+          if value.respond_to?(:presence)
+            value.presence&.to_s&.strip
+          else
+            str = value.to_s.strip
+            str unless str.empty?
+          end
+        end
+        authors.concat(values) if values.any?
+      end
+      authors.uniq!
+
+      Array(doc_hash['geojson_ssim']).filter_map do |value|
+        feature = parse_geojson_feature(value)
+        next unless feature.is_a?(Hash)
+
+        feature['properties'] ||= {}
+        props = feature['properties']
+        props['id'] ||= document.id if document.respond_to?(:id)
+        props['title'] ||= document.to_s
+        props['url'] ||= helpers.url_for_document(document)
+        props['authors'] ||= authors if authors.any?
+        props['placename'] ||= Array(doc_hash['subject_geo_ssim']).filter_map { |v| v.to_s.strip.presence }.first
+        feature
+      end
+    end
+
+    render json: { type: 'FeatureCollection', features: features }
+  rescue StandardError => e
+    Rails.logger.error("map_geojson generation failed: #{e.message}")
+    render json: { error: 'Unable to load map data' }, status: :unprocessable_entity
+  end
+
   def geojson
     permitted = params.permit(:id, :lang)
     solr_document = search_service.fetch(permitted[:id])
