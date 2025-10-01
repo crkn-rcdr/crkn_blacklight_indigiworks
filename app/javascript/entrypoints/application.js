@@ -447,7 +447,7 @@ const collectStringValues = (value) => {
   return [];
 };
 const subjectGeoFromProps = (props = {}) => {
-  const fields = ['subject_geo_ssim', 'subject_geo_ssm', 'subject_geo_tsim', 'subject_geo_tsi', 'subject_geo_ss', 'subject_geo'];
+  const fields = ['subject_geo_ssim_str', 'subject_geo_ssim', 'subject_geo_ssm', 'subject_geo_tsim', 'subject_geo_tsi', 'subject_geo_ss', 'subject_geo', 'subject_str','subject_ssim_str'];
   const results = [];
   fields.forEach((field) => {
     collectStringValues(props[field]).forEach((value) => {
