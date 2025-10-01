@@ -30,4 +30,4 @@
   <%= render_document_index @response.documents %>
 <% end %>
 
-<%= render 'results_pagination' %>
+<%= render 'results_pagination' if document_index_view_type == :list %>

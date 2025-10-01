@@ -417,6 +417,54 @@ const polygonContainsPoint = (point, polygon) => {
   return true;
 };
 const projectedGeometryContainsPoint = (point, polygons) => polygons.some((polygon) => polygonContainsPoint(point, polygon));
+const firstNonEmptyString = (value) => {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const result = firstNonEmptyString(item);
+      if (result) return result;
+    }
+  }
+  return null;
+};
+const collectStringValues = (value) => {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? [trimmed] : [];
+  }
+  if (Array.isArray(value)) {
+    const results = [];
+    value.forEach((item) => {
+      collectStringValues(item).forEach((val) => {
+        if (!results.includes(val)) results.push(val);
+      });
+    });
+    return results;
+  }
+  return [];
+};
+const subjectGeoFromProps = (props = {}) => {
+  const fields = ['subject_geo_ssim', 'subject_geo_ssm', 'subject_geo_tsim', 'subject_geo_tsi', 'subject_geo_ss', 'subject_geo'];
+  const results = [];
+  fields.forEach((field) => {
+    collectStringValues(props[field]).forEach((value) => {
+      if (!results.includes(value)) results.push(value);
+    });
+  });
+  return results;
+};
+const authorFromProps = (props = {}) => {
+  const candidates = ['author_ssm_str', 'author_ssm', 'author_ssim', 'author_tsim', 'author', 'creator_ssm_str', 'creator_ssm', 'authors'];
+  for (const field of candidates) {
+    const value = props[field];
+    const direct = firstNonEmptyString(value);
+    if (direct) return direct;
+  }
+  return null;
+};
 const primaryNameFromProps = (props = {}) => {
   const candidates = ['Name', 'name', 'English', 'english', 'Nation', 'Tribe', 'Tribal Affiliation'];
   for (const field of candidates) {
@@ -656,18 +704,6 @@ function initializeDocumentLeafletMap() {
   };
   map.on('overlayadd', refreshNativeLabels);
   map.on('overlayremove', refreshNativeLabels);
-  const authorFromProps = (props = {}) => {
-    const candidates = ['author_ssm_str', 'author_ssm', 'author_ssim', 'author_tsim', 'author', 'creator_ssm_str', 'creator_ssm', 'authors'];
-    for (const field of candidates) {
-      const value = props[field];
-      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
-      if (Array.isArray(value) && value.length > 0) {
-        const match = value.find((item) => typeof item === 'string' && item.trim().length > 0);
-        if (match) return match.trim();
-      }
-    }
-    return null;
-  };
   let combinedBounds = null;
   const extendBounds = (layer) => {
     if (!layer || typeof layer.getBounds !== 'function') return;
@@ -988,6 +1024,62 @@ function initializeSearchResultsLeafletMap() {
     scrollWheelZoom: false
   });
 
+  const searchDocumentLayers = [];
+  const searchDocumentLayerContainsLatLng = (latlng, layer) => {
+    if (!layer) return false;
+    const meta = layer._searchDocMeta || {};
+    if (meta.projectedPolygons && meta.projectedPolygons.length > 0) {
+      const projectedPoint = projectToMercator([latlng.lng, latlng.lat]);
+      if (projectedGeometryContainsPoint(projectedPoint, meta.projectedPolygons)) return true;
+    }
+    if (typeof layer.getLatLng === 'function') {
+      try {
+        const layerLatLng = layer.getLatLng();
+        if (layerLatLng) {
+          const centerPoint = map.latLngToLayerPoint(layerLatLng);
+          const clickPoint = map.latLngToLayerPoint(latlng);
+          if (centerPoint && clickPoint) {
+            const radius = typeof layer.options?.radius === 'number' ? layer.options.radius : 6;
+            const tolerance = radius + 4;
+            if (centerPoint.distanceTo(clickPoint) <= tolerance) return true;
+          }
+        }
+      } catch (error) {
+        // ignore projection errors
+      }
+    }
+    const bounds = meta.bounds || (typeof layer.getBounds === 'function' ? layer.getBounds() : null);
+    if (bounds && bounds.isValid && bounds.isValid() && bounds.contains(latlng)) return true;
+    return false;
+  };
+  const showSearchDocumentPopup = (latlng, fallbackLayer = null) => {
+    let targetLatLng = latlng;
+    if (!targetLatLng && fallbackLayer) {
+      if (typeof fallbackLayer.getLatLng === 'function') targetLatLng = fallbackLayer.getLatLng();
+      if (!targetLatLng && typeof fallbackLayer.getBounds === 'function') targetLatLng = fallbackLayer.getBounds()?.getCenter();
+    }
+    if (!targetLatLng) return;
+    const matches = [];
+    searchDocumentLayers.forEach((layer) => {
+      if (!map.hasLayer(layer)) return;
+      if (searchDocumentLayerContainsLatLng(targetLatLng, layer)) matches.push(layer);
+    });
+    if (matches.length === 0) return;
+    const html = matches.map((layer) => {
+      const meta = layer._searchDocMeta || {};
+      const url = meta.url || '#';
+      const linkLabel = meta.author || meta.title || 'Record';
+      const subjectLines = (meta.subjects || []).length > 0
+        ? meta.subjects.map((subject) => `<div class="map-popup-subject">${escapeHtml(subject)}</div>`).join('')
+        : '';
+      return `<div class="map-popup-record"><a href="${escapeAttribute(url)}" class="map-popup-title">${escapeHtml(linkLabel)}</a>${subjectLines}</div>`;
+    }).join('');
+    L.popup({ autoPan: true, className: 'map-popup' })
+      .setLatLng(targetLatLng)
+      .setContent(`<div class="map-popup-record-list">${html}</div>`)
+      .openOn(map);
+  };
+
   const searchNativeTerritoryLayers = [];
   const searchGeometryContainsLatLng = (latlng, meta) => {
     if (!meta || !meta.projectedPolygons || meta.projectedPolygons.length === 0) return false;
@@ -1069,33 +1161,59 @@ function initializeSearchResultsLeafletMap() {
         return;
       }
 
+      searchDocumentLayers.length = 0;
+
       const markerLayer = L.geoJSON(data.features, {
         pane: 'search-results-geometries',
         pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
           pane: 'search-results-geometries',
           radius: 6,
           weight: 1,
-          color: '#0f172a',
-          fillColor: '#2563eb',
-          fillOpacity: 0.85
+          color: '#1d4ed8',
+          fillColor: '#60a5fa',
+          fillOpacity: 0.85,
+          zIndexOffset: 1000
         }),
         style: (feature) => ({
           pane: 'search-results-geometries',
-          color: '#0f172a',
+          color: '#1d4ed8',
           weight: 1,
-          fillColor: '#38bdf8',
-          fillOpacity: feature.geometry && feature.geometry.type !== 'Point' ? 0.25 : 0
+          fillColor: '#93c5fd',
+          fillOpacity: feature.geometry && feature.geometry.type !== 'Point' ? 0.2 : 0
         }),
         onEachFeature: (feature, layer) => {
           const props = feature && feature.properties ? feature.properties : {};
-          const title = props.title || props.placename || props.id || 'Record';
-          const authors = Array.isArray(props.authors) && props.authors.length > 0 ? props.authors : [];
-          const authorLine = authors.length > 0 ? '<div class="map-popup-author">' + escapeHtml(authors[0]) + '</div>' : '';
-          const url = typeof props.url === 'string' ? props.url : '#';
-          const popupHtml = '<div class="map-popup"><a href="' + escapeAttribute(url) + '" class="map-popup-title">' + escapeHtml(title) + '</a>' + authorLine + '</div>';
-          layer.bindPopup(popupHtml);
-          layer.on('click', () => {
+          const titleCandidates = [
+            props.title,
+            props.display_title,
+            props.title_display,
+            props['title_tsim'],
+            props['title_ssm'],
+            props.placename,
+            props.name,
+            props.label,
+            props.id
+          ];
+          const title = titleCandidates.map((candidate) => firstNonEmptyString(candidate)).find((value) => value) || 'Record';
+          const urlCandidates = [props.url, props['url_ssi'], props['url_fulltext'], props['record_link']];
+          const url = urlCandidates.map((candidate) => firstNonEmptyString(candidate)).find((value) => value) || '#';
+          const author = authorFromProps(props) || firstNonEmptyString(props.authors);
+          const subjects = subjectGeoFromProps(props);
+          layer._searchDocMeta = {
+            title,
+            url,
+            author,
+            subjects,
+            projectedPolygons: projectGeometry(feature.geometry || null) || [],
+          };
+          const bounds = typeof layer.getBounds === 'function' ? layer.getBounds() : null;
+          if (bounds && bounds.isValid && bounds.isValid()) layer._searchDocMeta.bounds = bounds;
+          searchDocumentLayers.push(layer);
+          layer.on('click', (event) => {
+            event?.originalEvent?.preventDefault?.();
+            event?.originalEvent?.stopPropagation?.();
             if (map.hasLayer(layer)) layer.bringToFront();
+            showSearchDocumentPopup(event?.latlng, layer);
           });
         }
       });
