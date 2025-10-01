@@ -988,6 +988,38 @@ function initializeSearchResultsLeafletMap() {
     scrollWheelZoom: false
   });
 
+  const searchNativeTerritoryLayers = [];
+  const searchGeometryContainsLatLng = (latlng, meta) => {
+    if (!meta || !meta.projectedPolygons || meta.projectedPolygons.length === 0) return false;
+    if (meta.bounds && typeof meta.bounds.contains === 'function' && !meta.bounds.contains(latlng)) return false;
+    const projectedPoint = projectToMercator([latlng.lng, latlng.lat]);
+    return projectedGeometryContainsPoint(projectedPoint, meta.projectedPolygons);
+  };
+  const showSearchTerritoryPopup = (latlng) => {
+    if (!searchNativeTerritoryLayers.length) return;
+    const matches = [];
+    searchNativeTerritoryLayers.forEach((layer) => {
+      if (!map.hasLayer(layer)) return;
+      const meta = layer._nativeMeta;
+      if (!meta) return;
+      if (searchGeometryContainsLatLng(latlng, meta)) matches.push(layer);
+    });
+    if (matches.length === 0) return;
+    matches.sort((a, b) => (a._nativeMeta?.area || 0) - (b._nativeMeta?.area || 0));
+    const html = matches.map((layer) => {
+      const meta = layer._nativeMeta || {};
+      const lines = [`<strong>${meta.primary || 'Territory'}</strong>`];
+      if (meta.secondary) {
+        lines.push(`<div class="native-land-popup-secondary">${meta.secondary}</div>`);
+      }
+      return `<div class="native-land-popup-territory">${lines.join('')}</div>`;
+    }).join('');
+    L.popup({ autoPan: true, className: 'native-land-popup' })
+      .setLatLng(latlng)
+      .setContent(`<div class="native-land-popup-list">${html}</div>`)
+      .openOn(map);
+  };
+
   map.on('focus', () => map.scrollWheelZoom.enable());
   map.on('blur', () => map.scrollWheelZoom.disable());
 
@@ -1144,7 +1176,21 @@ function initializeSearchResultsLeafletMap() {
 
         if (filteredFeatures.length === 0) return null;
 
-        const nativeLayer = L.geoJSON(filteredFeatures, {
+        const featuresWithArea = filteredFeatures.map((feature) => ({
+          feature,
+          area: geometryArea(feature.geometry)
+        }));
+        featuresWithArea.sort((a, b) => a.area - b.area);
+        const metadataByFeature = new Map();
+        featuresWithArea.forEach((entry) => {
+          metadataByFeature.set(entry.feature, {
+            area: entry.area,
+            projectedPolygons: projectGeometry(entry.feature.geometry)
+          });
+        });
+        searchNativeTerritoryLayers.length = 0;
+
+        const nativeLayer = L.geoJSON(featuresWithArea.map((entry) => entry.feature), {
           pane: 'search-native-land-polygons',
           smoothFactor: 0.4,
           style: (feature) => {
@@ -1163,9 +1209,22 @@ function initializeSearchResultsLeafletMap() {
             const props = feature && feature.properties ? feature.properties : {};
             const primary = primaryNameFromProps(props);
             const secondary = secondaryNameFromProps(props);
-            const lines = [primary];
-            if (secondary) lines.push(secondary);
-            layer.bindPopup(lines.join('<br/>'));
+            const meta = metadataByFeature.get(feature) || {};
+            const bounds = typeof layer.getBounds === 'function' ? layer.getBounds() : null;
+            layer._nativeMeta = {
+              primary,
+              secondary,
+              area: meta.area || 0,
+              projectedPolygons: meta.projectedPolygons || [],
+              bounds
+            };
+            searchNativeTerritoryLayers.push(layer);
+            layer.on('click', (event) => {
+              event?.originalEvent?.preventDefault?.();
+              event?.originalEvent?.stopPropagation?.();
+              if (map.hasLayer(layer)) layer.bringToFront();
+              showSearchTerritoryPopup(event.latlng);
+            });
           },
         });
 
