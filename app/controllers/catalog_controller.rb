@@ -348,54 +348,58 @@ class CatalogController < ApplicationController
       solr_params[:rows] = ids.length
     end
   end
-  def map_geojson
-    response, documents = search_service.search_results do |builder|
-      limit_param = params[:map_limit]
-      limit = limit_param.present? ? limit_param.to_i : 1000
-      limit = 1000 if limit <= 0
-      limit = [limit, 1000].min
-      builder.page = 1
-      builder.rows = limit
-    end
 
-    features = documents.flat_map do |document|
-      doc_hash = document.respond_to?(:to_h) ? document.to_h : document
-      next [] unless doc_hash
+def map_geojson
+  limit_param = params[:map_limit]
+  limit = limit_param.present? ? limit_param.to_i : 1000
+  limit = 1000 if limit <= 0
+  limit = [limit, 1000].min
 
-      authors = []
-      %w[author_ssm author_ssm_str creator_ssm].each do |field|
-        values = Array(doc_hash[field]).filter_map do |value|
-          if value.respond_to?(:presence)
-            value.presence&.to_s&.strip
-          else
-            str = value.to_s.strip
-            str unless str.empty?
-          end
+  base_search_params = search_state.params_for_search.except(:rows, :per_page, :page, :lang, :format)
+  user_params = base_search_params.merge(rows: limit, page: 1)
+
+  builder = search_service.search_builder.with(user_params)
+  response = search_service.repository.search(builder)
+  documents = response.documents
+
+  features = documents.flat_map do |document|
+    doc_hash = document.respond_to?(:to_h) ? document.to_h : document
+    next [] unless doc_hash
+
+    authors = []
+    %w[author_ssm author_ssm_str creator_ssm].each do |field|
+      values = Array(doc_hash[field]).filter_map do |value|
+        if value.respond_to?(:presence)
+          value.presence&.to_s&.strip
+        else
+          str = value.to_s.strip
+          str unless str.empty?
         end
-        authors.concat(values) if values.any?
       end
-      authors.uniq!
-
-      Array(doc_hash['geojson_ssim']).filter_map do |value|
-        feature = parse_geojson_feature(value)
-        next unless feature.is_a?(Hash)
-
-        feature['properties'] ||= {}
-        props = feature['properties']
-        props['id'] ||= document.id if document.respond_to?(:id)
-        props['title'] ||= document.to_s
-        props['url'] ||= helpers.url_for_document(document)
-        props['authors'] ||= authors if authors.any?
-        props['placename'] ||= Array(doc_hash['subject_geo_ssim']).filter_map { |v| v.to_s.strip.presence }.first
-        feature
-      end
+      authors.concat(values) if values.any?
     end
+    authors.uniq!
 
-    render json: { type: 'FeatureCollection', features: features }
-  rescue StandardError => e
-    Rails.logger.error("map_geojson generation failed: #{e.message}")
-    render json: { error: 'Unable to load map data' }, status: :unprocessable_entity
+    Array(doc_hash['geojson_ssim']).filter_map do |value|
+      feature = parse_geojson_feature(value)
+      next unless feature.is_a?(Hash)
+
+      feature['properties'] ||= {}
+      props = feature['properties']
+      props['id'] ||= document.id if document.respond_to?(:id)
+      props['title'] ||= document.to_s
+      props['url'] ||= helpers.url_for_document(document)
+      props['authors'] ||= authors if authors.any?
+      props['placename'] ||= Array(doc_hash['subject_geo_ssim']).filter_map { |v| v.to_s.strip.presence }.first
+      feature
+    end
   end
+
+  render json: { type: 'FeatureCollection', features: features }
+rescue StandardError => e
+  Rails.logger.error("map_geojson generation failed: #{e.message}")
+  render json: { error: 'Unable to load map data' }, status: :unprocessable_entity
+end
 
   def geojson
     permitted = params.permit(:id, :lang)

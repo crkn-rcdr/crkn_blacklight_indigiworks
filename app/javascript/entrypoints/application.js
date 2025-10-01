@@ -291,6 +291,258 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   applyFilters();
 });
+
+
+// Shared Native Land geometry helpers
+const territoryColorPalette = [
+  '#f97316', '#ec4899', '#6366f1', '#22d3ee', '#14b8a6', '#a855f7',
+  '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#fb7185'
+];
+const hashString = (value) => {
+  const str = value || '';
+  let hash = 0;
+  for (let i = 0; i < str.length; i += 1) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+};
+const colorForTerritory = (name) => territoryColorPalette[hashString(name) % territoryColorPalette.length];
+const projectToMercator = ([lon, lat]) => {
+  const rad = Math.PI / 180;
+  const x = (lon * 20037508.34) / 180;
+  const safeLat = Math.min(Math.max(lat, -89.9999), 89.9999);
+  const y = Math.log(Math.tan((90 + safeLat) * rad / 2)) * 6378137;
+  return [x, y];
+};
+const ringArea = (ring) => {
+  let sum = 0;
+  for (let i = 0; i < ring.length; i += 1) {
+    const current = projectToMercator(ring[i]);
+    const next = projectToMercator(ring[(i + 1) % ring.length]);
+    sum += current[0] * next[1] - next[0] * current[1];
+  }
+  return Math.abs(sum / 2);
+};
+const polygonArea = (coords) => coords.reduce((total, ring) => total + ringArea(ring), 0);
+const geometryArea = (geometry) => {
+  if (!geometry) return 0;
+  if (geometry.type === 'Polygon') return polygonArea(geometry.coordinates);
+  if (geometry.type === 'MultiPolygon') {
+    return geometry.coordinates.reduce((total, coords) => total + polygonArea(coords), 0);
+  }
+  return 0;
+};
+const projectPolygon = (coords) => coords.map((ring) => ring.map(projectToMercator));
+const projectGeometry = (geometry) => {
+  if (!geometry) return [];
+  if (geometry.type === 'Polygon') return [projectPolygon(geometry.coordinates)];
+  if (geometry.type === 'MultiPolygon') {
+    return geometry.coordinates.map((coords) => projectPolygon(coords));
+  }
+  return [];
+};
+const geometryBounds = (geometry) => {
+  if (!geometry) return null;
+  let minLon = Infinity;
+  let minLat = Infinity;
+  let maxLon = -Infinity;
+  let maxLat = -Infinity;
+  const updateBounds = (coord) => {
+    if (!Array.isArray(coord) || coord.length < 2) return;
+    const [lon, lat] = coord;
+    if (Number.isNaN(lon) || Number.isNaN(lat)) return;
+    if (lon < minLon) minLon = lon;
+    if (lat < minLat) minLat = lat;
+    if (lon > maxLon) maxLon = lon;
+    if (lat > maxLat) maxLat = lat;
+  };
+  const processCoords = (coords) => {
+    coords.forEach((item) => {
+      if (Array.isArray(item[0])) {
+        processCoords(item);
+      } else {
+        updateBounds(item);
+      }
+    });
+  };
+  if (geometry.type === 'Point') {
+    updateBounds(geometry.coordinates);
+  } else if (geometry.type === 'MultiPoint' || geometry.type === 'LineString') {
+    processCoords([geometry.coordinates]);
+  } else if (geometry.type === 'MultiLineString' || geometry.type === 'Polygon') {
+    processCoords(geometry.coordinates);
+  } else if (geometry.type === 'MultiPolygon') {
+    geometry.coordinates.forEach((polygon) => processCoords(polygon));
+  } else if (geometry.type === 'GeometryCollection' && Array.isArray(geometry.geometries)) {
+    geometry.geometries.forEach((child) => {
+      const childBounds = geometryBounds(child);
+      if (!childBounds) return;
+      if (childBounds.minLon < minLon) minLon = childBounds.minLon;
+      if (childBounds.minLat < minLat) minLat = childBounds.minLat;
+      if (childBounds.maxLon > maxLon) maxLon = childBounds.maxLon;
+      if (childBounds.maxLat > maxLat) maxLat = childBounds.maxLat;
+    });
+    return Number.isFinite(minLon) ? { minLon, minLat, maxLon, maxLat } : null;
+  } else {
+    return null;
+  }
+  return Number.isFinite(minLon) ? { minLon, minLat, maxLon, maxLat } : null;
+};
+const bboxIntersects = (a, b) => {
+  if (!a || !b) return false;
+  return !(a.maxLon < b.minLon || a.minLon > b.maxLon || a.maxLat < b.minLat || a.minLat > b.maxLat);
+};
+const ringContainsPoint = (point, ring) => {
+  if (!ring || ring.length === 0) return false;
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+    const xi = ring[i][0];
+    const yi = ring[i][1];
+    const xj = ring[j][0];
+    const yj = ring[j][1];
+    const denominator = yj - yi;
+    const intersects = ((yi > point[1]) !== (yj > point[1]))
+      && (point[0] < ((xj - xi) * (point[1] - yi)) / (denominator === 0 ? 1e-12 : denominator) + xi);
+    if (intersects) inside = !inside;
+  }
+  return inside;
+};
+const polygonContainsPoint = (point, polygon) => {
+  if (!polygon || polygon.length === 0) return false;
+  if (!ringContainsPoint(point, polygon[0])) return false;
+  for (let i = 1; i < polygon.length; i += 1) {
+    if (ringContainsPoint(point, polygon[i])) return false;
+  }
+  return true;
+};
+const projectedGeometryContainsPoint = (point, polygons) => polygons.some((polygon) => polygonContainsPoint(point, polygon));
+const primaryNameFromProps = (props = {}) => {
+  const candidates = ['Name', 'name', 'English', 'english', 'Nation', 'Tribe', 'Tribal Affiliation'];
+  for (const field of candidates) {
+    const value = props[field];
+    if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+    if (Array.isArray(value) && value.length > 0) return value[0];
+  }
+  return 'Territory';
+};
+const secondaryNameFromProps = (props = {}) => {
+  const candidates = ['Other_names', 'other_names', 'Alternate Name', 'French', 'Language'];
+  for (const field of candidates) {
+    const value = props[field];
+    if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+    if (Array.isArray(value) && value.length > 0) return value[0];
+  }
+  return '';
+};
+
+
+// Native Land loading overlay helpers
+const ensureNativeLoadingStyles = (doc) => {
+  if (!doc || doc.querySelector('style[data-native-land-loading-styles]')) return;
+  const style = doc.createElement('style');
+  style.setAttribute('data-native-land-loading-styles', 'true');
+  style.textContent = `
+@keyframes native-land-spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}`;
+  (doc.head || doc.body || doc.documentElement).appendChild(style);
+};
+const ensureNativeLoadingOverlay = (container) => {
+  if (!container || typeof document === 'undefined') return null;
+  const doc = container.ownerDocument || document;
+  ensureNativeLoadingStyles(doc);
+  const win = doc.defaultView;
+  if (win && typeof win.getComputedStyle === 'function') {
+    const computed = win.getComputedStyle(container);
+    if (computed && computed.position === 'static') {
+      container.style.position = 'relative';
+    }
+  }
+  let overlay = container.querySelector('.native-land-loading-overlay');
+  if (overlay) return overlay;
+  overlay = doc.createElement('div');
+  overlay.className = 'native-land-loading-overlay';
+  Object.assign(overlay.style, {
+    position: 'absolute',
+    inset: '0',
+    display: 'none',
+    opacity: '0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'rgba(15, 23, 42, 0.45)',
+    color: '#f8fafc',
+    fontSize: '0.95rem',
+    fontWeight: '600',
+    letterSpacing: '0.01em',
+    zIndex: '999',
+    pointerEvents: 'none',
+    transition: 'opacity 0.25s ease'
+  });
+  const panel = doc.createElement('div');
+  panel.className = 'native-land-loading-panel';
+  Object.assign(panel.style, {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    padding: '0.9rem 1.4rem',
+    borderRadius: '9999px',
+    background: 'rgba(15, 23, 42, 0.65)',
+    boxShadow: '0 12px 24px rgba(15, 23, 42, 0.35)'
+  });
+  const spinner = doc.createElement('span');
+  spinner.className = 'native-land-loading-spinner';
+  Object.assign(spinner.style, {
+    width: '1.2rem',
+    height: '1.2rem',
+    borderRadius: '9999px',
+    border: '2px solid rgba(248, 250, 252, 0.35)',
+    borderTopColor: '#f8fafc',
+    animation: 'native-land-spinner 0.8s linear infinite'
+  });
+  const textEl = doc.createElement('span');
+  textEl.className = 'native-land-loading-text';
+  textEl.textContent = 'Loading Native Land territories...';
+  panel.appendChild(spinner);
+  panel.appendChild(textEl);
+  overlay.appendChild(panel);
+  container.appendChild(overlay);
+  return overlay;
+};
+const hideNativeLoading = (container) => {
+  if (!container) return;
+  const overlay = container.querySelector('.native-land-loading-overlay');
+  if (!overlay || overlay.dataset.visible !== '1') return;
+  overlay.dataset.visible = '0';
+  const finish = () => {
+    overlay.style.display = 'none';
+  };
+  let timeoutId = setTimeout(finish, 260);
+  overlay.addEventListener('transitionend', () => {
+    clearTimeout(timeoutId);
+    finish();
+  }, { once: true });
+  overlay.style.opacity = '0';
+};
+const showNativeLoading = (container, message = 'Loading Native Land territories...') => {
+  const overlay = ensureNativeLoadingOverlay(container);
+  if (!overlay) return () => {};
+  const textEl = overlay.querySelector('.native-land-loading-text');
+  if (textEl) textEl.textContent = message;
+  overlay.style.display = 'flex';
+  overlay.style.opacity = '0';
+  overlay.dataset.visible = '1';
+  const win = overlay.ownerDocument && overlay.ownerDocument.defaultView;
+  const run = () => { overlay.style.opacity = '1'; };
+  if (win && typeof win.requestAnimationFrame === 'function') {
+    win.requestAnimationFrame(run);
+  } else {
+    run();
+  }
+  return () => hideNativeLoading(container);
+};
+
 function initializeDocumentLeafletMap() {
   console.log('[LeafletMap] initializeDocumentLeafletMap called');
   console.log('[LeafletMap] script version', '2025-09-30-debug');
@@ -358,6 +610,8 @@ function initializeDocumentLeafletMap() {
   console.log('[LeafletMap] polygon pane ready');
   nativePolygonPane.style.zIndex = 420;
   nativePolygonPane.style.mixBlendMode = 'multiply';
+  nativePolygonPane.style.display = 'none';
+  nativePolygonPane.style.opacity = '0';
   const nativeLabelPane = map.createPane('native-land-labels');
   console.log('[LeafletMap] label pane ready');
   nativeLabelPane.style.zIndex = 450;
@@ -402,143 +656,6 @@ function initializeDocumentLeafletMap() {
   };
   map.on('overlayadd', refreshNativeLabels);
   map.on('overlayremove', refreshNativeLabels);
-  const territoryColorPalette = [
-    '#f97316', '#ec4899', '#6366f1', '#22d3ee', '#14b8a6', '#a855f7',
-    '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#fb7185'
-  ];
-  const hashString = (value) => {
-    const str = value || '';
-    let hash = 0;
-    for (let i = 0; i < str.length; i += 1) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash);
-  };
-  const colorForTerritory = (name) => territoryColorPalette[hashString(name) % territoryColorPalette.length];
-  const projectToMercator = ([lon, lat]) => {
-    const rad = Math.PI / 180;
-    const x = (lon * 20037508.34) / 180;
-    const safeLat = Math.min(Math.max(lat, -89.9999), 89.9999);
-    const y = Math.log(Math.tan((90 + safeLat) * rad / 2)) * 6378137;
-    return [x, y];
-  };
-  const ringArea = (ring) => {
-    let sum = 0;
-    for (let i = 0; i < ring.length; i += 1) {
-      const current = projectToMercator(ring[i]);
-      const next = projectToMercator(ring[(i + 1) % ring.length]);
-      sum += current[0] * next[1] - next[0] * current[1];
-    }
-    return Math.abs(sum / 2);
-  };
-  const polygonArea = (coords) => coords.reduce((total, ring) => total + ringArea(ring), 0);
-  const geometryArea = (geometry) => {
-    if (!geometry) return 0;
-    if (geometry.type === 'Polygon') return polygonArea(geometry.coordinates);
-    if (geometry.type === 'MultiPolygon') return geometry.coordinates.reduce((total, coords) => total + polygonArea(coords), 0);
-    return 0;
-  };
-  const projectPolygon = (coords) => coords.map((ring) => ring.map(projectToMercator));
-  const projectGeometry = (geometry) => {
-    if (!geometry) return [];
-    if (geometry.type === 'Polygon') return [projectPolygon(geometry.coordinates)];
-    if (geometry.type === 'MultiPolygon') return geometry.coordinates.map((coords) => projectPolygon(coords));
-    return [];
-  };
-  const geometryBounds = (geometry) => {
-    if (!geometry) return null;
-    let minLon = Infinity;
-    let minLat = Infinity;
-    let maxLon = -Infinity;
-    let maxLat = -Infinity;
-    const updateBounds = (coord) => {
-      if (!Array.isArray(coord) || coord.length < 2) return;
-      const [lon, lat] = coord;
-      if (Number.isNaN(lon) || Number.isNaN(lat)) return;
-      if (lon < minLon) minLon = lon;
-      if (lat < minLat) minLat = lat;
-      if (lon > maxLon) maxLon = lon;
-      if (lat > maxLat) maxLat = lat;
-    };
-    const processCoords = (coords) => {
-      coords.forEach((item) => {
-        if (Array.isArray(item[0])) {
-          processCoords(item);
-        } else {
-          updateBounds(item);
-        }
-      });
-    };
-    if (geometry.type === 'Point') {
-      updateBounds(geometry.coordinates);
-    } else if (geometry.type === 'MultiPoint' || geometry.type === 'LineString') {
-      processCoords([geometry.coordinates]);
-    } else if (geometry.type === 'MultiLineString' || geometry.type === 'Polygon') {
-      processCoords(geometry.coordinates);
-    } else if (geometry.type === 'MultiPolygon') {
-      geometry.coordinates.forEach((polygon) => processCoords(polygon));
-    } else if (geometry.type === 'GeometryCollection' && Array.isArray(geometry.geometries)) {
-      geometry.geometries.forEach((child) => {
-        const childBounds = geometryBounds(child);
-        if (!childBounds) return;
-        if (childBounds.minLon < minLon) minLon = childBounds.minLon;
-        if (childBounds.minLat < minLat) minLat = childBounds.minLat;
-        if (childBounds.maxLon > maxLon) maxLon = childBounds.maxLon;
-        if (childBounds.maxLat > maxLat) maxLat = childBounds.maxLat;
-      });
-      return Number.isFinite(minLon) ? { minLon, minLat, maxLon, maxLat } : null;
-    } else {
-      return null;
-    }
-    return Number.isFinite(minLon) ? { minLon, minLat, maxLon, maxLat } : null;
-  };
-  const bboxIntersects = (a, b) => {
-    if (!a || !b) return false;
-    return !(a.maxLon < b.minLon || a.minLon > b.maxLon || a.maxLat < b.minLat || a.minLat > b.maxLat);
-  };
-  const ringContainsPoint = (point, ring) => {
-    if (!ring || ring.length === 0) return false;
-    let inside = false;
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
-      const xi = ring[i][0];
-      const yi = ring[i][1];
-      const xj = ring[j][0];
-      const yj = ring[j][1];
-      const denominator = yj - yi;
-      const intersects = ((yi > point[1]) !== (yj > point[1]))
-        && (point[0] < ((xj - xi) * (point[1] - yi)) / (denominator === 0 ? 1e-12 : denominator) + xi);
-      if (intersects) inside = !inside;
-    }
-    return inside;
-  };
-  const polygonContainsPoint = (point, polygon) => {
-    if (!polygon || polygon.length === 0) return false;
-    if (!ringContainsPoint(point, polygon[0])) return false;
-    for (let i = 1; i < polygon.length; i += 1) {
-      if (ringContainsPoint(point, polygon[i])) return false;
-    }
-    return true;
-  };
-  const projectedGeometryContainsPoint = (point, polygons) => polygons.some((polygon) => polygonContainsPoint(point, polygon));
-  const primaryNameFromProps = (props = {}) => {
-    const candidates = ['Name', 'name', 'English', 'english', 'Nation', 'Tribe', 'Tribal Affiliation'];
-    for (const field of candidates) {
-      const value = props[field];
-      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
-      if (Array.isArray(value) && value.length > 0) return value[0];
-    }
-    return 'Territory';
-  };
-  const secondaryNameFromProps = (props = {}) => {
-    const candidates = ['Other_names', 'other_names', 'Alternate Name', 'French', 'Language'];
-    for (const field of candidates) {
-      const value = props[field];
-      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
-      if (Array.isArray(value) && value.length > 0) return value[0];
-    }
-    return '';
-  };
   const authorFromProps = (props = {}) => {
     const candidates = ['author_ssm_str', 'author_ssm', 'author_ssim', 'author_tsim', 'author', 'creator_ssm_str', 'creator_ssm', 'authors'];
     for (const field of candidates) {
@@ -697,6 +814,7 @@ function initializeDocumentLeafletMap() {
     console.log('[LeafletMap] parsed base url', maskedUrl, usingLocalProxy ? '(same origin)' : '(remote)');
     console.log('[LeafletMap] requesting Native Land territories', maskedUrl);
     const filterBounds = parseBbox(nativeUrl.searchParams.get('bbox')) || defaultNativeBounds;
+    const dismissNativeLoading = showNativeLoading(container);
 
     return fetch(requestUrl)
       .then((response) => {
@@ -807,10 +925,14 @@ function initializeDocumentLeafletMap() {
         territoryLayer.addTo(map);
         territoryLayer.on('add', () => {
           console.log('[LeafletMap] native layer added to map');
+          nativePolygonPane.style.display = 'block';
+          nativePolygonPane.style.opacity = '0.65';
+          territoryLayer.bringToFront();
           refreshNativeLabels();
         });
         territoryLayer.on('remove', () => {
           console.log('[LeafletMap] native layer removed from map');
+          nativePolygonPane.style.display = 'none';
           refreshNativeLabels();
         });
         return territoryLayer;
@@ -819,7 +941,8 @@ function initializeDocumentLeafletMap() {
         console.error('[LeafletMap] fetchNativeTerritories error', error);
         console.warn('Unable to load Native Land territories.', error);
         return null;
-      });
+      })
+      .finally(dismissNativeLoading);
   };
   map.on('focus', () => map.scrollWheelZoom.enable());
   map.on('blur', () => map.scrollWheelZoom.disable());
@@ -845,6 +968,7 @@ function initializeDocumentLeafletMap() {
     console.log('[LeafletMap] map initialization complete');
   });
 }
+
 function initializeSearchResultsLeafletMap() {
   const container = document.getElementById('search-results-map');
   if (!container) return;
@@ -856,11 +980,8 @@ function initializeSearchResultsLeafletMap() {
 
   container.dataset.mapInitialized = '1';
 
-  const geojsonUrl = container.dataset.geojsonUrl;
-  if (!geojsonUrl) {
-    console.warn('[LeafletMap] search results geojson URL missing');
-    return;
-  }
+  let geojsonUrl = container.dataset.geojsonUrl;
+  const fallbackBase = (container.dataset.fallbackPath || window.location.pathname).replace(/\/$/, '');
 
   const map = L.map(container, {
     worldCopyJump: true,
@@ -883,6 +1004,8 @@ function initializeSearchResultsLeafletMap() {
   const nativePolygonPane = map.createPane('search-native-land-polygons');
   nativePolygonPane.style.zIndex = 420;
   nativePolygonPane.style.mixBlendMode = 'multiply';
+  nativePolygonPane.style.display = 'none';
+  nativePolygonPane.style.opacity = '0';
 
   const overlayControl = L.control.layers(null, {}, { collapsed: false }).addTo(map);
   overlayControl.expand();
@@ -895,7 +1018,17 @@ function initializeSearchResultsLeafletMap() {
     if (loading && loading.parentNode) loading.parentNode.removeChild(loading);
   };
 
-  fetch(geojsonUrl)
+  if (!geojsonUrl) {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('view', 'map');
+    searchParams.set('format', 'json');
+    geojsonUrl = `${fallbackBase}/map_geojson?${searchParams.toString()}`;
+    console.warn('[LeafletMap] search results geojson URL missing; using fallback', geojsonUrl);
+  }
+
+  console.log('[LeafletMap] fetching search results geojson', geojsonUrl);
+
+  fetch(geojsonUrl, { headers: { Accept: 'application/json' } })
     .then((response) => (response.ok ? response.json() : null))
     .then((data) => {
       if (!data || !Array.isArray(data.features)) {
@@ -905,6 +1038,7 @@ function initializeSearchResultsLeafletMap() {
       }
 
       const markerLayer = L.geoJSON(data.features, {
+        pane: 'search-results-geometries',
         pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
           pane: 'search-results-geometries',
           radius: 6,
@@ -950,40 +1084,16 @@ function initializeSearchResultsLeafletMap() {
     });
 
   const nativeKeyRaw = container.dataset.nativeLandKey || '';
-  const nativeApiKey = nativeKeyRaw.replace(/^['\"]+|['\"]+$/g, '');
+  const nativeApiKey = nativeKeyRaw.replace(/^['"]+|['"]+$/g, '');
   const nativeBaseUrl = container.dataset.nativeLandUrl || 'https://native-land.ca/api/index.php';
 
-  const territoryColorPalette = [
-    '#f97316', '#ec4899', '#6366f1', '#22d3ee', '#14b8a6', '#a855f7',
-    '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#fb7185'
-  ];
-  const hashString = (value) => {
-    const str = value || '';
-    let hash = 0;
-    for (let i = 0; i < str.length; i += 1) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash);
-  };
-  const colorForTerritory = (name) => territoryColorPalette[hashString(name) % territoryColorPalette.length];
-  const primaryNameFromProps = (props = {}) => {
-    const candidates = ['Name', 'name', 'English', 'english', 'Nation', 'Tribe', 'Tribal Affiliation'];
-    for (const field of candidates) {
-      const value = props[field];
-      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
-      if (Array.isArray(value) && value.length > 0) return value[0];
-    }
-    return 'Territory';
-  };
-  const secondaryNameFromProps = (props = {}) => {
-    const candidates = ['Other_names', 'other_names', 'Alternate Name', 'French', 'Language'];
-    for (const field of candidates) {
-      const value = props[field];
-      if (typeof value === 'string' && value.trim().length > 0) return value.trim();
-      if (Array.isArray(value) && value.length > 0) return value[0];
-    }
-    return '';
+  const defaultNativeBbox = '-172,7,-52,83';
+  const parseBbox = (bboxString) => {
+    if (!bboxString) return null;
+    const parts = bboxString.split(',').map((value) => parseFloat(value.trim()));
+    if (parts.length !== 4 || parts.some((value) => Number.isNaN(value))) return null;
+    const [minLon, minLat, maxLon, maxLat] = parts;
+    return { minLon, minLat, maxLon, maxLat };
   };
 
   const buildNativeLandLayer = () => {
@@ -1001,28 +1111,40 @@ function initializeSearchResultsLeafletMap() {
 
     if (!nativeUrl.searchParams.has('maps')) nativeUrl.searchParams.set('maps', 'territories');
     if (!nativeUrl.searchParams.has('poly')) nativeUrl.searchParams.set('poly', '1');
-    if (!nativeUrl.searchParams.has('bbox')) nativeUrl.searchParams.set('bbox', '-172,7,-52,83');
+    if (!nativeUrl.searchParams.has('bbox')) nativeUrl.searchParams.set('bbox', defaultNativeBbox);
 
     if (nativeUrl.origin === window.location.origin) {
       if (nativeApiKey) nativeUrl.searchParams.set('key', nativeApiKey);
     } else {
       if (!nativeApiKey) {
-        console.warn('[LeafletMap] Native Land API key missing for remote request');
+        console.warn('[LeafletMap] Native Land API key missing for search map');
         return Promise.resolve(null);
       }
       nativeUrl.searchParams.set('key', nativeApiKey);
     }
 
-    return fetch(nativeUrl.toString())
+    const requestUrl = nativeUrl.toString();
+    const filterBounds = parseBbox(nativeUrl.searchParams.get('bbox')) || parseBbox(defaultNativeBbox);
+    const dismissNativeLoading = showNativeLoading(container);
+
+    return fetch(requestUrl)
       .then((response) => (response.ok ? response.json() : null))
       .then((data) => {
         if (!data) return null;
         const featureCollection = Array.isArray(data)
           ? { type: 'FeatureCollection', features: data.filter((feature) => feature && feature.geometry) }
           : data;
+
         if (!featureCollection || !Array.isArray(featureCollection.features)) return null;
 
-        return L.geoJSON(featureCollection.features, {
+        const filteredFeatures = featureCollection.features.filter((feature) => {
+          const bounds = geometryBounds(feature.geometry);
+          return bounds ? bboxIntersects(bounds, filterBounds) : false;
+        });
+
+        if (filteredFeatures.length === 0) return null;
+
+        const nativeLayer = L.geoJSON(filteredFeatures, {
           pane: 'search-native-land-polygons',
           smoothFactor: 0.4,
           style: (feature) => {
@@ -1034,23 +1156,35 @@ function initializeSearchResultsLeafletMap() {
               weight: 1,
               opacity: 0.6,
               fillColor: color,
-              fillOpacity: 0.3
+              fillOpacity: 0.3,
             };
           },
           onEachFeature: (feature, layer) => {
             const props = feature && feature.properties ? feature.properties : {};
             const primary = primaryNameFromProps(props);
             const secondary = secondaryNameFromProps(props);
-            const popupLines = [primary];
-            if (secondary) popupLines.push(secondary);
-            layer.bindPopup(popupLines.join('<br/>'));
-          }
+            const lines = [primary];
+            if (secondary) lines.push(secondary);
+            layer.bindPopup(lines.join('<br/>'));
+          },
         });
+
+        nativeLayer.on('add', () => {
+          nativePolygonPane.style.display = 'block';
+          nativePolygonPane.style.opacity = '0.65';
+          nativeLayer.bringToFront();
+        });
+        nativeLayer.on('remove', () => {
+          nativePolygonPane.style.display = 'none';
+        });
+
+        return nativeLayer;
       })
       .catch((error) => {
         console.error('[LeafletMap] failed to fetch Native Land data for search map', error);
         return null;
-      });
+      })
+      .finally(dismissNativeLoading);
   };
 
   buildNativeLandLayer().then((nativeLayer) => {
