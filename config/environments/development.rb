@@ -69,4 +69,5 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
   config.hosts << "canadiana-indigenous-works.azurewebsites.net"
   config.hosts << "canadiana-indigenous-works.ca:3000"
+  config.web_console.permissions = '172.24.0.1'
 end

@@ -1,4 +1,4 @@
-﻿<%# encoding: UTF-8 %>
+<%# encoding: UTF-8 %>
 <div id="documents" class="search-map-view">
   <% map_query_params = request.query_parameters.merge(format: :json) %>
   <% unless content_for?(:leaflet_assets) %>
@@ -20,7 +20,9 @@
   >
     <div class="search-map-loading" role="status">
       <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-      <span class="loading-text">Loading map data…</span>
+      <span class="loading-text">Loading map data.</span>
     </div>
   </div>
+  <p class="map-disclaimer"><%= native_land_disclaimer_html %></p>
 </div>
+

@@ -198,6 +198,17 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
     # Additional CRKN Information
     to_field 'collection_tsim', extract_marc('999a')
+
+    to_field 'is_creator' do |record, accumulator|
+      values = record.fields('999').flat_map do |field|
+        field.subfields.select { |sf| sf.code == 'a' }.map { |sf| sf.value.to_s.strip }
+      end
+      values.reject!(&:empty?)
+
+      is_creator = values.any? { |value| value.casecmp('Creator').zero? }
+      accumulator.replace [is_creator ? 'Yes' : 'No']
+    end
+
     to_field 'depositor_tsim', extract_marc('590a')
 
     # Document Source
@@ -310,18 +321,26 @@ class MarcIndexer < Blacklight::Marc::Indexer
   def self.extract_spatial_geometries(record)
     boxes = []
     points = []
+    locations = []
 
     record.fields('034').each do |field|
-      if (box = parse_bounding_box(field))
-        boxes << box
-      end
-      points.concat(parse_point_values(field))
+      location_box = parse_bounding_box(field)
+      location_points = parse_point_values(field) || []
+
+      boxes << location_box if location_box
+      points.concat(location_points)
+
+      next unless location_box || location_points.any?
+
+      location_points = location_points.uniq { |point| [point[:lon], point[:lat]] }
+
+      locations << { box: location_box, points: location_points }
     end
 
     boxes.uniq! { |box| [box[:west], box[:east], box[:north], box[:south]] }
     points.uniq! { |point| [point[:lon], point[:lat]] }
 
-    { boxes: boxes, points: points }
+    { boxes: boxes, points: points, locations: locations }
   end
 
   def self.parse_bounding_box(field)
@@ -501,43 +520,88 @@ class MarcIndexer < Blacklight::Marc::Indexer
 
   def self.build_geojson_features(spatial, placenames)
     names = placenames.map { |value| value.to_s.strip }.reject(&:empty?)
-    placename = names.first
 
     features = []
 
-    spatial[:boxes].each do |box|
-      polygon = {
-        type: 'Feature',
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[
-            [box[:west], box[:south]],
-            [box[:east], box[:south]],
-            [box[:east], box[:north]],
-            [box[:west], box[:north]],
-            [box[:west], box[:south]]
-          ]]
-        },
-        bbox: [box[:west], box[:south], box[:east], box[:north]]
-      }
-      polygon[:properties] = { placename: placename } if placename
-      features << JSON.generate(polygon)
+    locations = Array(spatial[:locations]).reject do |location|
+      location.nil? || (location[:box].nil? && Array(location[:points]).empty?)
     end
 
-    spatial[:points].each do |point|
-      next unless point[:lon] && point[:lat]
+    if locations.any?
+      name_index = 0
+      last_name_index = names.length - 1
 
-      feature = {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [point[:lon], point[:lat]]
-        }
-      }
-      feature[:properties] = { placename: placename } if placename
-      features << JSON.generate(feature)
+      locations.each do |location|
+        box = location[:box]
+        location_points = Array(location[:points])
+
+        placename =
+          if names.empty?
+            nil
+          else
+            idx = [name_index, last_name_index].min
+            name_index += 1 if name_index < last_name_index
+            names[idx]
+          end
+
+        if (polygon_json = build_geojson_polygon(box, placename))
+          features << polygon_json
+        end
+
+        location_points.each do |point|
+          next unless (point_json = build_geojson_point(point, placename))
+          features << point_json
+        end
+      end
+    else
+      placename = names.first
+
+      spatial[:boxes].each do |box|
+        next unless (polygon_json = build_geojson_polygon(box, placename))
+        features << polygon_json
+      end
+
+      spatial[:points].each do |point|
+        next unless (point_json = build_geojson_point(point, placename))
+        features << point_json
+      end
     end
 
     features.uniq
+  end
+
+  def self.build_geojson_polygon(box, placename)
+    return unless box
+
+    polygon = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          [box[:west], box[:south]],
+          [box[:east], box[:south]],
+          [box[:east], box[:north]],
+          [box[:west], box[:north]],
+          [box[:west], box[:south]]
+        ]]
+      },
+      bbox: [box[:west], box[:south], box[:east], box[:north]]
+    }
+    polygon[:properties] = { placename: placename } if placename
+    JSON.generate(polygon)
+  end
+
+  def self.build_geojson_point(point, placename)
+    return unless point && point[:lon] && point[:lat]
+
+    feature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [point[:lon], point[:lat]]
+      }
+    }
+    feature[:properties] = { placename: placename } if placename
+    JSON.generate(feature)
   end
 end

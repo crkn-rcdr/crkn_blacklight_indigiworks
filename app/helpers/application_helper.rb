@@ -60,4 +60,11 @@ module ApplicationHelper
   rescue
     args[:document][args[:field]].to_s # Fallback to original if parsing fails
   end
+  def native_land_disclaimer_html
+    api_link = link_to(t('maps.native_land.api_link_label'), 'https://api-docs.native-land.ca/', rel: 'noopener', target: '_blank')
+    site_link = link_to(t('maps.native_land.site_link_label'), 'https://native-land.ca/', rel: 'noopener', target: '_blank')
+    t('maps.native_land.disclaimer_html', api_link: api_link, site_link: site_link).html_safe
+  end
 end
+
+

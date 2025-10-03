@@ -1,0 +1,6 @@
+fr:
+  maps:
+    native_land:
+      api_link_label: "API Native Land"
+      site_link_label: "Native Land"
+      disclaimer_html: "Cette carte utilise %{api_link}. Pour une carte plus complete, consultez %{site_link}."

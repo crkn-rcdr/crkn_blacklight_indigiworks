@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require 'pp'
 # Blacklight controller that handles searches and document requests
 class CatalogController < ApplicationController
 
@@ -366,21 +366,7 @@ def map_geojson
     doc_hash = document.respond_to?(:to_h) ? document.to_h : document
     next [] unless doc_hash
 
-    authors = []
-    %w[author_ssm author_ssm_str creator_ssm].each do |field|
-      values = Array(doc_hash[field]).filter_map do |value|
-        if value.respond_to?(:presence)
-          value.presence&.to_s&.strip
-        else
-          str = value.to_s.strip
-          str unless str.empty?
-        end
-      end
-      authors.concat(values) if values.any?
-    end
-    authors.uniq!
-
-    Array(doc_hash['geojson_ssim']).filter_map do |value|
+    Array(doc_hash['geojson_ssim']).filter_map do |value, index |
       feature = parse_geojson_feature(value)
       next unless feature.is_a?(Hash)
 
@@ -389,8 +375,9 @@ def map_geojson
       props['id'] ||= document.id if document.respond_to?(:id)
       props['title'] ||= document.to_s
       props['url'] ||= helpers.url_for_document(document)
-      props['authors'] ||= authors if authors.any?
-      props['placename'] ||= Array(doc_hash['subject_geo_ssim']).filter_map { |v| v.to_s.strip.presence }.first
+      props['authors'] ||= doc_hash['author_ssm'][0]
+      props['placename'] ||= doc_hash['subject_geo_ssim'][index]
+      Rails.logger.info  { "DOC_HASH:\n#{doc_hash.pretty_inspect}" }
       feature
     end
   end
@@ -407,6 +394,7 @@ end
     solr_document = solr_document.last if solr_document.is_a?(Array)
     return head :not_found unless solr_document
     doc_hash = solr_document.respond_to?(:to_h) ? solr_document.to_h : solr_document
+    Rails.logger.info  { "DOC_HASH:\n#{doc_hash.pretty_inspect}" }
 
     features = Array(doc_hash['geojson_ssim']).filter_map { |value| parse_geojson_feature(value) }
     placenames = Array(doc_hash['subject_geo_ssim']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }

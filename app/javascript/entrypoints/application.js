@@ -447,7 +447,7 @@ const collectStringValues = (value) => {
   return [];
 };
 const subjectGeoFromProps = (props = {}) => {
-  const fields = ['subject_geo_ssim_str', 'subject_geo_ssim', 'subject_geo_ssm', 'subject_geo_tsim', 'subject_geo_tsi', 'subject_geo_ss', 'subject_geo', 'subject_str','subject_ssim_str'];
+  const fields = ['subject_geo_ssim_str', 'subject_geo_ssim', 'subject_geo_ssm', 'subject_geo_tsim', 'subject_geo_tsi', 'subject_geo_ss', 'subject_geo', 'subject_str','subject_ssim_str', 'subject_tsim', 'subject_ssm'];
   const results = [];
   fields.forEach((field) => {
     collectStringValues(props[field]).forEach((value) => {
@@ -722,10 +722,6 @@ function initializeDocumentLeafletMap() {
         }
         const featureCount = data.features.length;
         console.log('[LeafletMap] document features received', featureCount, data);
-        const fallbackAuthor = authorFromProps(data.properties || {});
-        const fallbackPlacename = Array.isArray(data.properties?.placenames)
-          ? data.properties.placenames.find((name) => typeof name === 'string' && name.trim().length > 0)
-          : null;
         documentLayer = L.geoJSON(data, {
           pane: 'document-geometries',
           pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
@@ -745,11 +741,9 @@ function initializeDocumentLeafletMap() {
           }),
           onEachFeature: (feature, layer) => {
             const props = feature && feature.properties ? feature.properties : {};
-            const author = authorFromProps(props) || fallbackAuthor;
-            const placename = typeof props.placename === 'string' && props.placename.trim().length > 0
-              ? props.placename.trim()
-              : fallbackPlacename;
-            const popupText = author || placename;
+            const author = props.author_ssm_str;//authorFromProps(props) || fallbackAuthor;
+            const placename = props.placename.trim();
+            const popupText = author + "<br/>" + placename;
             if (popupText) {
               layer.bindPopup('<strong>' + popupText + '</strong>');
             }
@@ -1066,6 +1060,7 @@ function initializeSearchResultsLeafletMap() {
     });
     if (matches.length === 0) return;
     const html = matches.map((layer) => {
+      console.log("layer",layer)
       const meta = layer._searchDocMeta || {};
       const url = meta.url || '#';
       const linkLabel = meta.author || meta.title || 'Record';
@@ -1182,6 +1177,7 @@ function initializeSearchResultsLeafletMap() {
           fillOpacity: feature.geometry && feature.geometry.type !== 'Point' ? 0.2 : 0
         }),
         onEachFeature: (feature, layer) => {
+          console.log("feature",feature)
           const props = feature && feature.properties ? feature.properties : {};
           const titleCandidates = [
             props.title,
@@ -1195,9 +1191,9 @@ function initializeSearchResultsLeafletMap() {
             props.id
           ];
           const title = titleCandidates.map((candidate) => firstNonEmptyString(candidate)).find((value) => value) || 'Record';
-          const urlCandidates = [props.url, props['url_ssi'], props['url_fulltext'], props['record_link']];
-          const url = urlCandidates.map((candidate) => firstNonEmptyString(candidate)).find((value) => value) || '#';
-          const author = authorFromProps(props) || firstNonEmptyString(props.authors);
+          //const urlCandidates = [props.url, props['url_ssi'], props['url_fulltext'], props['record_link']];
+          const url = props.url//urlCandidates.map((candidate) => firstNonEmptyString(candidate)).find((value) => value) || '#';
+          const author = firstNonEmptyString(props.authors)//authorFromProps(props) || firstNonEmptyString(props.authors);
           const subjects = subjectGeoFromProps(props);
           layer._searchDocMeta = {
             title,

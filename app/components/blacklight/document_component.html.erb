@@ -29,7 +29,26 @@
         <br/>
       <% end %>
 
-      <%= title %>
+      <% creator_flags = Array(@document._source&.[]('is_creator') || @document['is_creator']).map { |value| value.to_s.strip } %>
+      <% is_creator_document = creator_flags.any? { |value| value.casecmp('Yes').zero? } %>
+      <% creator_heading = Array(@document._source&.[]('author_ssm') || @document['author_ssm']).map { |value| value.to_s.strip }.reject(&:blank?).first %>
+      <% render_creator_heading = creator_heading.present? && is_creator_document %>
+      <% if render_creator_heading %>
+        <%= render(
+              Blacklight::DocumentTitleComponent.new(
+                creator_heading,
+                document: @document,
+                presenter: @presenter,
+                counter: @counter,
+                as: @title_component,
+                actions: !@show,
+                link_to_document: !@show,
+                document_component: self
+              )
+            ) %>
+      <% else %>
+        <%= title %>
+      <% end %>
       <%= embed %>
       <%= content %>
 
@@ -72,127 +91,126 @@
                 <button id="toggle-doc-metadata2" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
                     <i class="bi bi-layout-sidebar"></i><span><%= t('labels.L_RECORD') %></span>
                 </button>
-                <% if @document._source["ark"] %>
-                  <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
-                  
-                <% else %>
-                  <img src="/assets/404.webp" class="not-found-icon"/>
-                  <p>Sorry, there was a problem loading the images for this item.</p>
-                <% end %>
+                <% unless is_creator_document %>
+                  <% if @document._source["ark"] %>
+                    <div id="my-mirador" data-docid="<%= @document._source['ark'] %>"></div>
+                  <% else %>
+                    <img src="/assets/404.webp" class="not-found-icon"/>
+                    <p>Sorry, there was a problem loading the images for this item.</p>
+                  <% end %>
 
-                
-              <div>
-                  <div class="mt-2 d-flex gap-2 flex-wrap" id="download-toolbar"
-                       data-docid="<%= @document._source['id'] %>"
-                       data-arkpath="<%= @document._source['ark'].to_s.gsub('https://n2t.net/ark:/','') %>">
-                    <a id="btn-download-img" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
-                      <i class="bi bi-image" aria-hidden="true"></i>
-                      Download current image
-                    </a>
-                    <a id="btn-download-page" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
-                      <i class="bi bi-file-earmark-arrow-down" aria-hidden="true"></i>
-                      Download current image as PDF
-                    </a>
-                    <a id="btn-download-full" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
-                      <i class="bi bi-filetype-pdf" aria-hidden="true"></i>
-                      Download full searchable PDF
-                    </a>
-                  </div>
-                  <script>
-                    (function(){
-                      const bar = document.getElementById('download-toolbar');
-                      if(!bar) return;
+                  <div>
+                    <div class="mt-2 d-flex gap-2 flex-wrap" id="download-toolbar"
+                         data-docid="<%= @document._source['id'] %>"
+                         data-arkpath="<%= @document._source['ark'].to_s.gsub('https://n2t.net/ark:/','') %>">
+                      <a id="btn-download-img" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
+                        <i class="bi bi-image" aria-hidden="true"></i>
+                        Download current image
+                      </a>
+                      <a id="btn-download-page" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
+                        <i class="bi bi-file-earmark-arrow-down" aria-hidden="true"></i>
+                        Download current image as PDF
+                      </a>
+                      <a id="btn-download-full" class="btn btn-soft-primary btn-sm" target="_blank" rel="noopener">
+                        <i class="bi bi-filetype-pdf" aria-hidden="true"></i>
+                        Download full searchable PDF
+                      </a>
+                    </div>
+                    <script>
+                      (function(){
+                        const bar = document.getElementById('download-toolbar');
+                        if(!bar) return;
 
-                      const docid = bar.dataset.docid;
-                      const ark = bar.dataset.arkpath;
+                        const docid = bar.dataset.docid;
+                        const ark = bar.dataset.arkpath;
 
-                      const full = document.getElementById('btn-download-full');
-                      const page = document.getElementById('btn-download-page');
-                      const pageImg = document.getElementById('btn-download-img');
+                        const full = document.getElementById('btn-download-full');
+                        const page = document.getElementById('btn-download-page');
+                        const pageImg = document.getElementById('btn-download-img');
 
-                      // Update links based on current pageNum in the URL
-                      function updateForCurrentPage(data){
-                        if (!data) return;
+                        // Update links based on current pageNum in the URL
+                        function updateForCurrentPage(data){
+                          if (!data) return;
 
-                        // Full-document PDF (static once data is fetched)
-                        if (full) {
-                          if (data.docPdfUri) {
-                            full.href = data.docPdfUri;
-                            full.classList.remove('disabled');
-                            full.removeAttribute('aria-disabled');
-                          } else {
-                            full.classList.add('disabled');
-                            full.setAttribute('aria-disabled','true');
+                          // Full-document PDF (static once data is fetched)
+                          if (full) {
+                            if (data.docPdfUri) {
+                              full.href = data.docPdfUri;
+                              full.classList.remove('disabled');
+                              full.removeAttribute('aria-disabled');
+                            } else {
+                              full.classList.add('disabled');
+                              full.setAttribute('aria-disabled','true');
+                            }
+                          }
+
+                          const params = new URLSearchParams(window.location.search);
+                          let idx = 0;
+                          if (params.has('pageNum')) {
+                            const p = parseInt(params.get('pageNum'), 10);
+                            if (!isNaN(p) && p > 0) idx = p - 1;
+                          }
+
+                          const listPdf = data.canvasDownloadPdfUris || [];
+                          if (page) {
+                            if (listPdf[idx]) {
+                              page.href = listPdf[idx];
+                              page.classList.remove('disabled');
+                              page.removeAttribute('aria-disabled');
+                            } else {
+                              page.classList.add('disabled');
+                              page.setAttribute('aria-disabled','true');
+                            }
+                          }
+
+                          const listImg = data.canvasDownloadImgUris || [];
+                          if (pageImg) {
+                            if (listImg[idx]) {
+                              pageImg.href = listImg[idx];
+                              pageImg.classList.remove('disabled');
+                              pageImg.removeAttribute('aria-disabled');
+                            } else {
+                              pageImg.classList.add('disabled');
+                              pageImg.setAttribute('aria-disabled','true');
+                            }
                           }
                         }
 
-                        const params = new URLSearchParams(window.location.search);
-                        let idx = 0;
-                        if (params.has('pageNum')) {
-                          const p = parseInt(params.get('pageNum'), 10);
-                          if (!isNaN(p) && p > 0) idx = p - 1;
-                        }
+                        // Fetch once, then update on URL changes
+                        let dlData = null;
+                        fetch(`/dl/${encodeURIComponent(docid)}/${ark}`)
+                          .then(r => r.json())
+                          .then(data => {
+                            dlData = data;
+                            updateForCurrentPage(dlData);
+                          })
+                          .catch(() => {});
 
-                        const listPdf = data.canvasDownloadPdfUris || [];
-                        if (page) {
-                          if (listPdf[idx]) {
-                            page.href = listPdf[idx];
-                            page.classList.remove('disabled');
-                            page.removeAttribute('aria-disabled');
-                          } else {
-                            page.classList.add('disabled');
-                            page.setAttribute('aria-disabled','true');
-                          }
-                        }
+                        // Listen for navigation events that may change the query string
+                        function onLocationChange(){ updateForCurrentPage(dlData); }
+                        window.addEventListener('popstate', onLocationChange);
+                        window.addEventListener('hashchange', onLocationChange);
 
-                        const listImg = data.canvasDownloadImgUris || [];
-                        if (pageImg) {
-                          if (listImg[idx]) {
-                            pageImg.href = listImg[idx];
-                            pageImg.classList.remove('disabled');
-                            pageImg.removeAttribute('aria-disabled');
-                          } else {
-                            pageImg.classList.add('disabled');
-                            pageImg.setAttribute('aria-disabled','true');
-                          }
-                        }
-                      }
-
-                      // Fetch once, then update on URL changes
-                      let dlData = null;
-                      fetch(`/dl/${encodeURIComponent(docid)}/${ark}`)
-                        .then(r => r.json())
-                        .then(data => {
-                          dlData = data;
-                          updateForCurrentPage(dlData);
-                        })
-                        .catch(() => {});
-
-                      // Listen for navigation events that may change the query string
-                      function onLocationChange(){ updateForCurrentPage(dlData); }
-                      window.addEventListener('popstate', onLocationChange);
-                      window.addEventListener('hashchange', onLocationChange);
-
-                      // Patch history methods so pushState/replaceState also trigger updates
-                      (function() {
-                        const wrap = function(type){
-                          const orig = history[type];
-                          return function(){
-                            const res = orig.apply(this, arguments);
-                            try { window.dispatchEvent(new Event('locationchange')); } catch(e) {}
-                            return res;
+                        // Patch history methods so pushState/replaceState also trigger updates
+                        (function() {
+                          const wrap = function(type){
+                            const orig = history[type];
+                            return function(){
+                              const res = orig.apply(this, arguments);
+                              try { window.dispatchEvent(new Event('locationchange')); } catch(e) {}
+                              return res;
+                            };
                           };
-                        };
-                        history.pushState = wrap('pushState');
-                        history.replaceState = wrap('replaceState');
-                        window.addEventListener('locationchange', onLocationChange);
+                          history.pushState = wrap('pushState');
+                          history.replaceState = wrap('replaceState');
+                          window.addEventListener('locationchange', onLocationChange);
+                        })();
                       })();
-                    })();
-                  </script>
-                </div>
+                    </script>
+                  </div>
 
-                
-                <%= render(::IiifComponent.new(document: @document, term: params[:q])) %>
+                  <%= render(::IiifComponent.new(document: @document, term: params[:q])) %>
+                <% end %>
               <% else %>
               <button id="toggle-doc-metadata3" class="btn btn-outline-custom" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-menu" aria-expanded="true" aria-controls="toggle-menu">
                   <i class="bi bi-layout-sidebar"></i><span><%= t('labels.L_SERIAL_RECORD') %></span>
@@ -225,6 +243,7 @@
                   role="region"
                   aria-label="<%= t('labels.L_LOCATION_MAP', default: 'Location map') %>">
                 </div>
+                <p class="map-disclaimer"><%= native_land_disclaimer_html %></p>
               <% end %>
             </div>
           </div>
@@ -238,7 +257,9 @@
           <%= section %>
         <% end %>
         <%= thumbnail %>
-        <%= render(::PageSearchComponent.new(docId: @document._source["id"] , arkUrl: @document._source["ark"], term: params[:q])) %>
+        <% unless is_creator_document %>
+          <%= render(::PageSearchComponent.new(docId: @document._source["id"] , arkUrl: @document._source["ark"], term: params[:q])) %>
+        <% end %>
       <% end %>
 
       <br/>
@@ -250,4 +271,6 @@
 
   <%= footer %>
 <% end %>
+
+
 

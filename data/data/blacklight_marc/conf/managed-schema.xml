@@ -492,6 +492,7 @@
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
   <field name="is_issue" type="text_general"/>
   <field name="is_serial" type="text_general"/>
+  <field name="is_creator" type="text_general"/>
   <field name="isbn_tsim" type="plongs"/>
   <field name="language_ssim" type="text_general"/>
   <field name="lc_1letter_ssim" type="text_general"/>
@@ -597,6 +598,7 @@
   <dynamicField name="*_t" type="text_general" multiValued="false" indexed="true" stored="true"/>
   <dynamicField name="*_p" type="location" indexed="true" stored="true"/>
   <copyField source="is_serial" dest="is_serial_str" maxChars="256"/>
+  <copyField source="is_creator" dest="is_creator_str" maxChars="256"/>
   <copyField source="is_issue" dest="is_issue_str" maxChars="256"/>
   <copyField source="title_tsim" dest="title_tsim_str" maxChars="256"/>
   <copyField source="language_ssim" dest="language_ssim_str" maxChars="256"/>
