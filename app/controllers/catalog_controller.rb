@@ -366,7 +366,10 @@ def map_geojson
     doc_hash = document.respond_to?(:to_h) ? document.to_h : document
     next [] unless doc_hash
 
-    Array(doc_hash['geojson_ssim']).filter_map do |value, index |
+    image_url = creator_image_url(doc_hash)
+    subject_geo_values = Array(doc_hash['subject_geo_ssim'])
+
+    Array(doc_hash['geojson_ssim']).each_with_index.filter_map do |value, index|
       feature = parse_geojson_feature(value)
       next unless feature.is_a?(Hash)
 
@@ -375,13 +378,28 @@ def map_geojson
       props['id'] ||= document.id if document.respond_to?(:id)
       props['title'] ||= document.to_s
       props['url'] ||= helpers.url_for_document(document)
-      props['authors'] ||= doc_hash['author_ssm'][0]
-      props['placename'] ||= doc_hash['subject_geo_ssim'][index]
-      Rails.logger.info  { "DOC_HASH:\n#{doc_hash.pretty_inspect}" }
+      props['authors'] ||= Array(doc_hash['author_ssm']).first
+
+      placename_value = nil
+      if subject_geo_values.respond_to?(:[]) && subject_geo_values.size > index
+        placename_value = subject_geo_values[index]
+      elsif subject_geo_values.respond_to?(:first)
+        placename_value = subject_geo_values.first
+      end
+
+      if placename_value.respond_to?(:present?)
+        props['placename'] ||= placename_value if placename_value.present?
+      elsif placename_value.respond_to?(:to_s)
+        trimmed = placename_value.to_s.strip
+        props['placename'] ||= trimmed unless trimmed.empty?
+      end
+
+      props['image_url'] ||= image_url if image_url
+      Rails.logger.info  { "DOC_HASH:
+#{doc_hash.pretty_inspect}" }
       feature
     end
   end
-
   render json: { type: 'FeatureCollection', features: features }
 rescue StandardError => e
   Rails.logger.error("map_geojson generation failed: #{e.message}")
@@ -404,6 +422,8 @@ end
     authors += Array(doc_hash['creator_ssm']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
     authors.uniq! if authors.respond_to?(:uniq!)
 
+    image_url = creator_image_url(doc_hash)
+
     features.each do |feature|
       next unless feature.is_a?(Hash)
       props = feature['properties'] ||= {}
@@ -411,6 +431,7 @@ end
       props['author_ssm_str'] ||= authors.first if authors.any?
       props['authors'] ||= authors if authors.any?
       props['placename'] ||= placenames.first if placenames.respond_to?(:present?) ? placenames.present? : placenames.any?
+      props['image_url'] ||= image_url if image_url
     end
 
     payload = { type: 'FeatureCollection', features: features }
@@ -468,5 +489,18 @@ end
     lats = points.map(&:last)
     [lons.min, lats.min, lons.max, lats.max]
   end
+
+  def creator_image_url(doc_hash)
+    return unless doc_hash
+    identifier = doc_hash['id'] || doc_hash[:id]
+    return unless identifier
+
+    identifier = identifier.to_s.strip
+    return if identifier.empty?
+
+    "/assets/iw/#{identifier}.jpeg"
+  end
 end
+
+
 

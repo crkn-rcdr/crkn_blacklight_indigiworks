@@ -430,6 +430,28 @@ const firstNonEmptyString = (value) => {
   }
   return null;
 };
+const initialFromLabel = (value) => {
+  const label = firstNonEmptyString(value);
+  if (!label) return '?';
+  const trimmed = label.trim();
+  if (!trimmed) return '?';
+  const firstChar = trimmed.charAt(0);
+  return firstChar ? firstChar.toUpperCase() : '?';
+};
+
+const buildPopupImageMarkup = (imageUrl, label) => {
+  const initial = initialFromLabel(label);
+  const placeholder = `<span class="map-popup-image-initial">${escapeHtml(initial)}</span>`;
+
+  if (imageUrl) {
+    const altText = escapeHtml(firstNonEmptyString(label) || 'Map image');
+    const escapedSrc = escapeAttribute(imageUrl);
+    return `<div class="map-popup-image map-popup-image--with-photo">${placeholder}<img src="${escapedSrc}" alt="${altText}" loading="lazy" onerror="this.remove();" /></div>`;
+  }
+
+  return `<div class="map-popup-image map-popup-image--placeholder">${placeholder}</div>`;
+};
+
 const collectStringValues = (value) => {
   if (typeof value === 'string') {
     const trimmed = value.trim();
@@ -741,12 +763,19 @@ function initializeDocumentLeafletMap() {
           }),
           onEachFeature: (feature, layer) => {
             const props = feature && feature.properties ? feature.properties : {};
-            const author = props.author_ssm_str;//authorFromProps(props) || fallbackAuthor;
-            const placename = props.placename.trim();
-            const popupText = author + "<br/>" + placename;
-            if (popupText) {
-              layer.bindPopup('<strong>' + popupText + '</strong>');
-            }
+            const author = firstNonEmptyString([props.author_ssm_str, props.author_ssm, props.authors]);
+            const placename = firstNonEmptyString([props.placename, props.label]);
+            const imageUrl = firstNonEmptyString([props.image_url, props.imageUrl]);
+
+            const bodySegments = [];
+            if (author) bodySegments.push(`<div class="map-popup-title">${escapeHtml(author)}</div>`);
+            if (placename) bodySegments.push(`<div class="map-popup-placename">${escapeHtml(placename)}</div>`);
+            const bodyHtml = bodySegments.length ? `<div class="map-popup-body">${bodySegments.join('')}</div>` : '';
+            const imageMarkup = buildPopupImageMarkup(imageUrl, author || placename || 'Map location');
+            const popupHtml = `<div class="map-popup-record">${imageMarkup}${bodyHtml}</div>`;
+
+            layer.bindPopup(popupHtml, { className: 'map-popup' });
+
             layer.on('click', (event) => {
               if (event && L.DomEvent?.stop) L.DomEvent.stop(event);
               event?.originalEvent?.preventDefault?.();
@@ -1060,14 +1089,19 @@ function initializeSearchResultsLeafletMap() {
     });
     if (matches.length === 0) return;
     const html = matches.map((layer) => {
-      console.log("layer",layer)
       const meta = layer._searchDocMeta || {};
       const url = meta.url || '#';
       const linkLabel = meta.author || meta.title || 'Record';
       const subjectLines = (meta.subjects || []).length > 0
         ? meta.subjects.map((subject) => `<div class="map-popup-subject">${escapeHtml(subject)}</div>`).join('')
         : '';
-      return `<div class="map-popup-record"><a href="${escapeAttribute(url)}" class="map-popup-title">${escapeHtml(linkLabel)}</a>${subjectLines}</div>`;
+      const placenameLine = meta.placename ? `<div class="map-popup-placename">${escapeHtml(meta.placename)}</div>` : '';
+      const bodySegments = [`<a href="${escapeAttribute(url)}" class="map-popup-title">${escapeHtml(linkLabel)}</a>`];
+      if (placenameLine) bodySegments.push(placenameLine);
+      if (subjectLines) bodySegments.push(subjectLines);
+      const bodyHtml = `<div class="map-popup-body">${bodySegments.join('')}</div>`;
+      const imageMarkup = buildPopupImageMarkup(meta.imageUrl, meta.author || meta.title || meta.placename || 'Record image');
+      return `<div class="map-popup-record">${imageMarkup}${bodyHtml}</div>`;
     }).join('');
     L.popup({ autoPan: true, className: 'map-popup' })
       .setLatLng(targetLatLng)
@@ -1192,13 +1226,17 @@ function initializeSearchResultsLeafletMap() {
           ];
           const title = titleCandidates.map((candidate) => firstNonEmptyString(candidate)).find((value) => value) || 'Record';
           //const urlCandidates = [props.url, props['url_ssi'], props['url_fulltext'], props['record_link']];
-          const url = props.url//urlCandidates.map((candidate) => firstNonEmptyString(candidate)).find((value) => value) || '#';
-          const author = firstNonEmptyString(props.authors)//authorFromProps(props) || firstNonEmptyString(props.authors);
+          const url = props.url || '#';
+          const author = firstNonEmptyString(props.authors);
+          const placename = firstNonEmptyString([props.placename, props.label]);
+          const imageUrl = firstNonEmptyString([props.image_url, props.imageUrl]);
           const subjects = subjectGeoFromProps(props);
           layer._searchDocMeta = {
             title,
             url,
             author,
+            placename,
+            imageUrl,
             subjects,
             projectedPolygons: projectGeometry(feature.geometry || null) || [],
           };
@@ -1380,3 +1418,4 @@ if (typeof document !== 'undefined') {
     initializeSearchResultsLeafletMap();
   }
 }
+

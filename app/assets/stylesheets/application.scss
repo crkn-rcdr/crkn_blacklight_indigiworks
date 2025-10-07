@@ -132,6 +132,8 @@
   font-weight: 600;
   color: #0f172a;
   text-decoration: none;
+  display: block;
+  line-height: 1.2;
 }
 
 .map-popup-title:hover {
@@ -143,6 +145,90 @@
   color: #334155;
 }
 
+.map-popup-record {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  max-width: 280px;
+}
+
+.map-popup-record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+.map-popup-record-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.map-popup-record-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.map-popup-record-list::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.6);
+  border-radius: 9999px;
+}
+
+.map-popup-image {
+  position: relative;
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: linear-gradient(135deg, #94a3b8, #cbd5f5);
+  color: #1f2937;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-popup-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.map-popup-image-initial {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.map-popup-image--with-photo .map-popup-image-initial {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.25), rgba(30, 41, 59, 0.35));
+  color: rgba(248, 250, 252, 0.8);
+}
+
+.map-popup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.map-popup-placename,
+.map-popup-subject {
+  font-size: 0.85rem;
+  color: #334155;
+}
 
 #documents {
   margin-top: 1.5rem;
@@ -150,4 +236,23 @@
 
 .map-view-toggle .btn + .btn {
   margin-left: 0 !important;
+}
+.leaflet-popup.map-popup .leaflet-popup-content {
+  margin: 0;
+}
+
+.leaflet-popup.map-popup .leaflet-popup-content-wrapper {
+  padding: 0.95rem 1rem;
+  border-radius: 0.875rem;
+}
+
+.leaflet-popup.map-popup .leaflet-popup-tip {
+  display: none;
+}
+.map-popup-image--placeholder .map-popup-image-initial {
+  background: transparent;
+  color: #1f2937;
+}
+.map-popup-image--with-photo {
+  background: rgba(15, 23, 42, 0.4);
 }
