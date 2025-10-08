@@ -108,7 +108,7 @@ See Blacklight Wiki and Tutorials:
 
 To index a marc record from the terminal, you can enter the container on Docker Desktop (or through the docker exec command in your terminal) and run: 
 
-`rake solr:marc:index MARC_FILE=iw.mrc`
+`rake solr:marc:index MARC_FILE=iw2.mrc`
 
 A quick command to clear the solr index is:
 
