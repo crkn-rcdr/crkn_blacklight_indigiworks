@@ -324,8 +324,14 @@ class MarcIndexer < Blacklight::Marc::Indexer
     locations = []
 
     record.fields('034').each do |field|
-      location_box = parse_bounding_box(field)
+      coordinate_values = extract_coordinate_values(field)
+      location_box = parse_bounding_box(field, coordinate_values)
       location_points = parse_point_values(field) || []
+
+      unless location_box
+        point_from_box = point_from_coordinates(coordinate_values)
+        location_points << point_from_box if point_from_box
+      end
 
       boxes << location_box if location_box
       points.concat(location_points)
@@ -343,11 +349,35 @@ class MarcIndexer < Blacklight::Marc::Indexer
     { boxes: boxes, points: points, locations: locations }
   end
 
-  def self.parse_bounding_box(field)
-    west = normalize_coordinate(field['d'], :lon)
-    east = normalize_coordinate(field['e'], :lon)
-    north = normalize_coordinate(field['f'], :lat)
-    south = normalize_coordinate(field['g'], :lat)
+  def self.extract_coordinate_values(field)
+    {
+      west: normalize_coordinate(field['d'], :lon),
+      east: normalize_coordinate(field['e'], :lon),
+      north: normalize_coordinate(field['f'], :lat),
+      south: normalize_coordinate(field['g'], :lat)
+    }
+  end
+
+  def self.point_from_coordinates(coordinates)
+    lon_candidates = [coordinates[:west], coordinates[:east]].compact.uniq
+    lat_candidates = [coordinates[:north], coordinates[:south]].compact.uniq
+
+    lon = lon_candidates.first if lon_candidates.length == 1
+    lat = lat_candidates.first if lat_candidates.length == 1
+
+    return unless lon && lat
+    return if lat.abs > 90 || lon.abs > 180
+
+    { lon: lon, lat: lat }
+  end
+
+  def self.parse_bounding_box(field, coordinates = nil)
+    coordinates ||= extract_coordinate_values(field)
+
+    west = coordinates[:west]
+    east = coordinates[:east]
+    north = coordinates[:north]
+    south = coordinates[:south]
 
     return unless [west, east, north, south].all?
     return if west == east || north == south
@@ -455,15 +485,22 @@ class MarcIndexer < Blacklight::Marc::Indexer
       if digits.include?('.')
         number = digits.to_f
       else
-        digits = digits.sub(/^0+/, '') if digits.length > 1
+        digits = digits.sub(/^0+/, '') if axis.nil? && digits.length > 1
         deg_len =
           if axis == :lat
-            [2, digits.length].min
+            [2, digits.length - 4].max
           elsif axis == :lon
-            [3, digits.length].min
+            [3, digits.length - 4].max
           else
             digits.length >= 5 ? 3 : 2
           end
+        deg_len = digits.length if deg_len > digits.length
+        if digits.length > 2
+          deg_len = [deg_len, digits.length - 2].min
+        else
+          deg_len = digits.length if deg_len > digits.length
+        end
+        deg_len = 1 if deg_len < 1
 
         if digits.length > deg_len + 2
           degrees = digits[0, deg_len].to_i
@@ -544,21 +581,28 @@ class MarcIndexer < Blacklight::Marc::Indexer
             names[idx]
           end
 
-        if (polygon_json = build_geojson_polygon(box, placename))
-          features << polygon_json
-        end
-
         location_points.each do |point|
           next unless (point_json = build_geojson_point(point, placename))
           features << point_json
+        end
+
+        if box && location_points.empty?
+          center_point = box_center(box)
+          if center_point && (center_json = build_geojson_point(center_point, placename))
+            features << center_json
+          end
         end
       end
     else
       placename = names.first
 
       spatial[:boxes].each do |box|
-        next unless (polygon_json = build_geojson_polygon(box, placename))
-        features << polygon_json
+        next unless box
+
+        center_point = box_center(box)
+        if center_point && (center_json = build_geojson_point(center_point, placename))
+          features << center_json
+        end
       end
 
       spatial[:points].each do |point|

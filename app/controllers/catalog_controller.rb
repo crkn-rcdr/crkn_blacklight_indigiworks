@@ -12,6 +12,157 @@ class CatalogController < ApplicationController
   # be invoked without an authenticity token. Skip CSRF verification for it.
   skip_before_action :verify_authenticity_token, only: [:track]
 
+  MAP_POPUP_OVERRIDES = {
+    'oocihm.creator_00001' => {
+      label: "George Copway (Ojibway), 1818-1869.",
+      locations_only: true,
+      locations: {
+        /Near Rice Lake/i => "Near Rice Lake (birthplace).",
+        /La Pointe/i => "La Pointe, Wisconsin (translation work completed).",
+        /New York City/i => "New York City, NY (published memoir in 1847 - first book published by a First Nations author in what is now Canada)."
+      }
+    },
+    'oocihm.creator_00003' => {
+      label: "Eleazer Williams (Mohawk), 1787-1858.",
+      locations_only: true,
+      locations: {
+        /Kahnawake/i => "Chief of Caughnawaga Reserve (now Kahnawake)."
+      }
+    },
+    'oocihm.creator_00004' => {
+      label: "Peter Jones (Ojibway), 1802-1856."
+    },
+    'oocihm.creator_00006' => {
+      label: "Peter Warren Dease (Irish and possibly Caughnawaga Mohawk), 1788-1863.",
+      locations_only: true,
+      locations: {
+        /Fort Mackinac/i => "Fort Mackinac (birthplace). Nation: Irish and possibly Caughnawaga Mohawk.",
+        /Great Slave Lake/i => "Great Slave Lake and Fort Franklin (Deline, NWT). In 1824 he worked there procuring provisions from local Dene people for John Franklin's land Arctic expeditions; in 1825 he oversaw the construction of Fort Franklin."
+      }
+    },
+    'oocihm.creator_00007' => {
+      label: "Alfred Campbell Garrioch (Metis), 1848-1934."
+    },
+    'oocihm.creator_00008' => {
+      label: "Ely Samuel Parker (Seneca), 1828-1895.",
+      locations_only: true,
+      locations: {
+        /Tonawanda Reservation/i => "Tonawanda Reservation, NY (birthplace)."
+      }
+    },
+    'oocihm.creator_00009' => {
+      label: "John Alexander Mackay Kennedy (Metis), 1838-1923.",
+      locations_only: true,
+      locations: {
+        /Mistissini/i => "Mistissini (birthplace)."
+      }
+    },
+    'oocihm.creator_00011' => {
+      label: "Maris Bryant Pierce (Seneca), 1811-1874.",
+      locations_only: true,
+      locations: {
+        /Allegany Indian Reservation/i => "Allegany Indian Reservation, NY (birthplace)."
+      }
+    },
+    'oocihm.creator_00012' => {
+      label: "Peter Edmund Jones (Ojibway), 1843-1909.",
+      locations_only: true,
+      locations: {
+        /London, Upper Canada/i => "London, Upper Canada (birthplace).",
+        /New Credit/i => "New Credit, Ontario (led relocation)."
+      }
+    },
+    'oocihm.creator_00013' => {
+      label: "Alexander Kennedy Isbister (Metis), 1822-1883.",
+      locations_only: true,
+      locations: {
+        /Cumberland House/i => "Cumberland House (birthplace)."
+      }
+    },
+    'oocihm.creator_00014' => {
+      label: "Isaac Bearfoot (Onondaga), 1839-1911."
+    },
+    'oocihm.creator_00015' => {
+      label: "Henry Blatchford (Chippeway), fl. 1842."
+    },
+    'oocihm.creator_00020' => {
+      label: "William Hess (Mohawk), fl. 1839-1843."
+    },
+    'oocihm.creator_00021' => {
+      label: "Henry Aaron Hill (Mohawk), c.1770-1834."
+    },
+    'oocihm.creator_00022' => {
+      label: "John Hill Jr. (Mohawk), fl. 1842.",
+      locations_only: true,
+      locations: {
+        /Hamilton/i => "Hamilton (place of publication).",
+        /Six Nations of the Grand River/i => "Six Nations of the Grand River."
+      }
+    },
+    'oocihm.creator_00025' => {
+      label: "Peter Jacobs (Ojibway), 1807-1890."
+    },
+    'oocihm.creator_00026' => {
+      label: "Sophie Mason Thomas (Metis), 1822-1861."
+    },
+    'oocihm.creator_00027' => {
+      label: "Robert McDonald (Metis), 1829-1913.",
+      locations_only: true,
+      locations: {
+        /Red River Settlement/i => "Red River Settlement (birthplace)."
+      }
+    },
+    'oocihm.creator_00028' => {
+      label: "Pigarouich, also known as Etienne (Algonkin), fl. 1639-1645.",
+      locations_only: true,
+      locations: {
+        /Sillery/i => "Jesuit mission at Sillery near Quebec City (centre of work)."
+      }
+    },
+    'oocihm.creator_00029' => {
+      label: "Sahonwagy (Mohawk), fl. 1753-1787.",
+      locations_only: true,
+      locations: {
+        /Canajoharie/i => "Canajoharie, NY (centre of work); also known by several other names including Paulus Petersen."
+      }
+    },
+    'oocihm.creator_00031' => {
+      label: "John Summerfield (Ojibway), ca. 1806-1836.",
+      locations_only: true,
+      locations: {
+        /Credit Mission/i => "Credit Mission, Upper Canada (birthplace)."
+      }
+    },
+    'oocihm.creator_00032' => {
+      label: "Clare Thomas (Micmac/Mi'kmaw), fl. 1757.",
+      locations_only: true,
+      locations: {
+        /Halifax/i => "Halifax, Nova Scotia (captivity). A captive of the British in Halifax who spoke the Mi'kmaw language and French but not English; she tried to communicate by asking for pen, ink, and paper and wrote in hieroglyphics in what John Knox noted in his journal to be unintelligible. https://n2t.net/ark:/69429/m0183416xq3x See page 89-93."
+      }
+    },
+    'oocihm.creator_00033' => {
+      label: "Thomas Vincent (Metis), 1835-1907.",
+      locations_only: true,
+      locations: {
+        /Osnaburg House/i => "Osnaburg House (birthplace)."
+      }
+    },
+    'oocihm.creator_00034' => {
+      label: "William Henry Pierce (Tsimshian), 1856-1948.",
+      locations_only: true,
+      locations: {
+        /.*/ => "Translator and missionary who released his autobiography From Potlatch to Pulpit in 1933."
+      }
+    },
+    'oocihm.creator_00035' => {
+      label: "Pelkamulox (Okanagan Nation), ca. 1809-1810.",
+      locations_only: true,
+      locations: {
+        /.*/ => "A talented orator who travelled great distances to hunt; after he reported meeting traders with white skin, horses, and guns, a neighbouring chief accused him of lying and fatally injured him."
+      }
+    }
+  }.freeze
+
 
   # If you'd like to handle errors returned by Solr in a certain way,
   # you can use Rails rescue_from with a method you define in this controller,
@@ -366,6 +517,13 @@ def map_geojson
     doc_hash = document.respond_to?(:to_h) ? document.to_h : document
     next [] unless doc_hash
 
+    doc_id = if document.respond_to?(:id)
+               document.id
+             elsif doc_hash.respond_to?(:[])
+               doc_hash['id'] || doc_hash[:id]
+             end
+    doc_id = doc_id.to_s if doc_id
+
     image_url = creator_image_url(doc_hash)
     subject_geo_values = Array(doc_hash['subject_geo_ssim'])
 
@@ -387,12 +545,24 @@ def map_geojson
         placename_value = subject_geo_values.first
       end
 
-      if placename_value.respond_to?(:present?)
-        props['placename'] ||= placename_value if placename_value.present?
-      elsif placename_value.respond_to?(:to_s)
-        trimmed = placename_value.to_s.strip
-        props['placename'] ||= trimmed unless trimmed.empty?
+      metadata = map_popup_metadata(doc_id, placename_value)
+      next unless metadata[:visible]
+
+      if metadata[:label].present?
+        props['author_ssm_str'] = metadata[:label]
+        props['authors'] = metadata[:label]
+        props['author_ssm'] = [metadata[:label]]
       end
+
+      final_placename =
+        if metadata[:placename].present?
+          metadata[:placename]
+        elsif placename_value.respond_to?(:present?) ? placename_value.present? : placename_value.to_s.strip.present?
+          ensure_trailing_period(placename_value)
+        elsif props['placename'].respond_to?(:present?) ? props['placename'].present? : props['placename'].to_s.strip.present?
+          ensure_trailing_period(props['placename'])
+        end
+      props['placename'] = final_placename if final_placename.present?
 
       props['image_url'] ||= image_url if image_url
       Rails.logger.info  { "DOC_HASH:
@@ -414,9 +584,12 @@ end
     doc_hash = solr_document.respond_to?(:to_h) ? solr_document.to_h : solr_document
     Rails.logger.info  { "DOC_HASH:\n#{doc_hash.pretty_inspect}" }
 
-    features = Array(doc_hash['geojson_ssim']).filter_map { |value| parse_geojson_feature(value) }
-    placenames = Array(doc_hash['subject_geo_ssim']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
-    placenames.uniq! if placenames.respond_to?(:uniq!)
+    doc_id = if doc_hash.respond_to?(:[])
+               doc_hash['id'] || doc_hash[:id]
+             end
+    doc_id = doc_id.to_s if doc_id
+
+    subject_geo_values = Array(doc_hash['subject_geo_ssim'])
     authors = Array(doc_hash['author_ssm']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
     authors += Array(doc_hash['author_ssm_str']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
     authors += Array(doc_hash['creator_ssm']).filter_map { |value| value.respond_to?(:presence) ? value.presence&.to_s : value.to_s.presence }
@@ -424,20 +597,66 @@ end
 
     image_url = creator_image_url(doc_hash)
 
-    features.each do |feature|
+    features = []
+    placenames = []
+
+    Array(doc_hash['geojson_ssim']).each_with_index do |value, index|
+      feature = parse_geojson_feature(value)
       next unless feature.is_a?(Hash)
+
       props = feature['properties'] ||= {}
       props['author_ssm'] ||= authors if authors.any?
       props['author_ssm_str'] ||= authors.first if authors.any?
       props['authors'] ||= authors if authors.any?
-      props['placename'] ||= placenames.first if placenames.respond_to?(:present?) ? placenames.present? : placenames.any?
       props['image_url'] ||= image_url if image_url
+
+      placename_value = nil
+      if subject_geo_values.respond_to?(:[]) && subject_geo_values.size > index
+        placename_value = subject_geo_values[index]
+      elsif subject_geo_values.respond_to?(:first)
+        placename_value = subject_geo_values.first
+      end
+
+      metadata = map_popup_metadata(doc_id, placename_value)
+      next unless metadata[:visible]
+
+      if metadata[:label].present?
+        props['author_ssm_str'] = metadata[:label]
+        props['author_ssm'] = [metadata[:label]]
+        props['authors'] = metadata[:label]
+      end
+
+      final_placename =
+        if metadata[:placename].present?
+          metadata[:placename]
+        elsif placename_value.respond_to?(:present?) ? placename_value.present? : placename_value.to_s.strip.present?
+          ensure_trailing_period(placename_value)
+        elsif props['placename'].respond_to?(:present?) ? props['placename'].present? : props['placename'].to_s.strip.present?
+          ensure_trailing_period(props['placename'])
+        end
+
+      if final_placename.present?
+        props['placename'] = final_placename
+        placenames << final_placename
+      end
+
+      features << feature
     end
+
+    placenames.uniq! if placenames.respond_to?(:uniq!)
+    override_label = MAP_POPUP_OVERRIDES[doc_id]&.[](:label)
+    override_label = ensure_trailing_period(override_label) if override_label.present?
+    authors_payload =
+      if override_label.present?
+        [override_label]
+      else
+        authors
+      end
 
     payload = { type: 'FeatureCollection', features: features }
     properties_payload = {}
     properties_payload[:placenames] = placenames if placenames.respond_to?(:present?) ? placenames.present? : placenames.any?
-    properties_payload[:authors] = authors if authors.any?
+    properties_payload[:authors] = authors_payload if authors_payload.any?
     payload[:properties] = properties_payload if properties_payload.any?
 
     bbox = compute_feature_collection_bbox(features)
@@ -499,6 +718,56 @@ end
     return if identifier.empty?
 
     "/assets/iw/#{identifier}.jpeg"
+  end
+
+  def map_popup_metadata(doc_id, placename_value)
+    override = MAP_POPUP_OVERRIDES[doc_id.to_s] if doc_id
+    placename_text = if placename_value.respond_to?(:to_s)
+                       value = placename_value.to_s.strip
+                       value unless value.empty?
+                     end
+
+    metadata = { visible: true, label: nil, placename: nil }
+
+    if override
+      label = override[:label]
+      metadata[:label] = ensure_trailing_period(label) if label.present?
+
+      locations = override[:locations]
+      if placename_text
+        if locations.present?
+          match = locations.find { |pattern, _| pattern === placename_text }
+          if match
+            replacement = match.last
+            if replacement.nil?
+              metadata[:visible] = false
+            else
+              metadata[:placename] = ensure_trailing_period(replacement)
+            end
+          elsif override[:locations_only]
+            metadata[:visible] = false
+          end
+        elsif override[:locations_only]
+          metadata[:visible] = false
+        end
+      elsif override[:locations_only]
+        metadata[:visible] = false
+      end
+    end
+
+    if metadata[:visible] && metadata[:placename].blank? && placename_text
+      metadata[:placename] = ensure_trailing_period(placename_text)
+    end
+
+    metadata
+  end
+
+  def ensure_trailing_period(value)
+    return if value.nil?
+    text = value.to_s.strip
+    return if text.empty?
+    return text if text.end_with?('.', '!', '?')
+    "#{text}."
   end
 end
 
