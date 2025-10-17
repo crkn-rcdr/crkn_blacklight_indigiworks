@@ -99,6 +99,9 @@ class CatalogController < ApplicationController
         /Six Nations of the Grand River/i => "Six Nations of the Grand River."
       }
     },
+    'oocihm.creator_00023' => {
+      label: "Iligliuk (Inuit), fl. 1822."
+    },
     'oocihm.creator_00025' => {
       label: "Peter Jacobs (Ojibway), 1807-1890."
     },
@@ -155,10 +158,10 @@ class CatalogController < ApplicationController
       }
     },
     'oocihm.creator_00035' => {
-      label: "Pelkamulox (Okanagan Nation), ca. 1809-1810.",
+      label: "Pelkamū’lôx (Okanagan Nation), death ca. 1809-1810",
       locations_only: true,
       locations: {
-        /.*/ => "A talented orator who travelled great distances to hunt; after he reported meeting traders with white skin, horses, and guns, a neighbouring chief accused him of lying and fatally injured him."
+        /.*/ => "A talented orator who travelled great distances to hunt. When he reported to nearby communities that he had met traders with white skin, horses, and guns, a neighbouring chief accused him of lying and fatally injured him."
       }
     }
   }.freeze
